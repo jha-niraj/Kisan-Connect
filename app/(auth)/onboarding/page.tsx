@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Tractor, Home, Store } from "lucide-react"
+import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Tractor, Home, Store, Building2 } from "lucide-react"
 import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus, getCategories } from "@/actions/onboarding.action"
 
 interface Category {
@@ -35,7 +35,7 @@ export default function OnboardingPage() {
 	const [categories, setCategories] = useState<Category[]>([])
 	const [categoriesLoading, setCategoriesLoading] = useState(true)
 	const [formData, setFormData] = useState({
-		role: "" as "FARMER" | "USER" | "SELLER" | "",
+		role: "" as "FARMER" | "USER" | "SELLER" | "CONTRACTOR" | "",
 		location: "",
 		district: "",
 		phone: "",
@@ -84,7 +84,7 @@ export default function OnboardingPage() {
 		}
 	}
 
-	const handleRoleSelection = (role: "FARMER" | "USER" | "SELLER") => {
+	const handleRoleSelection = (role: "FARMER" | "USER" | "SELLER" | "CONTRACTOR") => {
 		setFormData(prev => ({ ...prev, role: role }))
 	}
 
@@ -206,7 +206,7 @@ export default function OnboardingPage() {
 					<CardContent className="space-y-6">
 						{
 							currentStep === 1 && (
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 									<Card
 										className={`cursor-pointer transition-all hover:shadow-lg ${formData.role === "FARMER" ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''
 											}`}
@@ -246,6 +246,20 @@ export default function OnboardingPage() {
 											<p className="text-gray-600 dark:text-gray-400 text-sm">
 												Sell farming supplies, equipment, and agricultural products
 												to farmers and buyers in your area
+											</p>
+										</CardContent>
+									</Card>
+									<Card
+										className={`cursor-pointer transition-all hover:shadow-lg ${formData.role === "CONTRACTOR" ? 'ring-2 ring-orange-500 bg-orange-50 dark:bg-orange-900/20' : ''
+											}`}
+										onClick={() => handleRoleSelection("CONTRACTOR")}
+									>
+										<CardContent className="flex flex-col items-center p-6 text-center">
+											<Building2 className="h-12 w-12 text-orange-600 mb-4" />
+											<h3 className="text-xl font-semibold mb-2">I&apos;m a Contractor</h3>
+											<p className="text-gray-600 dark:text-gray-400 text-sm">
+												Bid on agricultural products, purchase crops in bulk,
+												and connect farmers with larger markets
 											</p>
 										</CardContent>
 									</Card>

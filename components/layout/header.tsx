@@ -67,9 +67,17 @@ export function Header() {
 		
 		if (userRole === 'SELLER') {
 			return [
-				{ name: "Dashboard", href: "/merchant/dashboard", icon: <BarChart3 className="mr-2 h-4 w-4" /> },
-				{ name: "My Store", href: "/merchant/products", icon: <Store className="mr-2 h-4 w-4" /> },
-				{ name: "Orders", href: "/merchant/orders", icon: <Package className="mr-2 h-4 w-4" /> },
+				{ name: "Dashboard", href: "/seller/dashboard", icon: <BarChart3 className="mr-2 h-4 w-4" /> },
+				{ name: "My Store", href: "/seller/products", icon: <Store className="mr-2 h-4 w-4" /> },
+				{ name: "Orders", href: "/seller/orders", icon: <Package className="mr-2 h-4 w-4" /> },
+			]
+		}
+		
+		if (userRole === 'CONTRACTOR') {
+			return [
+				{ name: "Dashboard", href: "/contractor/dashboard", icon: <BarChart3 className="mr-2 h-4 w-4" /> },
+				{ name: "My Bids", href: "/contractor/bids", icon: <Tractor className="mr-2 h-4 w-4" /> },
+				{ name: "Purchases", href: "/contractor/purchases", icon: <Package className="mr-2 h-4 w-4" /> },
 			]
 		}
 		

@@ -22,7 +22,8 @@ const Layout = ({ children }: LayoutProps) => {
 			return;
 		}
 
-		if (session.user.role !== Role.SELLER) {
+		// Check if user has CONTRACTOR role
+		if (session.user.role !== Role.CONTRACTOR) {
 			redirect("/");
 			return;
 		}
@@ -36,7 +37,7 @@ const Layout = ({ children }: LayoutProps) => {
 		);
 	}
 
-	if (!session || session.user.role !== Role.SELLER) {
+	if (!session || session.user.role !== Role.CONTRACTOR) {
 		return null;
 	}
 

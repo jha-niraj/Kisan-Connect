@@ -23,6 +23,43 @@ function SignUp() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+    const roleRef = searchParams.get('ref') // farmer, seller, contractor
+
+    // Update page content based on role ref
+    const getPageContent = () => {
+        switch (roleRef) {
+            case 'farmer':
+                return {
+                    title: "Join as a Farmer",
+                    subtitle: "Start selling your agricultural products directly to buyers",
+                    brandColor: "from-green-900 to-green-700 dark:from-green-400 dark:to-green-300",
+                    buttonColor: "bg-green-600 hover:bg-green-700"
+                }
+            case 'seller':
+                return {
+                    title: "Join as a Seller",
+                    subtitle: "Start your agricultural supply business on our platform",
+                    brandColor: "from-purple-900 to-purple-700 dark:from-purple-400 dark:to-purple-300",
+                    buttonColor: "bg-purple-600 hover:bg-purple-700"
+                }
+            case 'contractor':
+                return {
+                    title: "Join as a Contractor",
+                    subtitle: "Connect farmers with markets and participate in auctions",
+                    brandColor: "from-orange-900 to-orange-700 dark:from-orange-400 dark:to-orange-300",
+                    buttonColor: "bg-orange-600 hover:bg-orange-700"
+                }
+            default:
+                return {
+                    title: "Create your account",
+                    subtitle: "Join the future of agricultural marketplace",
+                    brandColor: "from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300",
+                    buttonColor: "bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100"
+                }
+        }
+    }
+
+    const pageContent = getPageContent()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

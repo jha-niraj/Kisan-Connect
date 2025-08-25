@@ -12,11 +12,20 @@ const protectedRoutes = [
 
 // Seller-specific routes that require SELLER role
 const sellerRoutes = [
-	'/merchant/dashboard',
-	'/merchant/products',
-	'/merchant/orders',
-	'/merchant/analytics',
-	'/merchant/settings'
+	'/seller/dashboard',
+	'/seller/products',
+	'/seller/orders',
+	'/seller/analytics',
+	'/seller/settings'
+]
+
+// Contractor-specific routes that require CONTRACTOR role
+const contractorRoutes = [
+	'/contractor/dashboard',
+	'/contractor/bids',
+	'/contractor/purchases',
+	'/contractor/analytics',
+	'/contractor/settings'
 ]
 
 // Farmer-specific routes that require FARMER role
@@ -113,6 +122,10 @@ export default auth((req) => {
 		nextUrl.pathname.startsWith(route)
 	)
 	
+	const isContractorRoute = contractorRoutes.some(route =>
+		nextUrl.pathname.startsWith(route)
+	)
+	
 	const isAdminRoute = adminRoutes.some(route =>
 		nextUrl.pathname.startsWith(route)
 	)
@@ -132,6 +145,12 @@ export default auth((req) => {
 			return NextResponse.redirect(new URL('/merchantonboard', nextUrl.origin))
 		}
 
+		// Check contractor route access
+		if (isContractorRoute && userRole !== 'CONTRACTOR') {
+			// If not a contractor, redirect to home
+			return NextResponse.redirect(new URL('/', nextUrl.origin))
+		}
+
 		// Check farmer route access
 		if (isFarmerRoute && userRole !== 'FARMER') {
 			// If not a farmer, redirect to home
@@ -148,7 +167,11 @@ export default auth((req) => {
 		if (nextUrl.pathname === '/signin' || nextUrl.pathname === '/signup') {
 			// Redirect based on user role after login
 			if (userRole === 'SELLER') {
-				return NextResponse.redirect(new URL('/merchant/dashboard', nextUrl.origin))
+				return NextResponse.redirect(new URL('/seller/dashboard', nextUrl.origin))
+			} else if (userRole === 'CONTRACTOR') {
+				return NextResponse.redirect(new URL('/contractor/dashboard', nextUrl.origin))
+			} else if (userRole === 'FARMER') {
+				return NextResponse.redirect(new URL('/farmer/dashboard', nextUrl.origin))
 			} else if (userRole === 'FARMER') {
 				return NextResponse.redirect(new URL('/farmer/dashboard', nextUrl.origin))
 			} else if (userRole === 'ADMIN') {
@@ -161,7 +184,9 @@ export default auth((req) => {
 		// For the root path, redirect based on role
 		if (nextUrl.pathname === '/' && nextUrl.search === '') {
 			if (userRole === 'SELLER') {
-				return NextResponse.redirect(new URL('/merchant/dashboard', nextUrl.origin))
+				return NextResponse.redirect(new URL('/seller/dashboard', nextUrl.origin))
+			} else if (userRole === 'CONTRACTOR') {
+				return NextResponse.redirect(new URL('/contractor/dashboard', nextUrl.origin))
 			} else if (userRole === 'FARMER') {
 				return NextResponse.redirect(new URL('/farmer/dashboard', nextUrl.origin))
 			} else if (userRole === 'ADMIN') {

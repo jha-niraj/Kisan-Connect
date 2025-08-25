@@ -11,6 +11,7 @@ enum Role {
     USER
     FARMER
     SELLER
+    CONTRACTOR
     ADMIN
 }
 
