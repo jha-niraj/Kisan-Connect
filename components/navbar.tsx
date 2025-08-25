@@ -19,7 +19,7 @@ const menuItems = [
     { name: 'About', href: '#about' },
 ]
 
-export const Header = () => {
+export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const { theme, setTheme } = useTheme();
     const { data: session, status } = useSession();
@@ -73,11 +73,13 @@ export const Header = () => {
                             <div className="flex items-center justify-start gap-2 p-2">
                                 <div className="flex flex-col space-y-1 leading-none">
                                     {session.user.name && <p className="font-medium">{session.user.name}</p>}
-                                    {session.user.email && (
-                                        <p className="w-[200px] truncate text-sm text-muted-foreground">
-                                            {session.user.email}
-                                        </p>
-                                    )}
+                                    {
+                                        session.user.email && (
+                                            <p className="w-[200px] truncate text-sm text-muted-foreground">
+                                                {session.user.email}
+                                            </p>
+                                        )
+                                    }
                                 </div>
                             </div>
                             <DropdownMenuSeparator />
@@ -164,10 +166,10 @@ export const Header = () => {
                                 <Link href="/wallet">Wallet</Link>
                             </Button>
                         </SheetClose>
-                        <Button 
-                            onClick={handleSignOut} 
-                            variant="outline" 
-                            size="sm" 
+                        <Button
+                            onClick={handleSignOut}
+                            variant="outline"
+                            size="sm"
                             className="w-full justify-start text-red-600 hover:text-red-700"
                         >
                             <LogOut className="mr-2 h-4 w-4" />
@@ -210,7 +212,7 @@ export const Header = () => {
     return (
         <header>
             <nav className="fixed left-0 w-full z-20 px-2">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
+                <div className={cn('max-w-7xl mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 lg:gap-0 py-2">
                         <div className="flex w-full justify-between lg:w-auto">
                             <Link

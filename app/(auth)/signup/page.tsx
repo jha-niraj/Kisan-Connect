@@ -4,12 +4,12 @@ import type React from "react"
 
 import { Suspense, useState } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowRight } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { toast } from "sonner"
 import { registerUser } from "@/actions/auth.action"
@@ -21,6 +21,8 @@ function SignUp() {
     const [isLoading, setIsLoading] = useState(false)
     const [isGoogleLoading, setIsGoogleLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -36,7 +38,12 @@ function SignUp() {
             console.log("Signup Result: " + result?.message);
 
             toast.success('Account created successfully! Please check your email for verification code.')
-            router.push(`/verify?email=${encodeURIComponent(email)}`)
+            const verifyUrl = `/verify?email=${encodeURIComponent(email)}`
+            if (callbackUrl && callbackUrl !== '/dashboard') {
+                router.push(`${verifyUrl}&callbackUrl=${encodeURIComponent(callbackUrl)}`)
+            } else {
+                router.push(verifyUrl)
+            }
         } catch (error) {
             console.error('Registration error:', error)
             toast.error(error instanceof Error ? error.message : 'Registration failed')
@@ -49,7 +56,7 @@ function SignUp() {
         setIsGoogleLoading(true)
         try {
             await signIn('google', {
-                callbackUrl: '/dashboard'
+                callbackUrl
             })
         } catch (error) {
             console.error('Google sign-up error:', error)
