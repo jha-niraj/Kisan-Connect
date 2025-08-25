@@ -21,8 +21,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-	title: "Next Starter Kit",
-	description: "All medicine info at one place",
+	title: "Kisan Connect",
+	description: "All farming related needs in one place",
 };
 
 export default function RootLayout({
