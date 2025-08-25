@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { checkOnboardingStatus } from "@/actions/onboarding.actions"
+import { checkOnboardingStatus } from "@/actions/onboarding.action"
 import { useSession } from "next-auth/react"
 
 export default function OnboardingCheck({ children }: { children: React.ReactNode }) {

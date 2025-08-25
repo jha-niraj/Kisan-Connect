@@ -7,10 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { ArrowRight, ArrowLeft, CheckCircle, Users, Sprout, Loader2, MapPin, Phone, Tractor, Home } from "lucide-react"
+import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Tractor, Home } from "lucide-react"
 import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus, getCategories } from "@/actions/onboarding.action"
 
 interface Category {
@@ -167,7 +166,7 @@ export default function OnboardingPage() {
 						Welcome to KisanConnect! 🌾
 					</h1>
 					<p className="text-gray-600 dark:text-gray-400">
-						Nepal's premier agricultural marketplace connecting farmers and buyers
+						Nepal&apos;s premier agricultural marketplace connecting farmers and buyers
 					</p>
 				</div>
 
@@ -220,7 +219,7 @@ export default function OnboardingPage() {
 								>
 									<CardContent className="flex flex-col items-center p-6 text-center">
 										<Tractor className="h-12 w-12 text-green-600 mb-4" />
-										<h3 className="text-xl font-semibold mb-2">I'm a Farmer</h3>
+										<h3 className="text-xl font-semibold mb-2">I&apos;m a Farmer</h3>
 										<p className="text-gray-600 dark:text-gray-400 text-sm">
 											Sell your agricultural products directly to buyers, 
 											participate in auctions, and grow your business
@@ -236,7 +235,7 @@ export default function OnboardingPage() {
 								>
 									<CardContent className="flex flex-col items-center p-6 text-center">
 										<Home className="h-12 w-12 text-blue-600 mb-4" />
-										<h3 className="text-xl font-semibold mb-2">I'm a Buyer</h3>
+										<h3 className="text-xl font-semibold mb-2">I&apos;m a Buyer</h3>
 										<p className="text-gray-600 dark:text-gray-400 text-sm">
 											Buy fresh agricultural products directly from farmers,
 											participate in auctions, and support local agriculture

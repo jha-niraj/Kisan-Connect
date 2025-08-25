@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Users, ShieldCheck, Clock, Star, TrendingUp, Gavel } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 const featuredProducts = [
 	{
@@ -134,7 +135,7 @@ export default function HomePage() {
 						>
 							<div className="space-y-4">
 								<Badge variant="secondary" className="w-fit">
-									Fresh from Nepal's Farmers
+									Fresh from Nepal&apos;s Farmers
 								</Badge>
 								<h1 className="font-serif text-4xl lg:text-6xl font-black text-foreground leading-tight">
 									Fresh from
@@ -181,10 +182,12 @@ export default function HomePage() {
 							className="relative"
 						>
 							<div className="relative rounded-2xl overflow-hidden">
-								<img
+								<Image
 									src="/placeholder.svg?height=500&width=600"
 									alt="Fresh produce from Nepal"
 									className="w-full h-auto object-cover"
+									height={500}
+									width={600}
 								/>
 								<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 								<div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
@@ -251,7 +254,7 @@ export default function HomePage() {
 							</div>
 							<h3 className="font-semibold text-lg">Quality Guarantee</h3>
 							<p className="text-muted-foreground text-sm">
-								100% authentic products with pickup from farmer's location or doorstep delivery across Nepal.
+								100% authentic products with pickup from farmer&apos;s location or doorstep delivery across Nepal.
 							</p>
 						</motion.div>
 					</div>
@@ -280,10 +283,12 @@ export default function HomePage() {
 								<Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
 									<div className="relative">
 										<Link href={`/products/${product.id}`}>
-											<img
+											<Image
 												src={product.image || "/placeholder.svg"}
 												alt={product.name}
 												className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+												height={192}
+												width={192}
 											/>
 										</Link>
 										<Badge
@@ -363,10 +368,12 @@ export default function HomePage() {
 								<Card className="border-2 border-primary/20 hover:border-primary/40 transition-colors">
 									<CardContent className="p-6">
 										<div className="flex items-start space-x-4">
-											<img
+											<Image
 												src={bid.image || "/placeholder.svg"}
 												alt={bid.product}
 												className="w-20 h-20 rounded-lg object-cover"
+												height={80}
+												width={80}
 											/>
 											<div className="flex-1 space-y-2">
 												<div className="flex items-start justify-between">
@@ -417,7 +424,7 @@ export default function HomePage() {
 					<div className="text-center space-y-4 mb-12">
 						<h2 className="font-serif text-3xl font-bold">How It Works</h2>
 						<p className="text-muted-foreground max-w-2xl mx-auto">
-							Simple steps to get fresh produce from Nepal's farmers directly to your doorstep
+							Simple steps to get fresh produce from Nepal&apos;s farmers directly to your doorstep
 						</p>
 					</div>
 
@@ -465,7 +472,7 @@ export default function HomePage() {
 							</div>
 							<h3 className="font-semibold text-lg">Receive Fresh</h3>
 							<p className="text-muted-foreground text-sm">
-								Get fresh produce delivered to your doorstep or pick up directly from the farmer's location.
+								Get fresh produce delivered to your doorstep or pick up directly from the farmer&apos;s location.
 							</p>
 						</motion.div>
 					</div>
@@ -485,7 +492,7 @@ export default function HomePage() {
 						<p className="text-lg opacity-90 max-w-2xl mx-auto">
 							We like to bring people the food they deserve. Direct from farmers, with source traceability, doorstep
 							delivery and quality you can trust. Join us in creating a space where everyone can access the fresh food
-							they deserve. Let's make authentic Nepali produce accessible to all.
+							they deserve. Let&apos;s make authentic Nepali produce accessible to all.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<Button size="lg" variant="secondary" asChild>

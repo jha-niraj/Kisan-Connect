@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Sidebar from '@/components/mainsidebar';
 import MainNavbar from '@/components/mainnavbar';
-import OnboardingCheck from '@/components/onboarding-check';
+import OnboardingCheck from '@/components/onboardingcheck';
 import { redirect } from 'next/navigation';
 
 interface LayoutProps {
@@ -13,7 +13,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-	const { data: session, status } = useSession();
+	const { data: session } = useSession();
 
 	useEffect(() => {
 		const savedState = localStorage.getItem('mainSidebarCollapsed');
