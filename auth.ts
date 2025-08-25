@@ -54,6 +54,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 								image: freshUser.image,
 								role: freshUser.role,
 								roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
+								onboardingCompleted: freshUser.onboardingCompleted,
 							};
 						} else {
 							throw new Error("Email verification not completed");
@@ -79,6 +80,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 						image: user.image,
 						role: user.role,
 						roleExplicitlyChosen: user.roleExplicitlyChosen,
+						onboardingCompleted: user.onboardingCompleted,
 					};
 				} catch (error) {
 					console.error("Authorization error:", error);
@@ -97,20 +99,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				token.id = user.id!;
 				token.role = user.role;
 				token.roleExplicitlyChosen = user.roleExplicitlyChosen;
+				token.onboardingCompleted = user.onboardingCompleted;
 			}
 
 			// Only fetch from database during session updates or when explicitly triggered
 			// This prevents Prisma from running in Edge Runtime during middleware execution
-			if (token && !token.roleExplicitlyChosen && (trigger === "update" || trigger === "signIn")) {
+			if (token && (!token.roleExplicitlyChosen || !token.onboardingCompleted) && (trigger === "update" || trigger === "signIn")) {
 				try {
 					// Check if we're in Edge Runtime by trying to access process
 					if (typeof process !== 'undefined' && process.env) {
 						const dbUser = await prisma.user.findUnique({
 							where: { id: token.id as string },
-							select: { roleExplicitlyChosen: true }
+							select: { roleExplicitlyChosen: true, onboardingCompleted: true }
 						});
 						if (dbUser) {
 							token.roleExplicitlyChosen = dbUser.roleExplicitlyChosen;
+							token.onboardingCompleted = dbUser.onboardingCompleted;
 						}
 					}
 				} catch (error) {
@@ -126,6 +130,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 				session.user.role = token.role as Role
 				session.user.roleExplicitlyChosen = Boolean(token.roleExplicitlyChosen);
+				session.user.onboardingCompleted = Boolean(token.onboardingCompleted);
 			}
 			return session;
 		},

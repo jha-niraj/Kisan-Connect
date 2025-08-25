@@ -6,10 +6,16 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 
 const onboardingSchema = z.object({
-	userRole: z.enum(["USER", "SELLER"]),
-	location: z.string().min(1, "Please select your location"),
-	farmSize: z.string().optional(),
-	cropTypes: z.array(z.string()).optional(),
+	role: z.enum(["USER", "FARMER"]),
+	location: z.string().min(1, "Location is required"),
+	district: z.string().min(1, "District is required"),
+	phone: z.string().min(10, "Valid phone number is required"),
+	// Farmer specific fields
+	farmName: z.string().optional(),
+	farmSize: z.number().optional(),
+	farmingExperience: z.number().optional(),
+	// User interests
+	categoryInterests: z.array(z.string()).optional(),
 });
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>;
@@ -23,86 +29,55 @@ export async function completeOnboarding(data: OnboardingInput) {
 		}
 
 		const validatedData = onboardingSchema.parse(data);
-		const { userRole, categories: inputCategories, customCategory } = validatedData;
-
-		// Ensure default categories exist in database
-		const existingCategories = await seedDefaultCategories();
-
-		// Map category names/IDs to database IDs
-		const categoryIds: string[] = [];
-		
-		for (const categoryNameOrId of inputCategories) {
-			// Check if it's already a valid CUID (database ID)
-			const existingCategory = existingCategories.find(cat => 
-				cat.id === categoryNameOrId || cat.name.toLowerCase() === categoryNameOrId.toLowerCase()
-			);
-			
-			if (existingCategory) {
-				categoryIds.push(existingCategory.id);
-			} else {
-				// If it's a fallback category name, try to find by name mapping
-				const fallbackMapping: Record<string, string> = {
-					'tech': 'Technology',
-					'business': 'Business', 
-					'assignments': 'Assignments',
-					'social-impact': 'Social Impact',
-					'creative': 'Creative'
-				};
-				
-				const mappedName = fallbackMapping[categoryNameOrId] || categoryNameOrId;
-				const mappedCategory = existingCategories.find(cat => 
-					cat.name.toLowerCase() === mappedName.toLowerCase()
-				);
-				
-				if (mappedCategory) {
-					categoryIds.push(mappedCategory.id);
-				}
-			}
-		}
-
-		// Create custom category if provided and doesn't exist
-		if (customCategory && customCategory.trim()) {
-			const existingCustom = existingCategories.find(cat => 
-				cat.name.toLowerCase() === customCategory.trim().toLowerCase()
-			);
-			
-			if (!existingCustom) {
-				const newCategory = await prisma.category.create({
-					data: {
-						name: customCategory.trim(),
-						description: `Custom category: ${customCategory.trim()}`,
-						icon: "⭐", // Default icon for custom categories
-						isActive: true
-					}
-				});
-				categoryIds.push(newCategory.id);
-			} else {
-				categoryIds.push(existingCustom.id);
-			}
-		}
 
 		// Update user with onboarding data
-		const user = await prisma.user.update({
-			where: { id: session.user.id },
-			data: {
-				userRole: validatedData.userRole,
-				onboardingCompleted: true,
-				updatedAt: new Date(),
-			}
-		});
+		const updateData: any = {
+			role: validatedData.role,
+			location: validatedData.location,
+			district: validatedData.district,
+			phone: validatedData.phone,
+			onboardingCompleted: true,
+			roleExplicitlyChosen: true,
+			updatedAt: new Date(),
+		};
 
-		// Create category selections for the user
-		if (categoryIds.length > 0) {
-			await prisma.categorySelection.createMany({
-				data: categoryIds.map(categoryId => ({
-					userId: session.user.id,
-					categoryId
-				})),
-				skipDuplicates: true
-			});
+		// Add farmer-specific fields if role is FARMER
+		if (validatedData.role === "FARMER") {
+			if (validatedData.farmName) updateData.farmName = validatedData.farmName;
+			if (validatedData.farmSize) updateData.farmSize = validatedData.farmSize;
+			if (validatedData.farmingExperience) updateData.farmingExperience = validatedData.farmingExperience;
 		}
 
-		return { success: true };
+		const user = await prisma.user.update({
+			where: { id: session.user.id },
+			data: updateData
+		});
+
+		// Create category interests for the user if provided
+		if (validatedData.categoryInterests && validatedData.categoryInterests.length > 0) {
+			// First ensure categories exist
+			await seedDefaultCategories();
+			
+			const existingCategories = await prisma.category.findMany({
+				where: {
+					name: {
+						in: validatedData.categoryInterests
+					}
+				}
+			});
+
+			if (existingCategories.length > 0) {
+				await prisma.categoryInterest.createMany({
+					data: existingCategories.map(category => ({
+						userId: session.user.id,
+						categoryId: category.id
+					})),
+					skipDuplicates: true
+				});
+			}
+		}
+
+		return { success: true, role: validatedData.role };
 	} catch (error) {
 		console.error("Error completing onboarding:", error);
 
@@ -126,7 +101,7 @@ export async function checkOnboardingStatus() {
 			where: { id: session.user.id },
 			select: {
 				onboardingCompleted: true,
-				userRole: true,
+				role: true,
 			}
 		});
 
@@ -136,7 +111,7 @@ export async function checkOnboardingStatus() {
 
 		return {
 			needsOnboarding: false,
-			userRole: user.userRole
+			role: user.role
 		};
 	} catch (error) {
 		console.error("Error checking onboarding status:", error);
@@ -144,31 +119,48 @@ export async function checkOnboardingStatus() {
 	}
 }
 
-export async function redirectAfterOnboarding(userRole: string) {
-	switch (userRole) {
-		case 'VALIDATOR':
-			redirect('/validatehub');
-		case 'SUBMITTER':
-			redirect('/dashboard?createPost=true');
-		case 'BOTH':
-			redirect('/dashboard');
+export async function redirectAfterOnboarding(role: string) {
+	switch (role) {
+		case 'FARMER':
+			redirect('/farmer/dashboard');
+		case 'USER':
+			redirect('/products');
 		default:
-			redirect('/dashboard');
+			redirect('/products');
+	}
+}
+
+// Get all categories for selection
+export async function getCategories() {
+	try {
+		await seedDefaultCategories();
+		
+		const categories = await prisma.category.findMany({
+			orderBy: { name: 'asc' }
+		});
+		
+		return { success: true, categories };
+	} catch (error) {
+		console.error("Error fetching categories:", error);
+		return { success: false, error: "Failed to fetch categories" };
 	}
 }
 
 // Seed default categories if they don't exist
 export async function seedDefaultCategories() {
 	const DEFAULT_CATEGORIES = [
-		{ name: "Technology", icon: "💻", description: "Software, Hardware, AI, Web Development" },
-		{ name: "Business", icon: "🏢", description: "Startups, Business Models, Marketing" },
-		{ name: "Assignments", icon: "📚", description: "Academic Projects, Research, Studies" },
-		{ name: "Social Impact", icon: "❤️", description: "Non-profit, Community, Sustainability" },
-		{ name: "Creative", icon: "🎨", description: "Design, Art, Content, Media" },
-	]
+		{ name: "Grains", icon: "🌾", description: "Rice, Wheat, Barley, Corn, etc." },
+		{ name: "Vegetables", icon: "🥬", description: "Fresh vegetables like tomatoes, potatoes, etc." },
+		{ name: "Fruits", icon: "�", description: "Apples, Oranges, Bananas, seasonal fruits" },
+		{ name: "Spices", icon: "🌶️", description: "Turmeric, Cardamom, Ginger, etc." },
+		{ name: "Dairy", icon: "🥛", description: "Milk, Cheese, Yogurt, etc." },
+		{ name: "Legumes", icon: "🫘", description: "Lentils, Beans, Chickpeas, etc." },
+		{ name: "Herbs", icon: "🌿", description: "Basil, Cilantro, Mint, etc." },
+		{ name: "Organic", icon: "�", description: "Certified organic products" },
+	];
 
 	try {
-		const existingCategories = await prisma.category.findMany()
+		const existingCategories = await prisma.category.findMany();
 		
 		if (existingCategories.length === 0) {
 			await prisma.category.createMany({
@@ -176,17 +168,15 @@ export async function seedDefaultCategories() {
 					name: category.name,
 					description: category.description,
 					icon: category.icon,
-					isActive: true
 				})),
 				skipDuplicates: true
-			})
-			console.log("Default categories seeded")
+			});
+			console.log("Default agricultural categories seeded");
 		}
 		
 		return await prisma.category.findMany({
-			where: { isActive: true },
 			orderBy: { name: 'asc' }
-		})
+		});
 	} catch (error) {
 		console.error("Error seeding categories:", error);
 		throw error;

@@ -8,10 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Play, SkipForward, Loader2 } from "lucide-react"
-import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus } from "@/actions/onboarding.actions"
-import { getCategories } from "@/actions/post.actions"
+import { ArrowRight, ArrowLeft, CheckCircle, Users, Sprout, Loader2, MapPin, Phone, Tractor, Home } from "lucide-react"
+import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus, getCategories } from "@/actions/onboarding.action"
 
 interface Category {
 	id: string
@@ -20,13 +20,11 @@ interface Category {
 	icon: string | null
 }
 
-// Fallback categories if database is empty
-const FALLBACK_CATEGORIES = [
-	{ id: "tech", name: "Technology", icon: "💻", description: "Software, Hardware, AI, Web Development" },
-	{ id: "business", name: "Business", icon: "🏢", description: "Startups, Business Models, Marketing" },
-	{ id: "assignments", name: "Assignments", icon: "📚", description: "Academic Projects, Research, Studies" },
-	{ id: "social-impact", name: "Social Impact", icon: "❤️", description: "Non-profit, Community, Sustainability" },
-	{ id: "creative", name: "Creative", icon: "🎨", description: "Design, Art, Content, Media" },
+// Nepal districts for location selection
+const NEPAL_DISTRICTS = [
+	"Kathmandu", "Lalitpur", "Bhaktapur", "Chitwan", "Pokhara", "Butwal", "Dharan", "Biratnagar",
+	"Birgunj", "Janakpur", "Dhangadhi", "Mahendranagar", "Nepalgunj", "Gorkha", "Syangja", 
+	"Kaski", "Tanahu", "Baglung", "Myagdi", "Mustang", "Manang", "Lamjung", "Nawalpur"
 ]
 
 export default function OnboardingPage() {
@@ -38,10 +36,14 @@ export default function OnboardingPage() {
 	const [categories, setCategories] = useState<Category[]>([])
 	const [categoriesLoading, setCategoriesLoading] = useState(true)
 	const [formData, setFormData] = useState({
-		role: "" as "SUBMITTER" | "USER" | "",
-		selectedCategories: [] as string[],
-		customCategory: "",
-		watchedVideo: false
+		role: "" as "FARMER" | "USER" | "",
+		location: "",
+		district: "",
+		phone: "",
+		farmName: "",
+		farmSize: "",
+		farmingExperience: "",
+		categoryInterests: [] as string[],
 	})
 
 	useEffect(() => {
@@ -55,9 +57,9 @@ export default function OnboardingPage() {
 			const result = await checkOnboardingStatus()
 			
 			if (!result.needsOnboarding) {
-				// User has already completed onboarding, redirect to dashboard
+				// User has already completed onboarding, redirect appropriately
 				toast.success("You've already completed onboarding!")
-				router.replace('/dashboard')
+				await redirectAfterOnboarding(result.role || 'USER')
 				return
 			}
 		} catch (error) {
@@ -72,393 +74,357 @@ export default function OnboardingPage() {
 			setCategoriesLoading(true)
 			const result = await getCategories()
 
-			if (result.success && result.categories && result.categories.length > 0) {
+			if (result.success && result.categories) {
 				setCategories(result.categories)
-			} else {
-				// Use fallback categories if none exist in database
-				setCategories(FALLBACK_CATEGORIES as Category[])
 			}
 		} catch (error) {
 			console.error("Error fetching categories:", error)
-			setCategories(FALLBACK_CATEGORIES as Category[])
-			toast.error("Using default categories due to loading error")
+			toast.error("Failed to load categories")
 		} finally {
 			setCategoriesLoading(false)
 		}
 	}
 
-	const handleRoleSelection = (role: "SUBMITTER" | "USER") => {
+	const handleRoleSelection = (role: "FARMER" | "USER") => {
 		setFormData(prev => ({ ...prev, role: role }))
 	}
 
-	const handleCategoryToggle = (categoryId: string) => {
+	const handleCategoryToggle = (categoryName: string) => {
 		setFormData(prev => ({
 			...prev,
-			selectedCategories: prev.selectedCategories.includes(categoryId)
-				? prev.selectedCategories.filter(id => id !== categoryId)
-				: [...prev.selectedCategories, categoryId]
+			categoryInterests: prev.categoryInterests.includes(categoryName)
+				? prev.categoryInterests.filter(name => name !== categoryName)
+				: [...prev.categoryInterests, categoryName]
 		}))
 	}
 
-	const handleNext = () => {
-		if (currentStep === 1 && !formData.role) {
-			toast.error("Please select a role to continue")
-			return
+	const nextStep = () => {
+		if (currentStep < 3) {
+			setCurrentStep(currentStep + 1)
 		}
-		if (currentStep === 2 && formData.selectedCategories.length === 0) {
-			toast.error("Please select at least one category")
-			return
+	}
+
+	const prevStep = () => {
+		if (currentStep > 1) {
+			setCurrentStep(currentStep - 1)
 		}
-		setCurrentStep(prev => prev + 1)
 	}
 
-	const handlePrevious = () => {
-		setCurrentStep(prev => prev - 1)
-	}
-
-	const handleSkipVideo = () => {
-		setCurrentStep(4)
-	}
-
-	const handleCompleteOnboarding = async () => {
-		if (formData.selectedCategories.length === 0) {
-			toast.error("Please select at least one category")
+	const handleSubmit = async () => {
+		if (!formData.role) {
+			toast.error("Please select a role")
 			return
 		}
 
 		setIsLoading(true)
 		try {
-			const result = await completeOnboarding({
-				role: formData.role as "SUBMITTER" | "USER",
-				categories: formData.selectedCategories,
-				customCategory: formData.customCategory
-			})
+			const data = {
+				role: formData.role,
+				location: formData.location,
+				district: formData.district,
+				phone: formData.phone,
+				categoryInterests: formData.categoryInterests,
+				...(formData.role === "FARMER" && {
+					farmName: formData.farmName,
+					farmSize: formData.farmSize ? parseFloat(formData.farmSize) : undefined,
+					farmingExperience: formData.farmingExperience ? parseInt(formData.farmingExperience) : undefined,
+				})
+			}
 
+			const result = await completeOnboarding(data)
+			
 			if (result.success) {
-				toast.success("Welcome to KisanConnect!")
-				// Redirect based on role
-				await redirectAfterOnboarding(formData.role)
+				toast.success("Welcome to KisanConnect! 🎉")
+				await redirectAfterOnboarding(result.role || formData.role)
 			} else {
 				toast.error(result.error || "Failed to complete onboarding")
 			}
 		} catch (error) {
-			console.error("Onboarding error:", error)
+			console.error("Error submitting onboarding:", error)
 			toast.error("Something went wrong. Please try again.")
 		} finally {
 			setIsLoading(false)
 		}
 	}
 
-	const renderStep1 = () => (
-		<Card className="max-w-7xl mx-auto">
-			<CardHeader className="text-center">
-				<CardTitle className="text-2xl font-bold">Choose Your Role</CardTitle>
-				<CardDescription>
-					How would you like to participate in KisanConnect?
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="flex flex-col gap-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div
-						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.role === "SUBMITTER" ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
-							}`}
-						onClick={() => handleRoleSelection("SUBMITTER")}
-					>
-						<div className="flex items-start gap-4">
-							<div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-								<Lightbulb className="h-6 w-6 text-blue-600" />
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-semibold mb-2">Submit Ideas</h3>
-								<p className="text-gray-600 dark:text-gray-400">
-									Submit ideas for feedback (e.g., projects, pitches, assignments)
-								</p>
-								<div className="flex items-center gap-2 mt-3">
-									<Badge variant="outline">Idea Creator</Badge>
-									<Badge variant="outline">Project Owner</Badge>
-								</div>
-							</div>
-							{
-								formData.role === "SUBMITTER" && (
-									<CheckCircle className="h-6 w-6 text-blue-600" />
-								)
-							}
-						</div>
-					</div>
-					<div
-						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.role === "USER" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
-							}`}
-						onClick={() => handleRoleSelection("USER")}
-					>
-						<div className="flex items-start gap-4">
-							<div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-								<Users className="h-6 w-6 text-green-600" />
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-semibold mb-2">Validate Ideas</h3>
-								<p className="text-gray-600 dark:text-gray-400">
-									Earn rewards by reviewing and providing feedback on ideas
-								</p>
-								<div className="flex items-center gap-2 mt-3">
-									<Badge variant="outline">Expert Reviewer</Badge>
-									<Badge variant="outline">Reward Earner</Badge>
-								</div>
-							</div>
-							{
-								formData.role === "USER" && (
-									<CheckCircle className="h-6 w-6 text-green-600" />
-								)
-							}
-						</div>
-					</div>
-				</div>
-				<div className="pt-4 text-center">
-					<Button
-						onClick={handleNext}
-						className="w-fit mx-auto"
-						size="lg"
-						disabled={!formData.role}
-					>
-						Continue <ArrowRight className="ml-2 h-4 w-4" />
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
-	)
-
-	const renderStep2 = () => (
-		<Card className="w-full max-w-7xl mx-auto">
-			<CardHeader className="text-center">
-				<CardTitle className="text-2xl font-bold">Select Your Interests</CardTitle>
-				<CardDescription>
-					Choose categories that match your interests to get personalized content
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-6">
-				{
-					categoriesLoading ? (
-						<div className="text-center py-8">
-							<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-							<p className="text-muted-foreground">Loading categories...</p>
-						</div>
-					) : (
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							{
-								categories.map((category) => {
-									const isSelected = formData.selectedCategories.includes(category.id)
-
-									return (
-										<div
-											key={category.id}
-											className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
-												}`}
-											onClick={() => handleCategoryToggle(category.id)}
-										>
-											<div className="flex items-start gap-3">
-												<div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-													{
-														category.icon ? (
-															<span className="text-lg">{category.icon}</span>
-														) : (
-															<Lightbulb className="h-5 w-5" />
-														)
-													}
-												</div>
-												<div className="flex-1">
-													<h4 className="font-semibold mb-1">{category.name}</h4>
-													<p className="text-sm text-gray-600 dark:text-gray-400">
-														{category.description || "No description available"}
-													</p>
-												</div>
-												{
-													isSelected && (
-														<CheckCircle className="h-5 w-5 text-blue-600" />
-													)
-												}
-											</div>
-										</div>
-									)
-								})
-							}
-						</div>
-					)
-				}
-				<div className="space-y-2">
-					<Label htmlFor="customCategory">Custom Category (Optional)</Label>
-					<Input
-						id="customCategory"
-						placeholder="e.g., AI Research, Climate Tech, EdTech"
-						value={formData.customCategory}
-						onChange={(e) => setFormData(prev => ({ ...prev, customCategory: e.target.value }))}
-					/>
-				</div>
-				<div className="flex gap-3 pt-4">
-					<Button variant="outline" onClick={handlePrevious} className="flex-1">
-						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
-					</Button>
-					<Button
-						onClick={handleNext}
-						className="flex-1"
-						disabled={formData.selectedCategories.length === 0}
-					>
-						Continue <ArrowRight className="ml-2 h-4 w-4" />
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
-	)
-
-	const renderStep3 = () => (
-		<Card className="w-full max-w-7xl mx-auto">
-			<CardHeader className="text-center">
-				<CardTitle className="text-2xl font-bold">How KisanConnect Works</CardTitle>
-				<CardDescription>
-					Watch this quick 1-minute video to understand the platform
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-6">
-				<div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-					<div className="text-center">
-						<div className="p-4 bg-white/10 rounded-full mb-4 mx-auto w-fit">
-							<Play className="h-8 w-8 text-white" />
-						</div>
-						<p className="text-white mb-4">Video: How KisanConnect Works</p>
-						<p className="text-white/70 text-sm">Click to watch the introduction video</p>
-					</div>
-				</div>
-				<div className="flex gap-3">
-					<Button variant="outline" onClick={handlePrevious} className="flex-1">
-						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
-					</Button>
-					<Button variant="outline" onClick={handleSkipVideo} className="flex-1">
-						<SkipForward className="mr-2 h-4 w-4" /> Skip Video
-					</Button>
-					<Button onClick={handleNext} className="flex-1">
-						Continue <ArrowRight className="ml-2 h-4 w-4" />
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
-	)
-
-	const renderStep4 = () => (
-		<Card className="w-full max-w-7xl mx-auto">
-			<CardHeader className="text-center">
-				<CardTitle className="text-2xl font-bold">You&apos;re All Set!</CardTitle>
-				<CardDescription>
-					Review your selections and complete your onboarding
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-6">
-				<div className="space-y-4">
-					<div>
-						<h4 className="font-semibold mb-2">Your Role:</h4>
-						<Badge variant="outline" className="text-base px-3 py-1">
-							{formData.role === "SUBMITTER" && "Idea Submitter"}
-							{formData.role === "USER" && "Idea Validator"}
-						</Badge>
-					</div>
-					<div>
-						<h4 className="font-semibold mb-2">Selected Categories:</h4>
-						<div className="flex flex-wrap gap-2">
-							{
-								formData.selectedCategories.map(categoryId => {
-									const category = categories.find(c => c.id === categoryId)
-									return (
-										<Badge key={categoryId} variant="secondary">
-											{category?.name || categoryId}
-										</Badge>
-									)
-								})
-							}
-							{
-								formData.customCategory && (
-									<Badge variant="secondary">{formData.customCategory}</Badge>
-								)
-							}
-						</div>
-					</div>
-				</div>
-				<div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
-					<h4 className="font-semibold mb-2">What happens next?</h4>
-					<p className="text-sm text-gray-600 dark:text-gray-400">
-						{formData.role === "USER" && "You'll be taken to the ValidateHub where you can start reviewing ideas and earning rewards."}
-						{formData.role === "SUBMITTER" && "You'll be taken to your dashboard where you can create your first post."}
-					</p>
-				</div>
-				<div className="flex gap-3 pt-4">
-					<Button variant="outline" onClick={handlePrevious} className="flex-1">
-						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
-					</Button>
-					<Button
-						onClick={handleCompleteOnboarding}
-						className="flex-1"
-						disabled={isLoading}
-					>
-						{
-							isLoading ? (
-								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Setting up...
-								</>
-							) : (
-								<>
-									Complete Setup <CheckCircle className="ml-2 h-4 w-4" />
-								</>
-							)
-						}
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
-	)
-
-	// Show loading screen while checking onboarding status
 	if (checkingStatus) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
-				<div className="text-center">
-					<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-					<p className="text-lg text-gray-600 dark:text-gray-400">Checking your account status...</p>
+			<div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+				<div className="flex items-center space-x-2">
+					<Loader2 className="h-6 w-6 animate-spin" />
+					<span>Checking your status...</span>
 				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col bg-white dark:bg-neutral-900 flex items-center justify-center p-4 py-24 md:py-0">
+		<div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
 			<div className="w-full max-w-4xl">
-				<div className="mb-4">
-					<div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
-						{
-							[1, 2, 3, 4].map((step) => (
-								<div key={step} className="flex items-center">
-									<div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step <= currentStep
-										? "bg-blue-600 text-white"
-										: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
-										}`}>
-										{step}
-									</div>
-									{
-										step < 4 && (
-											<div className={`w-12 h-1 mx-2 ${step < currentStep ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
-												}`} />
-										)
-									}
-								</div>
-							))
-						}
-					</div>
-					<p className="text-center text-sm text-gray-600 dark:text-gray-400">
-						Step {currentStep} of 4
+				{/* Header */}
+				<div className="text-center mb-8">
+					<h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+						Welcome to KisanConnect! 🌾
+					</h1>
+					<p className="text-gray-600 dark:text-gray-400">
+						Nepal's premier agricultural marketplace connecting farmers and buyers
 					</p>
 				</div>
-			</div>
-			<div className="max-w-7xl mx-auto">
-				{currentStep === 1 && renderStep1()}
-				{currentStep === 2 && renderStep2()}
-				{currentStep === 3 && renderStep3()}
-				{currentStep === 4 && renderStep4()}
+
+				{/* Progress Indicator */}
+				<div className="flex justify-center mb-8">
+					<div className="flex items-center space-x-4">
+						{[1, 2, 3].map((step) => (
+							<div key={step} className="flex items-center">
+								<div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+									currentStep >= step 
+										? 'bg-green-500 text-white' 
+										: 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+								}`}>
+									{currentStep > step ? <CheckCircle className="h-5 w-5" /> : step}
+								</div>
+								{step < 3 && (
+									<div className={`h-1 w-16 mx-2 ${
+										currentStep > step ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+									}`} />
+								)}
+							</div>
+						))}
+					</div>
+				</div>
+
+				{/* Step Content */}
+				<Card className="mx-auto max-w-2xl">
+					<CardHeader>
+						<CardTitle className="text-center">
+							{currentStep === 1 && "Choose Your Role"}
+							{currentStep === 2 && "Basic Information"}
+							{currentStep === 3 && "Interests & Preferences"}
+						</CardTitle>
+						<CardDescription className="text-center">
+							{currentStep === 1 && "How would you like to use KisanConnect?"}
+							{currentStep === 2 && "Tell us about yourself and your location"}
+							{currentStep === 3 && "Help us personalize your experience"}
+						</CardDescription>
+					</CardHeader>
+
+					<CardContent className="space-y-6">
+						{/* Step 1: Role Selection */}
+						{currentStep === 1 && (
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<Card 
+									className={`cursor-pointer transition-all hover:shadow-lg ${
+										formData.role === "FARMER" ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''
+									}`}
+									onClick={() => handleRoleSelection("FARMER")}
+								>
+									<CardContent className="flex flex-col items-center p-6 text-center">
+										<Tractor className="h-12 w-12 text-green-600 mb-4" />
+										<h3 className="text-xl font-semibold mb-2">I'm a Farmer</h3>
+										<p className="text-gray-600 dark:text-gray-400 text-sm">
+											Sell your agricultural products directly to buyers, 
+											participate in auctions, and grow your business
+										</p>
+									</CardContent>
+								</Card>
+
+								<Card 
+									className={`cursor-pointer transition-all hover:shadow-lg ${
+										formData.role === "USER" ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
+									}`}
+									onClick={() => handleRoleSelection("USER")}
+								>
+									<CardContent className="flex flex-col items-center p-6 text-center">
+										<Home className="h-12 w-12 text-blue-600 mb-4" />
+										<h3 className="text-xl font-semibold mb-2">I'm a Buyer</h3>
+										<p className="text-gray-600 dark:text-gray-400 text-sm">
+											Buy fresh agricultural products directly from farmers,
+											participate in auctions, and support local agriculture
+										</p>
+									</CardContent>
+								</Card>
+							</div>
+						)}
+
+						{/* Step 2: Basic Information */}
+						{currentStep === 2 && (
+							<div className="space-y-4">
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<div className="space-y-2">
+										<Label htmlFor="location">Location/Address</Label>
+										<Input
+											id="location"
+											value={formData.location}
+											onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+											placeholder="Enter your address"
+											className="w-full"
+										/>
+									</div>
+
+									<div className="space-y-2">
+										<Label htmlFor="district">District</Label>
+										<Select value={formData.district} onValueChange={(value) => setFormData(prev => ({ ...prev, district: value }))}>
+											<SelectTrigger>
+												<SelectValue placeholder="Select your district" />
+											</SelectTrigger>
+											<SelectContent>
+												{NEPAL_DISTRICTS.map((district) => (
+													<SelectItem key={district} value={district}>
+														{district}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</div>
+								</div>
+
+								<div className="space-y-2">
+									<Label htmlFor="phone">Phone Number</Label>
+									<Input
+										id="phone"
+										value={formData.phone}
+										onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+										placeholder="+977 98XXXXXXXX"
+										className="w-full"
+									/>
+								</div>
+
+								{/* Farmer specific fields */}
+								{formData.role === "FARMER" && (
+									<div className="space-y-4 pt-4 border-t">
+										<h4 className="font-semibold text-green-700 dark:text-green-400">Farm Information</h4>
+										
+										<div className="space-y-2">
+											<Label htmlFor="farmName">Farm Name (Optional)</Label>
+											<Input
+												id="farmName"
+												value={formData.farmName}
+												onChange={(e) => setFormData(prev => ({ ...prev, farmName: e.target.value }))}
+												placeholder="e.g., Green Valley Farm"
+											/>
+										</div>
+
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div className="space-y-2">
+												<Label htmlFor="farmSize">Farm Size (in acres)</Label>
+												<Input
+													id="farmSize"
+													type="number"
+													value={formData.farmSize}
+													onChange={(e) => setFormData(prev => ({ ...prev, farmSize: e.target.value }))}
+													placeholder="e.g., 5.5"
+													step="0.1"
+													min="0"
+												/>
+											</div>
+
+											<div className="space-y-2">
+												<Label htmlFor="farmingExperience">Farming Experience (years)</Label>
+												<Input
+													id="farmingExperience"
+													type="number"
+													value={formData.farmingExperience}
+													onChange={(e) => setFormData(prev => ({ ...prev, farmingExperience: e.target.value }))}
+													placeholder="e.g., 10"
+													min="0"
+												/>
+											</div>
+										</div>
+									</div>
+								)}
+							</div>
+						)}
+
+						{/* Step 3: Interests */}
+						{currentStep === 3 && (
+							<div className="space-y-4">
+								<div className="text-center mb-4">
+									<h4 className="font-semibold mb-2">
+										{formData.role === "FARMER" 
+											? "What do you grow or plan to grow?" 
+											: "What products are you interested in buying?"
+										}
+									</h4>
+									<p className="text-sm text-gray-600 dark:text-gray-400">
+										Select all that apply to personalize your experience
+									</p>
+								</div>
+
+								{categoriesLoading ? (
+									<div className="flex justify-center py-8">
+										<Loader2 className="h-6 w-6 animate-spin" />
+									</div>
+								) : (
+									<div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+										{categories.map((category) => (
+											<div
+												key={category.id}
+												className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+													formData.categoryInterests.includes(category.name)
+														? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+														: 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+												}`}
+												onClick={() => handleCategoryToggle(category.name)}
+											>
+												<div className="text-center">
+													<div className="text-2xl mb-1">{category.icon}</div>
+													<div className="text-sm font-medium">{category.name}</div>
+													<div className="text-xs text-gray-500 mt-1">
+														{category.description}
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								)}
+
+								<div className="text-center text-sm text-gray-500 mt-4">
+									You can always update your preferences later in your profile
+								</div>
+							</div>
+						)}
+
+						{/* Navigation Buttons */}
+						<div className="flex justify-between pt-6">
+							<Button
+								variant="outline"
+								onClick={prevStep}
+								disabled={currentStep === 1}
+								className="flex items-center space-x-2"
+							>
+								<ArrowLeft className="h-4 w-4" />
+								<span>Previous</span>
+							</Button>
+
+							{currentStep < 3 ? (
+								<Button
+									onClick={nextStep}
+									disabled={
+										(currentStep === 1 && !formData.role) ||
+										(currentStep === 2 && (!formData.location || !formData.district || !formData.phone))
+									}
+									className="flex items-center space-x-2"
+								>
+									<span>Next</span>
+									<ArrowRight className="h-4 w-4" />
+								</Button>
+							) : (
+								<Button
+									onClick={handleSubmit}
+									disabled={isLoading}
+									className="flex items-center space-x-2"
+								>
+									{isLoading ? (
+										<Loader2 className="h-4 w-4 animate-spin" />
+									) : (
+										<CheckCircle className="h-4 w-4" />
+									)}
+									<span>{isLoading ? "Setting up..." : "Complete Setup"}</span>
+								</Button>
+							)}
+						</div>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	)

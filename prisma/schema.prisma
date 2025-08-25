@@ -9,8 +9,43 @@ datasource db {
 
 enum Role {
     USER
-    SELLER
+    FARMER
     ADMIN
+}
+
+enum ProductCategory {
+    GRAINS
+    VEGETABLES
+    FRUITS
+    SPICES
+    DAIRY
+    MEAT
+    LEGUMES
+    HERBS
+    ORGANIC
+    SEEDS
+}
+
+enum ProductStatus {
+    ACTIVE
+    INACTIVE
+    SOLD_OUT
+    PENDING
+}
+
+enum AuctionStatus {
+    ACTIVE
+    COMPLETED
+    CANCELLED
+    PENDING
+}
+
+enum OrderStatus {
+    PENDING
+    CONFIRMED
+    SHIPPED
+    DELIVERED
+    CANCELLED
 }
 
 model User {
@@ -22,7 +57,19 @@ model User {
     image                String    @default("https://res.cloudinary.com/dhfuckcax/image/upload/v1739810646/krk8x7fzjukcfcoefrea.jpg")
     role                 Role      @default(USER)
     roleExplicitlyChosen Boolean   @default(false)
-	createdAt            DateTime  @default(now())
+    onboardingCompleted  Boolean   @default(false)
+    createdAt            DateTime  @default(now())
+    updatedAt            DateTime  @updatedAt
+
+    // Contact information
+    phone                String?
+    location             String?
+    district             String?
+    
+    // Farmer specific fields
+    farmName             String?
+    farmSize             Float?
+    farmingExperience    Int?
 
     // Email verification
     verificationToken    String?   @unique
@@ -32,9 +79,21 @@ model User {
     resetToken           String?   @unique
     resetTokenExpiry     DateTime?
 
-    accounts              Account[]
+    // Relations
+    accounts             Account[]
+    products             Product[]
+    farmerAuctions       Auction[] @relation("FarmerAuctions")
+    wonAuctions          Auction[] @relation("WonAuctions")
+    orders               Order[]
+    bids                 Bid[]
+    addresses            Address[]
+    cartItems            CartItem[]
+    reviews              Review[]
+    categoryInterests    CategoryInterest[]
 
     @@index([email])
+    @@index([role])
+    @@index([district])
 }
 
 model Account {
@@ -58,4 +117,203 @@ model Account {
 
     @@unique([provider, providerAccountId])
     @@map("accounts")
+}
+
+model Category {
+    id          String    @id @default(cuid())
+    name        String    @unique
+    description String?
+    icon        String?
+    createdAt   DateTime  @default(now())
+    
+    products    Product[]
+    interests   CategoryInterest[]
+}
+
+model CategoryInterest {
+    id         String   @id @default(cuid())
+    userId     String
+    categoryId String
+    createdAt  DateTime @default(now())
+    
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, categoryId])
+}
+
+model Product {
+    id          String          @id @default(cuid())
+    name        String
+    description String
+    price       Float
+    unit        String          @default("kg")
+    stock       Int
+    category    ProductCategory
+    categoryId  String?
+    status      ProductStatus   @default(ACTIVE)
+    images      String[]
+    
+    // Farmer/Seller info
+    farmerId    String
+    location    String
+    district    String
+    
+    // Product details
+    organicCertified Boolean @default(false)
+    harvestDate     DateTime?
+    expiryDate      DateTime?
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relations
+    farmer      User         @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+    categoryRef Category?    @relation(fields: [categoryId], references: [id])
+    auctions    Auction[]
+    cartItems   CartItem[]
+    orderItems  OrderItem[]
+    reviews     Review[]
+    
+    @@index([farmerId])
+    @@index([category])
+    @@index([district])
+    @@index([status])
+}
+
+model Auction {
+    id              String        @id @default(cuid())
+    productId       String
+    farmerId        String
+    title           String
+    description     String
+    startPrice      Float
+    currentBid      Float
+    minIncrement    Float         @default(10)
+    startTime       DateTime
+    endTime         DateTime
+    status          AuctionStatus @default(PENDING)
+    winnerId        String?
+    
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    
+    // Relations
+    product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+    farmer          User     @relation("FarmerAuctions", fields: [farmerId], references: [id], onDelete: Cascade)
+    winner          User?    @relation("WonAuctions", fields: [winnerId], references: [id])
+    bids            Bid[]
+    
+    @@index([status])
+    @@index([endTime])
+    @@index([farmerId])
+}
+
+model Bid {
+    id        String   @id @default(cuid())
+    auctionId String
+    bidderId  String
+    amount    Float
+    createdAt DateTime @default(now())
+    
+    // Relations
+    auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+    bidder    User    @relation(fields: [bidderId], references: [id], onDelete: Cascade)
+    
+    @@index([auctionId])
+    @@index([bidderId])
+}
+
+model Address {
+    id        String  @id @default(cuid())
+    userId    String
+    title     String
+    fullName  String
+    phone     String
+    street    String
+    city      String
+    district  String
+    zipCode   String?
+    isDefault Boolean @default(false)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    // Relations
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    orders    Order[]
+    
+    @@index([userId])
+}
+
+model CartItem {
+    id        String @id @default(cuid())
+    userId    String
+    productId String
+    quantity  Int
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    // Relations
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, productId])
+}
+
+model Order {
+    id          String      @id @default(cuid())
+    userId      String
+    addressId   String
+    totalAmount Float
+    status      OrderStatus @default(PENDING)
+    
+    // Payment info
+    paymentMethod String?
+    paymentId     String?
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relations
+    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    address     Address     @relation(fields: [addressId], references: [id])
+    items       OrderItem[]
+    
+    @@index([userId])
+    @@index([status])
+}
+
+model OrderItem {
+    id        String @id @default(cuid())
+    orderId   String
+    productId String
+    quantity  Int
+    price     Float
+    
+    // Relations
+    order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product   Product @relation(fields: [productId], references: [id])
+    
+    @@index([orderId])
+}
+
+model Review {
+    id        String @id @default(cuid())
+    productId String
+    userId    String
+    rating    Int
+    comment   String?
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    // Relations
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@unique([productId, userId])
+    @@index([productId])
+    @@index([rating])
 }
