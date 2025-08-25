@@ -219,13 +219,13 @@ export const Header = () => {
                                 className="flex gap-2 items-center"
                             >
                                 <Image
-                                    src="/validatexmainlogo.png"
-                                    alt="ValidateX"
+                                    src="/kisanconnect-logo.png"
+                                    alt="KisanConnect"
                                     width={32}
                                     height={32}
                                     className='w-10 h-10 rounded-full scale-110'
                                 />
-                                <p className='font-semibold text-xl tracking-tighter text-black dark:text-white'>ValidateX</p>
+                                <p className='font-semibold text-xl tracking-tighter text-black dark:text-white'>KisanConnect</p>
                             </Link>
                             <Sheet>
                                 <SheetTrigger asChild>

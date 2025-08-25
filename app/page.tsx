@@ -1,125 +1,510 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Github, Shield, Zap, Code2, Star, ExternalLink } from "lucide-react";
-import Link from "next/link";
+import { motion } from "framer-motion"
+import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRight, Users, ShieldCheck, Clock, Star, TrendingUp, Gavel } from "lucide-react"
+import Link from "next/link"
 
-export default function App() {
-	const [isHovered, setIsHovered] = React.useState(false);
+const featuredProducts = [
+	{
+		id: 1,
+		name: "Organic Basmati Rice",
+		farmer: "Ram Bahadur",
+		location: "Chitwan",
+		price: "Rs. 120",
+		originalPrice: "Rs. 150",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "ORGANIC",
+		rating: 4.8,
+		inStock: true,
+	},
+	{
+		id: 2,
+		name: "Fresh Tomatoes",
+		farmer: "Sita Devi",
+		location: "Kavre",
+		price: "Rs. 80",
+		originalPrice: "Rs. 100",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "FRESH",
+		rating: 4.9,
+		inStock: true,
+	},
+	{
+		id: 3,
+		name: "Mountain Honey",
+		farmer: "Tek Bahadur",
+		location: "Mustang",
+		price: "Rs. 800",
+		originalPrice: "Rs. 1000",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "PREMIUM",
+		rating: 5.0,
+		inStock: false,
+	},
+	{
+		id: 4,
+		name: "Organic Spinach",
+		farmer: "Kamala Devi",
+		location: "Lalitpur",
+		price: "Rs. 35",
+		originalPrice: "Rs. 45",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "ORGANIC",
+		rating: 4.7,
+		inStock: true,
+	},
+	{
+		id: 5,
+		name: "Highland Potatoes",
+		farmer: "Bir Bahadur",
+		location: "Dolakha",
+		price: "Rs. 55",
+		originalPrice: "Rs. 70",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "PREMIUM",
+		rating: 4.6,
+		inStock: true,
+	},
+	{
+		id: 6,
+		name: "Fresh Cauliflower",
+		farmer: "Gita Rai",
+		location: "Chitwan",
+		price: "Rs. 45",
+		originalPrice: "Rs. 55",
+		image: "/placeholder.svg?height=200&width=200",
+		badge: "FRESH",
+		rating: 4.5,
+		inStock: true,
+	},
+]
 
+const liveBids = [
+	{
+		id: 1,
+		product: "Premium Cardamom",
+		farmer: "Maya Sherpa",
+		location: "Ilam",
+		currentBid: "Rs. 2,500",
+		timeLeft: "2h 15m",
+		bidders: 12,
+		image: "/placeholder.svg?height=150&width=150",
+	},
+	{
+		id: 2,
+		product: "Organic Potatoes",
+		farmer: "Krishna Thapa",
+		location: "Mustang",
+		currentBid: "Rs. 45",
+		timeLeft: "45m",
+		bidders: 8,
+		image: "/placeholder.svg?height=150&width=150",
+	},
+	{
+		id: 3,
+		product: "Wild Mushrooms",
+		farmer: "Pemba Sherpa",
+		location: "Solukhumbu",
+		currentBid: "Rs. 450",
+		timeLeft: "1h 30m",
+		bidders: 15,
+		image: "/placeholder.svg?height=150&width=150",
+	},
+]
+
+export default function HomePage() {
 	return (
-		<main className="h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50/50 relative overflow-hidden">
-			<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.05),transparent_50%)] pointer-events-none"></div>
-			<div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(16,185,129,0.05),transparent_50%)] pointer-events-none"></div>
-			<div className="relative h-full flex items-center justify-center p-4">
-				<div className="max-w-5xl w-full h-full max-h-[95vh] flex flex-col">
-					<div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden flex-1 flex flex-col">
-						<div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-8 py-10 text-center relative overflow-hidden">
-							<div className="absolute inset-0 bg-gradient-to-r from-teal-600/20 to-emerald-600/20"></div>
-							<div className="relative z-10">
-								<div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl mb-4 shadow-lg">
-									<Shield className="w-8 h-8 text-white" />
-								</div>
-								<h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
-									Next Auth Kit
+		<div className="min-h-screen bg-background">
+			<Header />
+
+			{/* Hero Section */}
+			<section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/5">
+				<div className="container mx-auto px-4 py-16 lg:py-24">
+					<div className="grid lg:grid-cols-2 gap-12 items-center">
+						<motion.div
+							initial={{ opacity: 0, x: -50 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.8 }}
+							className="space-y-6"
+						>
+							<div className="space-y-4">
+								<Badge variant="secondary" className="w-fit">
+									Fresh from Nepal's Farmers
+								</Badge>
+								<h1 className="font-serif text-4xl lg:text-6xl font-black text-foreground leading-tight">
+									Fresh from
+									<span className="text-primary"> #Kisan</span>
 								</h1>
-								<p className="text-lg text-teal-50 font-medium">by Niraj Jha</p>
-							</div>
-						</div>
-						<div className="px-8 py-8 flex-1 flex flex-col">
-							<div className="text-center mb-8">
-								<h2 className="text-xl font-semibold text-gray-800 mb-3">
-									Streamlined Authentication for Modern Developers
-								</h2>
-								<p className="text-gray-600 max-w-3xl mx-auto leading-relaxed">
-									A clean, reliable starting point that eliminates the complexity of integrating Next Auth with Prisma,
-									designed for developers who value simplicity and reliability.
+								<p className="text-lg text-muted-foreground max-w-md">
+									Join us, elevate meals, and support 600+ local farmers with farm-fresh produce delivered to your
+									doorstep. Experience authentic Nepali agriculture with transparent pricing and direct farmer
+									connections.
 								</p>
 							</div>
-							<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 flex-1">
-								<div className="group bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-5 border border-teal-100/50 hover:border-teal-200 hover:shadow-md transition-all duration-300">
-									<div className="text-center">
-										<div className="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow mx-auto mb-3">
-											<Zap className="w-5 h-5 text-white" />
-										</div>
-										<h3 className="text-gray-800 font-semibold text-sm mb-2">Fast Integration</h3>
-										<p className="text-gray-600 text-xs leading-relaxed">
-											Streamlined setup process for rapid development.
-										</p>
+
+							<div className="flex flex-col sm:flex-row gap-4">
+								<Button size="lg" className="text-base" asChild>
+									<Link href="/products">
+										Shop Fresh Products <ArrowRight className="ml-2 h-4 w-4" />
+									</Link>
+								</Button>
+								<Button variant="outline" size="lg" className="text-base bg-transparent" asChild>
+									<Link href="/bidding">Join Live Bidding</Link>
+								</Button>
+							</div>
+
+							<div className="flex items-center space-x-6 pt-4">
+								<div className="text-center">
+									<div className="text-2xl font-bold text-primary">600+</div>
+									<div className="text-sm text-muted-foreground">Farmers</div>
+								</div>
+								<div className="text-center">
+									<div className="text-2xl font-bold text-primary">7</div>
+									<div className="text-sm text-muted-foreground">Provinces</div>
+								</div>
+								<div className="text-center">
+									<div className="text-2xl font-bold text-primary">100%</div>
+									<div className="text-sm text-muted-foreground">Authentic</div>
+								</div>
+							</div>
+						</motion.div>
+
+						<motion.div
+							initial={{ opacity: 0, x: 50 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.8, delay: 0.2 }}
+							className="relative"
+						>
+							<div className="relative rounded-2xl overflow-hidden">
+								<img
+									src="/placeholder.svg?height=500&width=600"
+									alt="Fresh produce from Nepal"
+									className="w-full h-auto object-cover"
+								/>
+								<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+								<div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+									<div className="flex items-center space-x-2">
+										<div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+										<span className="text-sm font-medium">Live from farms</span>
 									</div>
 								</div>
-								<div className="group bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100/50 hover:border-emerald-200 hover:shadow-md transition-all duration-300">
-									<div className="text-center">
-										<div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow mx-auto mb-3">
-											<Code2 className="w-5 h-5 text-white" />
-										</div>
-										<h3 className="text-gray-800 font-semibold text-sm mb-2">Dependency Free</h3>
-										<p className="text-gray-600 text-xs leading-relaxed">
-											Eliminates common integration headaches.
-										</p>
-									</div>
-								</div>
-								<div className="group bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-5 border border-teal-100/50 hover:border-teal-200 hover:shadow-md transition-all duration-300">
-									<div className="text-center">
-										<div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow mx-auto mb-3">
-											<Shield className="w-5 h-5 text-white" />
-										</div>
-										<h3 className="text-gray-800 font-semibold text-sm mb-2">Prisma Ready</h3>
-										<p className="text-gray-600 text-xs leading-relaxed">
-											Seamless database integration included.
-										</p>
-									</div>
-								</div>
-								<div className="group bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100/50 hover:border-emerald-200 hover:shadow-md transition-all duration-300">
-									<div className="text-center">
-										<div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow mx-auto mb-3">
-											<Star className="w-5 h-5 text-white" />
-										</div>
-										<h3 className="text-gray-800 font-semibold text-sm mb-2">Production Ready</h3>
-										<p className="text-gray-600 text-xs leading-relaxed">
-											Battle-tested and reliable foundation.
-										</p>
+								<div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+									<div className="text-sm">
+										<div className="font-medium">Government Rate Based</div>
+										<div className="text-muted-foreground">Fair pricing guaranteed</div>
 									</div>
 								</div>
 							</div>
-							<div className="text-center">
-								<Link
-									href="https://github.com/jha-niraj/NextJS-starter-auth"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="group inline-flex items-center gap-3 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md"
-									onMouseEnter={() => setIsHovered(true)}
-									onMouseLeave={() => setIsHovered(false)}
-								>
-									<Github className={`w-5 h-5 transition-transform duration-300 ${isHovered ? 'rotate-12' : ''}`} />
-									<span>Star on GitHub</span>
-									<ExternalLink className="w-4 h-4 opacity-80" />
-								</Link>
-								<div className="flex items-center justify-center gap-2 text-gray-500 mt-4">
-									<Star className="w-4 h-4 text-amber-400 fill-current" />
-									<span className="text-sm font-medium">Help other developers discover this toolkit</span>
-								</div>
-							</div>
-						</div>
-						<div className="bg-gray-50/80 px-8 py-4 border-t border-gray-200/50">
-							<div className="flex items-center justify-center gap-6 text-gray-500 text-sm font-medium">
-								<div className="flex items-center gap-2">
-									<div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-									<span>Open Source</span>
-								</div>
-								<div className="flex items-center gap-2">
-									<div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-									<span>TypeScript</span>
-								</div>
-								<div className="flex items-center gap-2">
-									<div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-									<span>Next.js 14+</span>
-								</div>
-							</div>
-						</div>
+						</motion.div>
 					</div>
 				</div>
-			</div>
-		</main>
-	);
+			</section>
+
+			{/* Features Section */}
+			<section className="py-16 bg-muted/30">
+				<div className="container mx-auto px-4">
+					<div className="grid md:grid-cols-3 gap-8">
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+								<Users className="h-8 w-8 text-primary" />
+							</div>
+							<h3 className="font-semibold text-lg">Direct from Farmers</h3>
+							<p className="text-muted-foreground text-sm">
+								Connect directly with farmers across all 7 provinces of Nepal. No middlemen, fair prices for everyone.
+							</p>
+						</motion.div>
+
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.1 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
+								<Gavel className="h-8 w-8 text-accent" />
+							</div>
+							<h3 className="font-semibold text-lg">Smart Bidding System</h3>
+							<p className="text-muted-foreground text-sm">
+								Participate in live auctions with government rate-based pricing. Transparent and fair for all
+								participants.
+							</p>
+						</motion.div>
+
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto">
+								<ShieldCheck className="h-8 w-8 text-secondary" />
+							</div>
+							<h3 className="font-semibold text-lg">Quality Guarantee</h3>
+							<p className="text-muted-foreground text-sm">
+								100% authentic products with pickup from farmer's location or doorstep delivery across Nepal.
+							</p>
+						</motion.div>
+					</div>
+				</div>
+			</section>
+
+			{/* Featured Products */}
+			<section className="py-16">
+				<div className="container mx-auto px-4">
+					<div className="text-center space-y-4 mb-12">
+						<h2 className="font-serif text-3xl font-bold">Our Fresh Products</h2>
+						<p className="text-muted-foreground max-w-2xl mx-auto">
+							Browse our selection of farm-fresh products directly from Nepali farmers. All products are tested for
+							quality and freshness with government rate-based pricing.
+						</p>
+					</div>
+
+					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+						{featuredProducts.map((product, index) => (
+							<motion.div
+								key={product.id}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.6, delay: index * 0.1 }}
+							>
+								<Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+									<div className="relative">
+										<Link href={`/products/${product.id}`}>
+											<img
+												src={product.image || "/placeholder.svg"}
+												alt={product.name}
+												className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+											/>
+										</Link>
+										<Badge
+											className="absolute top-3 left-3"
+											variant={product.badge === "ORGANIC" ? "default" : "secondary"}
+										>
+											{product.badge}
+										</Badge>
+										{!product.inStock && (
+											<div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+												<Badge variant="destructive">Out of Stock</Badge>
+											</div>
+										)}
+									</div>
+									<CardContent className="p-4">
+										<div className="space-y-2">
+											<Link href={`/products/${product.id}`}>
+												<h3 className="font-semibold hover:text-primary transition-colors">{product.name}</h3>
+											</Link>
+											<p className="text-sm text-muted-foreground">
+												by {product.farmer} • {product.location}
+											</p>
+											<div className="flex items-center space-x-1">
+												<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+												<span className="text-sm font-medium">{product.rating}</span>
+											</div>
+											<div className="flex items-center justify-between">
+												<div className="flex items-center space-x-2">
+													<span className="font-bold text-lg">{product.price}</span>
+													<span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
+												</div>
+												<Button size="sm" disabled={!product.inStock} asChild>
+													<Link href={`/products/${product.id}`}>
+														{product.inStock ? "View Details" : "Out of Stock"}
+													</Link>
+												</Button>
+											</div>
+										</div>
+									</CardContent>
+								</Card>
+							</motion.div>
+						))}
+					</div>
+
+					<div className="text-center">
+						<Button variant="outline" size="lg" asChild>
+							<Link href="/products">
+								View All Products <ArrowRight className="ml-2 h-4 w-4" />
+							</Link>
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* Live Bidding Section */}
+			<section className="py-16 bg-muted/30">
+				<div className="container mx-auto px-4">
+					<div className="text-center space-y-4 mb-12">
+						<div className="flex items-center justify-center space-x-2">
+							<Gavel className="h-6 w-6 text-primary" />
+							<h2 className="font-serif text-3xl font-bold">Live Bidding</h2>
+						</div>
+						<p className="text-muted-foreground max-w-2xl mx-auto">
+							Participate in live auctions for premium products. Get the best deals directly from farmers with
+							transparent, government rate-based pricing.
+						</p>
+					</div>
+
+					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+						{liveBids.map((bid, index) => (
+							<motion.div
+								key={bid.id}
+								initial={{ opacity: 0, scale: 0.95 }}
+								whileInView={{ opacity: 1, scale: 1 }}
+								transition={{ duration: 0.6, delay: index * 0.1 }}
+							>
+								<Card className="border-2 border-primary/20 hover:border-primary/40 transition-colors">
+									<CardContent className="p-6">
+										<div className="flex items-start space-x-4">
+											<img
+												src={bid.image || "/placeholder.svg"}
+												alt={bid.product}
+												className="w-20 h-20 rounded-lg object-cover"
+											/>
+											<div className="flex-1 space-y-2">
+												<div className="flex items-start justify-between">
+													<div>
+														<h3 className="font-semibold">{bid.product}</h3>
+														<p className="text-sm text-muted-foreground">
+															by {bid.farmer} • {bid.location}
+														</p>
+													</div>
+													<Badge variant="outline" className="text-xs">
+														<Clock className="w-3 h-3 mr-1" />
+														{bid.timeLeft}
+													</Badge>
+												</div>
+												<div className="flex items-center justify-between">
+													<div>
+														<p className="text-sm text-muted-foreground">Current Bid</p>
+														<p className="text-xl font-bold text-primary">{bid.currentBid}</p>
+													</div>
+													<div className="text-right">
+														<p className="text-sm text-muted-foreground">{bid.bidders} bidders</p>
+														<Button size="sm" className="mt-1" asChild>
+															<Link href="/bidding">Place Bid</Link>
+														</Button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</CardContent>
+								</Card>
+							</motion.div>
+						))}
+					</div>
+
+					<div className="text-center">
+						<Button size="lg" asChild>
+							<Link href="/bidding">
+								View All Live Auctions <TrendingUp className="ml-2 h-4 w-4" />
+							</Link>
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* How It Works Section */}
+			<section className="py-16">
+				<div className="container mx-auto px-4">
+					<div className="text-center space-y-4 mb-12">
+						<h2 className="font-serif text-3xl font-bold">How It Works</h2>
+						<p className="text-muted-foreground max-w-2xl mx-auto">
+							Simple steps to get fresh produce from Nepal's farmers directly to your doorstep
+						</p>
+					</div>
+
+					<div className="grid md:grid-cols-3 gap-8">
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+								<span className="text-2xl font-bold text-primary">1</span>
+							</div>
+							<h3 className="font-semibold text-lg">Browse & Select</h3>
+							<p className="text-muted-foreground text-sm">
+								Browse fresh products from verified farmers across Nepal. Choose from regular shopping or participate in
+								live bidding.
+							</p>
+						</motion.div>
+
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.1 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+								<span className="text-2xl font-bold text-primary">2</span>
+							</div>
+							<h3 className="font-semibold text-lg">Order & Pay</h3>
+							<p className="text-muted-foreground text-sm">
+								Place your order with transparent pricing based on government rates. Pay securely with multiple payment
+								options.
+							</p>
+						</motion.div>
+
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							className="text-center space-y-4"
+						>
+							<div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+								<span className="text-2xl font-bold text-primary">3</span>
+							</div>
+							<h3 className="font-semibold text-lg">Receive Fresh</h3>
+							<p className="text-muted-foreground text-sm">
+								Get fresh produce delivered to your doorstep or pick up directly from the farmer's location.
+							</p>
+						</motion.div>
+					</div>
+				</div>
+			</section>
+
+			{/* CTA Section */}
+			<section className="py-16 bg-gradient-to-r from-primary to-accent text-primary-foreground">
+				<div className="container mx-auto px-4 text-center">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
+						className="space-y-6"
+					>
+						<h2 className="font-serif text-3xl lg:text-4xl font-bold">Afterall, what we eat makes us</h2>
+						<p className="text-lg opacity-90 max-w-2xl mx-auto">
+							We like to bring people the food they deserve. Direct from farmers, with source traceability, doorstep
+							delivery and quality you can trust. Join us in creating a space where everyone can access the fresh food
+							they deserve. Let's make authentic Nepali produce accessible to all.
+						</p>
+						<div className="flex flex-col sm:flex-row gap-4 justify-center">
+							<Button size="lg" variant="secondary" asChild>
+								<Link href="/products">Start Shopping</Link>
+							</Button>
+							<Button
+								size="lg"
+								variant="outline"
+								className="border-white text-white hover:bg-white hover:text-primary bg-transparent"
+								asChild
+							>
+								<Link href="/auth/register">Become a Farmer Partner</Link>
+							</Button>
+						</div>
+					</motion.div>
+				</div>
+			</section>
+
+			<Footer />
+		</div>
+	)
 }

@@ -6,9 +6,10 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 
 const onboardingSchema = z.object({
-	userRole: z.enum(["SUBMITTER", "VALIDATOR", "BOTH"]),
-	categories: z.array(z.string()).min(1, "Please select at least one category"),
-	customCategory: z.string().optional(),
+	userRole: z.enum(["USER", "SELLER"]),
+	location: z.string().min(1, "Please select your location"),
+	farmSize: z.string().optional(),
+	cropTypes: z.array(z.string()).optional(),
 });
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>;

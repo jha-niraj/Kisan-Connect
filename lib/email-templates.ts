@@ -5,7 +5,7 @@ export const verificationEmailTemplate = (otp: string) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Verify your email - ValidateX</title>
+            <title>Verify your email - KisanConnect</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); min-height: 100vh;">
             <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -15,7 +15,7 @@ export const verificationEmailTemplate = (otp: string) => {
                         <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488, #10b981); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <span style="color: white; font-size: 20px; font-weight: bold;">V</span>
                         </div>
-                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">ValidateX</h1>
+                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">KisanConnect</h1>
                     </div>
                 </div>
 
@@ -27,7 +27,7 @@ export const verificationEmailTemplate = (otp: string) => {
                                 <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 32px; font-weight: 700;">Welcome to ValidateX!</h2>
+                        <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 32px; font-weight: 700;">Welcome to KisanConnect!</h2>
                         <p style="margin: 0; color: #6b7280; font-size: 18px; line-height: 1.6;">Thank you for joining our idea validation community. Please verify your email address to get started.</p>
                     </div>
 
@@ -55,14 +55,14 @@ export const verificationEmailTemplate = (otp: string) => {
                     <div style="text-align: center; margin: 32px 0;">
                         <p style="margin: 0 0 16px 0; color: #374151; font-size: 16px; line-height: 1.6;">Enter this code on the verification page to complete your registration. This code will expire in <strong style="color: #0d9488;">10 minutes</strong>.</p>
                         <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; margin: 20px 0;">
-                            <p style="margin: 0; color: #92400e; font-size: 14px;">⚠️ If you didn't create an account with ValidateX, please ignore this email.</p>
+                            <p style="margin: 0; color: #92400e; font-size: 14px;">⚠️ If you didn't create an account with KisanConnect, please ignore this email.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Footer -->
                 <div style="text-align: center; margin-top: 40px; padding: 24px; background: rgba(255, 255, 255, 0.5); border-radius: 16px;">
-                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by ValidateX</p>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by KisanConnect</p>
                     <p style="margin: 0; color: #9ca3af; font-size: 12px;">Empowering innovation through community validation</p>
                 </div>
             </div>
@@ -78,7 +78,7 @@ export const passwordResetEmailTemplate = (resetUrl: string) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Reset your password - ValidateX</title>
+            <title>Reset your password - KisanConnect</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); min-height: 100vh;">
             <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -88,7 +88,7 @@ export const passwordResetEmailTemplate = (resetUrl: string) => {
                         <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488, #10b981); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <span style="color: white; font-size: 20px; font-weight: bold;">V</span>
                         </div>
-                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">ValidateX</h1>
+                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">KisanConnect</h1>
                     </div>
                 </div>
 
@@ -130,7 +130,7 @@ export const passwordResetEmailTemplate = (resetUrl: string) => {
 
                 <!-- Footer -->
                 <div style="text-align: center; margin-top: 40px; padding: 24px; background: rgba(255, 255, 255, 0.5); border-radius: 16px;">
-                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by ValidateX</p>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by KisanConnect</p>
                     <p style="margin: 0; color: #9ca3af; font-size: 12px;">Empowering innovation through community validation</p>
                 </div>
             </div>
@@ -146,7 +146,7 @@ export const registrationSuccessEmailTemplate = (name: string, email: string) =>
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Welcome to ValidateX - Registration Complete!</title>
+            <title>Welcome to KisanConnect - Registration Complete!</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); min-height: 100vh;">
             <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -156,7 +156,7 @@ export const registrationSuccessEmailTemplate = (name: string, email: string) =>
                         <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488, #10b981); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <span style="color: white; font-size: 20px; font-weight: bold;">V</span>
                         </div>
-                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">ValidateX</h1>
+                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">KisanConnect</h1>
                     </div>
                 </div>
 
@@ -168,7 +168,7 @@ export const registrationSuccessEmailTemplate = (name: string, email: string) =>
                                 <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 32px; font-weight: 700;">🎉 Welcome to ValidateX!</h2>
+                        <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 32px; font-weight: 700;">🎉 Welcome to KisanConnect!</h2>
                         <p style="margin: 0; color: #6b7280; font-size: 18px; line-height: 1.6;">Congratulations! Your account has been successfully created and verified. You're now part of our innovative idea validation community.</p>
                     </div>
 
@@ -241,14 +241,14 @@ export const registrationSuccessEmailTemplate = (name: string, email: string) =>
                     <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; margin: 32px 0;">
                         <h4 style="margin: 0 0 12px 0; color: #1e40af; font-size: 16px; font-weight: 600;">💬 Need Help?</h4>
                         <p style="margin: 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
-                            If you have any questions or need assistance, feel free to reach out to our support team. We're here to help you make the most of your ValidateX experience!
+                            If you have any questions or need assistance, feel free to reach out to our support team. We're here to help you make the most of your KisanConnect experience!
                         </p>
                     </div>
                 </div>
 
                 <!-- Footer -->
                 <div style="text-align: center; margin-top: 40px; padding: 24px; background: rgba(255, 255, 255, 0.5); border-radius: 16px;">
-                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by ValidateX</p>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by KisanConnect</p>
                     <p style="margin: 0; color: #9ca3af; font-size: 12px;">Empowering innovation through community validation</p>
                     <div style="margin-top: 16px;">
                         <p style="margin: 0; color: #9ca3af; font-size: 12px;">

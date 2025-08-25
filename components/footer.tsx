@@ -40,7 +40,7 @@ const Footer = () => {
                             <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-lg">V</span>
                             </div>
-                            <span className="font-bold text-xl tracking-tight">ValidateX</span>
+                            <span className="font-bold text-xl tracking-tight">KisanConnect</span>
                         </Link>
                         <p className="text-neutral-400 mb-6 max-w-sm">
                             Empowering innovators worldwide with blockchain-powered idea validation and community feedback.
@@ -85,7 +85,7 @@ const Footer = () => {
                 <hr className="border-neutral-800 mb-8" />
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-neutral-400 text-sm">
-                        © 2024 ValidateX. All rights reserved.
+                        © 2024 KisanConnect. All rights reserved.
                     </p>
                     <p className="text-neutral-400 text-sm">
                         Made with ❤️ for innovators worldwide

@@ -54,7 +54,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 								image: freshUser.image,
 								role: freshUser.role,
 								roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
-								onboardingCompleted: freshUser.onboardingCompleted,
 							};
 						} else {
 							throw new Error("Email verification not completed");
@@ -152,15 +151,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 			return true;
 		},
 		async redirect({ url, baseUrl }) {
-			// If user is signing in and no specific redirect URL, go to dashboard
+			// If user is signing in and no specific redirect URL, go to products page
 			if (url.startsWith("/")) {
 				if (url === "/signin" || url === "/signup") {
-					return `${baseUrl}/dashboard`
+					return `${baseUrl}/products`
 				}
 				return `${baseUrl}${url}`
 			}
 			if (new URL(url).origin === baseUrl) return url
-			return `${baseUrl}/dashboard`
+			return `${baseUrl}/products`
 		},
 	},
 	pages: {

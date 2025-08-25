@@ -92,7 +92,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 					<div className="flex items-center justify-center p-4 h-[80px] border-b border-gray-200 dark:border-gray-800">
 						<Link href={session ? "/dashboard" : "/"} className="flex gap-2 items-center justify-center group cursor-pointer">
 							<Image
-								src="/validatexmainlogo.png"
+								src="/kisanconnect-logo.png"
 								alt="ShunyaTech"
 								width={32}
 								height={32}
@@ -109,7 +109,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 							>
 								<div className="whitespace-nowrap">
 									<h1 className="text-xl font-bold text-gray-900 dark:text-white">
-										ValidateX
+										KisanConnect
 									</h1>
 								</div>
 							</motion.div>
