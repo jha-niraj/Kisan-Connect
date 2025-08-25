@@ -255,7 +255,7 @@ export default function ProductsPage() {
 								variant={viewMode === "grid" ? "default" : "outline"}
 								size="sm"
 								onClick={() => setViewMode("grid")}
-								className={viewMode === "outline" ? "bg-transparent" : ""}
+								className={viewMode === "list" ? "bg-transparent" : ""}
 							>
 								<Grid className="h-4 w-4" />
 							</Button>
@@ -263,7 +263,7 @@ export default function ProductsPage() {
 								variant={viewMode === "list" ? "default" : "outline"}
 								size="sm"
 								onClick={() => setViewMode("list")}
-								className={viewMode === "outline" ? "bg-transparent" : ""}
+								className={viewMode === "grid" ? "bg-transparent" : ""}
 							>
 								<List className="h-4 w-4" />
 							</Button>
@@ -297,13 +297,21 @@ export default function ProductsPage() {
 
 								<div className="space-y-3">
 									<div className="flex items-center space-x-2">
-										<Checkbox id="organic" checked={showOnlyOrganic} onCheckedChange={setShowOnlyOrganic} />
+										<Checkbox 
+											id="organic" 
+											checked={showOnlyOrganic} 
+											onCheckedChange={(checked) => setShowOnlyOrganic(checked === true)} 
+										/>
 										<label htmlFor="organic" className="text-sm font-medium">
 											Organic only
 										</label>
 									</div>
 									<div className="flex items-center space-x-2">
-										<Checkbox id="instock" checked={showOnlyInStock} onCheckedChange={setShowOnlyInStock} />
+										<Checkbox 
+											id="instock" 
+											checked={showOnlyInStock} 
+											onCheckedChange={(checked) => setShowOnlyInStock(checked === true)} 
+										/>
 										<label htmlFor="instock" className="text-sm font-medium">
 											In stock only
 										</label>

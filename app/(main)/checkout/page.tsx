@@ -14,6 +14,21 @@ import { AddressSelector } from "@/components/address/address-selector"
 import { CreditCard, Truck, MapPin, Phone, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
+// Address interface to match AddressSelector component
+interface Address {
+	id: number
+	label: string
+	type: string
+	name: string
+	phone: string
+	street: string
+	municipality: string
+	district: string
+	province: string
+	isDefault: boolean
+	notes?: string
+}
+
 // Nepal provinces and districts data
 // const nepalProvinces = {
 // 	"Province 1": [
@@ -129,7 +144,7 @@ const cartItems = [
 ]
 
 // Mock saved addresses for address selector
-const savedAddresses = [
+const savedAddresses: Address[] = [
 	{
 		id: 1,
 		label: "Home",
@@ -159,7 +174,7 @@ const savedAddresses = [
 ]
 
 export default function CheckoutPage() {
-	const [selectedAddress, setSelectedAddress] = useState(savedAddresses[0])
+	const [selectedAddress, setSelectedAddress] = useState<Address>(savedAddresses[0])
 	const [paymentMethod, setPaymentMethod] = useState("cod")
 	const [agreeTerms, setAgreeTerms] = useState(false)
 
@@ -269,7 +284,11 @@ export default function CheckoutPage() {
 						<Card>
 							<CardContent className="pt-6">
 								<div className="flex items-start space-x-2">
-									<Checkbox id="terms" checked={agreeTerms} onCheckedChange={setAgreeTerms} />
+									<Checkbox 
+										id="terms" 
+										checked={agreeTerms} 
+										onCheckedChange={(checked) => setAgreeTerms(checked === true)} 
+									/>
 									<Label htmlFor="terms" className="text-sm leading-relaxed">
 										I agree to the{" "}
 										<Link href="/terms" className="text-primary hover:underline">

@@ -146,7 +146,11 @@ export default function CreateAuction() {
 								</div>
 
 								<div className="flex items-center space-x-2">
-									<Checkbox id="organic" checked={isOrganic} onCheckedChange={setIsOrganic} />
+									<Checkbox 
+										id="organic" 
+										checked={isOrganic} 
+										onCheckedChange={(checked) => setIsOrganic(checked === true)} 
+									/>
 									<Label htmlFor="organic">This is an organic product</Label>
 								</div>
 							</CardContent>
@@ -163,7 +167,7 @@ export default function CreateAuction() {
 									<div className="space-y-2">
 										<Label>Start Date *</Label>
 										<Popover>
-											<PopoverTrigger asChild>
+											<PopoverTrigger>
 												<Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
 													<CalendarIcon className="mr-2 h-4 w-4" />
 													{startDate ? format(startDate, "PPP") : "Pick a date"}
@@ -239,7 +243,11 @@ export default function CreateAuction() {
 
 								<div className="space-y-4">
 									<div className="flex items-center space-x-2">
-										<Checkbox id="reservePrice" checked={hasReservePrice} onCheckedChange={setHasReservePrice} />
+										<Checkbox 
+											id="reservePrice" 
+											checked={hasReservePrice} 
+											onCheckedChange={(checked) => setHasReservePrice(checked === true)} 
+										/>
 										<Label htmlFor="reservePrice">Set a reserve price (minimum selling price)</Label>
 									</div>
 									{hasReservePrice && (

@@ -110,7 +110,11 @@ export default function AddProduct() {
 								</div>
 
 								<div className="flex items-center space-x-2">
-									<Checkbox id="organic" checked={isOrganic} onCheckedChange={setIsOrganic} />
+									<Checkbox 
+										id="organic" 
+										checked={isOrganic} 
+										onCheckedChange={(checked) => setIsOrganic(checked === true)} 
+									/>
 									<Label htmlFor="organic">This is an organic product</Label>
 								</div>
 							</CardContent>
@@ -183,7 +187,11 @@ export default function AddProduct() {
 								</div>
 
 								<div className="flex items-center space-x-2">
-									<Checkbox id="bidding" checked={allowBidding} onCheckedChange={setAllowBidding} />
+									<Checkbox 
+										id="bidding" 
+										checked={allowBidding} 
+										onCheckedChange={(checked) => setAllowBidding(checked === true)} 
+									/>
 									<Label htmlFor="bidding">Allow bidding for this product</Label>
 								</div>
 							</CardContent>

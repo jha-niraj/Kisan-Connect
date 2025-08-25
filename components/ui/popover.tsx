@@ -44,7 +44,7 @@ const PopoverAnchor = ({ children }: { children: React.ReactNode }) => {
 const PopoverContent = React.forwardRef<
     HTMLDivElement,
     PopoverContentProps
->(({ className, children, align = "center", sideOffset = 4, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
     <div
         ref={ref}
         className={cn(

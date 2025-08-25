@@ -13,6 +13,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Clock, Gavel, Search, Star, MapPin } from "lucide-react"
 import Image from "next/image"
 
+// Types
+interface Auction {
+	id: number
+	product: string
+	farmer: string
+	location: string
+	category: string
+	startPrice: number
+	currentBid: number
+	bidders: number
+	timeLeft: string
+	endTime: Date
+	image: string
+	description: string
+	minIncrement: number
+	totalBids: number
+	isOrganic?: boolean
+	rating?: number
+}
+
 // Mock data for live auctions
 const liveAuctions = [
 	{
@@ -396,7 +416,7 @@ export default function BiddingPage() {
 }
 
 // Bidding Modal Component
-function BiddingModal({ auction, onClose }: { auction: any; onClose: () => void }) {
+function BiddingModal({ auction, onClose }: { auction: Auction; onClose: () => void }) {
 	const [bidAmount, setBidAmount] = useState(auction.currentBid + auction.minIncrement)
 	const [isPlacingBid, setIsPlacingBid] = useState(false)
 

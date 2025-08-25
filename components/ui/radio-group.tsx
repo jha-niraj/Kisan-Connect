@@ -10,7 +10,7 @@ const RadioGroup = React.forwardRef<
 		value?: string
 		onValueChange?: (value: string) => void
 	}
->(({ className, value, onValueChange, ...props }, ref) => {
+>(({ className, ...props }, ref) => {
 	return (
 		<div
 			ref={ref}
@@ -26,13 +26,16 @@ const RadioGroupItem = React.forwardRef<
 	React.ElementRef<"button">,
 	React.ComponentPropsWithoutRef<"button"> & {
 		value: string
+		checked?: boolean
 	}
->(({ className, value, ...props }, ref) => {
+>(({ className, value, checked = false, ...props }, ref) => {
 	return (
 		<button
 			ref={ref}
 			type="button"
 			role="radio"
+			aria-checked={checked}
+			data-value={value}
 			className={cn(
 				"aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
 				className

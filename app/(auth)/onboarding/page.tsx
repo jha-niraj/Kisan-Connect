@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+// import { useSession } from "next-auth/react"
+// import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -27,8 +27,8 @@ const NEPAL_DISTRICTS = [
 ]
 
 export default function OnboardingPage() {
-	const { data: session } = useSession()
-	const router = useRouter()
+	// const { data: session } = useSession()
+	// const router = useRouter()
 	const [currentStep, setCurrentStep] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
 	const [checkingStatus, setCheckingStatus] = useState(true)
