@@ -19,9 +19,10 @@ import {
 	getSellerStats, getSellerProducts, 
 	getSellerRecentOrders, getSellerTopProducts 
 } from "@/actions/(seller)/seller.action"
-import { Product } from "@/types/product"
 import { SellerStats, RecentOrder, TopProduct } from "@/types/dashboard"
+import { Product } from "@/types/product"
 import { useSession } from "next-auth/react"
+import Image from "next/image"
 
 export default function SellerDashboard() {
 	const { data: session } = useSession()
@@ -192,8 +193,9 @@ export default function SellerDashboard() {
 			<Tabs defaultValue="overview" className="space-y-4">
 				<TabsList>
 					<TabsTrigger value="overview">Overview</TabsTrigger>
+					<TabsTrigger value="products">My Products</TabsTrigger>
 					<TabsTrigger value="orders">Recent Orders</TabsTrigger>
-					<TabsTrigger value="products">Top Products</TabsTrigger>
+					<TabsTrigger value="top-products">Top Products</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="overview" className="space-y-4">
@@ -269,6 +271,82 @@ export default function SellerDashboard() {
 					</div>
 				</TabsContent>
 
+				<TabsContent value="products" className="space-y-4">
+					<Card>
+						<CardHeader>
+							<CardTitle>My Products</CardTitle>
+							<CardDescription>
+								Your latest products (showing top 5)
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="space-y-4">
+								{products.length > 0 ? (
+									products.slice(0, 5).map((product) => (
+										<div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+											<div className="flex items-center space-x-4">
+												{product.images.length > 0 && (
+													<Image 
+														src={product.images[0]} 
+														alt={product.name}
+														className="w-12 h-12 object-cover rounded-md"
+														height={32}
+														width={32}
+													/>
+												)}
+												<div>
+													<p className="text-sm font-medium">{product.name}</p>
+													<p className="text-sm text-muted-foreground">{product.category}</p>
+												</div>
+											</div>
+											<div className="flex items-center space-x-4">
+												<div className="text-right">
+													<p className="text-sm font-medium">₹{product.price.toLocaleString()}</p>
+													<p className="text-xs text-muted-foreground">Stock: {product.stock} {product.unit}</p>
+												</div>
+												<Badge
+													variant={
+														product.status === "ACTIVE" ? "default" :
+															product.status === "INACTIVE" ? "secondary" : "destructive"
+													}
+												>
+													{product.status}
+												</Badge>
+												<Button asChild size="sm" variant="outline">
+													<Link href={`/seller/products/${product.id}`}>
+														Edit
+													</Link>
+												</Button>
+											</div>
+										</div>
+									))
+								) : (
+									<div className="text-center text-muted-foreground py-8">
+										<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+										<p>No products found</p>
+										<p className="text-sm">Add your first product to get started</p>
+										<Button asChild className="mt-4">
+											<Link href="/seller/products/new">
+												<Plus className="h-4 w-4 mr-2" />
+												Add Product
+											</Link>
+										</Button>
+									</div>
+								)}
+							</div>
+							{products.length > 5 && (
+								<div className="mt-4 text-center">
+									<Button asChild variant="outline">
+										<Link href="/seller/products">
+											View All Products
+										</Link>
+									</Button>
+								</div>
+							)}
+						</CardContent>
+					</Card>
+				</TabsContent>
+
 				<TabsContent value="orders" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -320,7 +398,7 @@ export default function SellerDashboard() {
 					</Card>
 				</TabsContent>
 
-				<TabsContent value="products" className="space-y-4">
+				<TabsContent value="top-products" className="space-y-4">
 					<Card>
 						<CardHeader>
 							<CardTitle>Top Performing Products</CardTitle>

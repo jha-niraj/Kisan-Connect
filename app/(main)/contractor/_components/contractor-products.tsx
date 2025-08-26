@@ -39,13 +39,13 @@ export default function ContractorProducts() {
 		} finally {
 			setLoading(false)
 		}
-	}, []);
+	}, [searchQuery, selectedCategory]);
 
 	useEffect(() => {
 		loadFarmerProducts()
 	}, [loadFarmerProducts])
 
-	const filterProducts = () => {
+	const filterProducts = useCallback(() => {
 		let filtered = products
 
 		if (searchQuery) {
@@ -62,7 +62,7 @@ export default function ContractorProducts() {
 		}
 
 		setFilteredProducts(filtered)
-	}
+	}, [products, searchQuery, selectedCategory]);
 
 	useEffect(() => {
 		filterProducts()

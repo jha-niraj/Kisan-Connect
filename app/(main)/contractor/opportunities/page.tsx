@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -64,7 +64,7 @@ export default function ContractorOpportunities() {
     })
 
     // Function to load farmer products available for bidding
-    const loadFarmerProducts = async () => {
+    const loadFarmerProducts = useCallback(async () => {
         try {
             setLoading(true)
             setError(null)
@@ -85,7 +85,7 @@ export default function ContractorOpportunities() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [searchQuery, selectedCategory]);
 
     useEffect(() => {
         if (status === "loading") return

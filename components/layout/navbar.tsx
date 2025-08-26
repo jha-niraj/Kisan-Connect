@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useSession, signOut } from "next-auth/react"
@@ -471,7 +471,9 @@ export function Header() {
 					</div>
 				</nav>
 			</header>
-			<AuthDialog />
+			<Suspense fallback={<div />}>
+				<AuthDialog />
+			</Suspense>
 		</>
 	)
 }

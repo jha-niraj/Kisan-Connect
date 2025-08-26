@@ -24,7 +24,7 @@ import { uploadToCloudinary } from "@/actions/(common)/utils.action"
 import {
     getSellerProduct, updateProduct, toggleProductStatus
 } from "@/actions/(seller)/seller.action"
-import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from "@/types/product"
+import { PRODUCT_CATEGORIES, Product } from "@/types/product"
 
 const productCategories = PRODUCT_CATEGORIES.map(category => ({
     value: category,
@@ -72,7 +72,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
     const [isSaving, setIsSaving] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [uploadingImages, setUploadingImages] = useState(false)
-    const [product, setProduct] = useState<any>(null)
+    const [product, setProduct] = useState<Product | null>(null)
     const [formData, setFormData] = useState<ProductForm>({
         name: "",
         description: "",
@@ -121,7 +121,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
         } finally {
             setIsLoading(false)
         }
-    }, [productId]);
+    }, [productId, router]);
 
     useEffect(() => {
         if (status === "loading") return
@@ -139,7 +139,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
         loadProduct()
     }, [session, status, productId, loadProduct])
 
-    const handleInputChange = (field: keyof ProductForm, value: any) => {
+    const handleInputChange = (field: keyof ProductForm, value: unknown) => {
         setFormData(prev => ({
             ...prev,
             [field]: value

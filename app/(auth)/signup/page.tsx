@@ -31,30 +31,22 @@ function SignUp() {
             case 'farmer':
                 return {
                     title: "Join as a Farmer",
-                    subtitle: "Start selling your agricultural products directly to buyers",
-                    brandColor: "from-green-900 to-green-700 dark:from-green-400 dark:to-green-300",
-                    buttonColor: "bg-green-600 hover:bg-green-700"
+                    subtitle: "Start selling your agricultural products directly to buyers"
                 }
             case 'seller':
                 return {
                     title: "Join as a Seller",
-                    subtitle: "Start your agricultural supply business on our platform",
-                    brandColor: "from-purple-900 to-purple-700 dark:from-purple-400 dark:to-purple-300",
-                    buttonColor: "bg-purple-600 hover:bg-purple-700"
+                    subtitle: "Start your agricultural supply business on our platform"
                 }
             case 'contractor':
                 return {
                     title: "Join as a Contractor",
-                    subtitle: "Connect farmers with markets and participate in auctions",
-                    brandColor: "from-orange-900 to-orange-700 dark:from-orange-400 dark:to-orange-300",
-                    buttonColor: "bg-orange-600 hover:bg-orange-700"
+                    subtitle: "Connect farmers with markets and participate in auctions"
                 }
             default:
                 return {
                     title: "Create your account",
-                    subtitle: "Join the future of agricultural marketplace",
-                    brandColor: "from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300",
-                    buttonColor: "bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100"
+                    subtitle: "Join the future of agricultural marketplace"
                 }
         }
     }
@@ -137,8 +129,8 @@ function SignUp() {
                     </div>
                     <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Create your account</h2>
-                            <p className="text-neutral-600 dark:text-neutral-400 mt-2">Join the future of idea validation</p>
+                            <h2 className="text-2xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100">{pageContent.title}</h2>
+                            <p className="text-sm text-neutral-600 dark:text-neutral-400">{pageContent.subtitle}</p>
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">

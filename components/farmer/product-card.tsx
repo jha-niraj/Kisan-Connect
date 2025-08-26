@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, Eye, Edit, MoreHorizontal } from "lucide-react"
+import { Eye, Edit, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import { Product, ProductStatus } from "@/types/product";
@@ -22,10 +22,10 @@ export function ProductCard({ product, onEdit, onDelete, onView }: ProductCardPr
 		switch (status) {
 			case ProductStatus.ACTIVE:
 				return <Badge className="bg-green-100 text-green-800">Active</Badge>
-			case ProductStatus.OUT_OF_STOCK:
-				return <Badge variant="destructive">Out of Stock</Badge>
-			case ProductStatus.DRAFT:
-				return <Badge variant="secondary">Draft</Badge>
+			case ProductStatus.SOLD_OUT:
+				return <Badge variant="destructive">Sold Out</Badge>
+			case ProductStatus.PENDING:
+				return <Badge variant="secondary">Pending</Badge>
 			case ProductStatus.INACTIVE:
 				return <Badge className="bg-yellow-100 text-yellow-800">Inactive</Badge>
 			default:

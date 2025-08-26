@@ -117,7 +117,7 @@ export default function ProductDetailPage() {
 
 				// Load related products
 				const relatedResult = await getRelatedProducts(productData.id, productData.category)
-				if (relatedResult.success) {
+				if (relatedResult.success && relatedResult.products) {
 					setRelatedProducts(relatedResult.products.map(p => ({
 						id: p.id,
 						name: p.name,
@@ -276,10 +276,14 @@ export default function ProductDetailPage() {
 
 							<div className="flex items-center space-x-4 mb-6">
 								<span className="text-3xl font-bold text-emerald-600">₹{product.price}</span>
-								<span className="text-xl text-gray-500 line-through">₹{product.originalPrice}</span>
-								<Badge variant="destructive">
-									{Math.round(((product?.originalPrice! - product.price) / product?.originalPrice!) * 100)}% OFF
-								</Badge>
+								{product.originalPrice && (
+									<>
+										<span className="text-xl text-gray-500 line-through">₹{product.originalPrice}</span>
+										<Badge variant="destructive">
+											{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+										</Badge>
+									</>
+								)}
 							</div>
 						</div>
 

@@ -16,6 +16,11 @@ export interface Product {
     status: ProductStatus
     farmerId?: string | null
     sellerId?: string | null
+    location: string
+    district: string
+    organicCertified: boolean
+    harvestDate?: Date | null
+    expiryDate?: Date | null
     createdAt: Date
     updatedAt: Date
     farmer?: {

@@ -17,12 +17,10 @@ import { motion } from "framer-motion"
 import { getFarmerStats, getMyFarmerProducts } from "@/actions/(farmer)/farmer.action"
 import { Product } from "@/types/product"
 import { FarmerStats } from "@/types/dashboard"
+import { useSession } from "next-auth/react"
 
-interface FarmerDashboardProps {
-	session: any
-}
-
-export default function FarmerDashboard({ session }: FarmerDashboardProps) {
+export default function FarmerDashboard() {
+	const { data: session } = useSession()
 	const [products, setProducts] = useState<Product[]>([])
 	const [stats, setStats] = useState<FarmerStats>({
 		totalProducts: 0,
@@ -101,7 +99,7 @@ export default function FarmerDashboard({ session }: FarmerDashboardProps) {
 				<div>
 					<h1 className="font-serif text-3xl font-bold mb-2">Farmer Dashboard</h1>
 					<p className="text-muted-foreground">
-						Welcome back, {session.user.name}! Manage your products and track your sales.
+						Welcome back, {session?.user?.name}! Manage your products and track your sales.
 					</p>
 				</div>
 				<div className="flex gap-3">

@@ -28,7 +28,7 @@ export default function MainDashboard() {
 		case Role.FARMER:
 			return (
 				<div className="container mx-auto p-6">
-					<FarmerDashboard session={session} />
+					<FarmerDashboard />
 				</div>
 			)
 
