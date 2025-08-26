@@ -122,8 +122,6 @@ export default function HomePage() {
 	return (
 		<div className="min-h-screen bg-background">
 			<Header />
-
-			{/* Hero Section */}
 			<section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/5">
 				<div className="container mx-auto px-4 py-16 lg:py-24">
 					<div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -147,7 +145,6 @@ export default function HomePage() {
 									connections.
 								</p>
 							</div>
-
 							<div className="flex flex-col sm:flex-row gap-4">
 								<Button size="lg" className="text-base" asChild>
 									<Link href="/products">
@@ -158,7 +155,6 @@ export default function HomePage() {
 									<Link href="/bidding">Join Live Bidding</Link>
 								</Button>
 							</div>
-
 							<div className="flex items-center space-x-6 pt-4">
 								<div className="text-center">
 									<div className="text-2xl font-bold text-primary">600+</div>
@@ -174,7 +170,6 @@ export default function HomePage() {
 								</div>
 							</div>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, x: 50 }}
 							animate={{ opacity: 1, x: 0 }}
@@ -207,8 +202,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</section>
-
-			{/* Features Section */}
 			<section className="py-16 bg-muted/30">
 				<div className="container mx-auto px-4">
 					<div className="grid md:grid-cols-3 gap-8">
@@ -226,7 +219,6 @@ export default function HomePage() {
 								Connect directly with farmers across all 7 provinces of Nepal. No middlemen, fair prices for everyone.
 							</p>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
@@ -242,7 +234,6 @@ export default function HomePage() {
 								participants.
 							</p>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
@@ -260,8 +251,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</section>
-
-			{/* Featured Products */}
 			<section className="py-16">
 				<div className="container mx-auto px-4">
 					<div className="text-center space-y-4 mb-12">
@@ -271,68 +260,70 @@ export default function HomePage() {
 							quality and freshness with government rate-based pricing.
 						</p>
 					</div>
-
 					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-						{featuredProducts.map((product, index) => (
-							<motion.div
-								key={product.id}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.6, delay: index * 0.1 }}
-							>
-								<Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-									<div className="relative">
-										<Link href={`/products/${product.id}`}>
-											<Image
-												src={product.image || "/placeholder.svg"}
-												alt={product.name}
-												className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-												height={192}
-												width={192}
-											/>
-										</Link>
-										<Badge
-											className="absolute top-3 left-3"
-											variant={product.badge === "ORGANIC" ? "default" : "secondary"}
-										>
-											{product.badge}
-										</Badge>
-										{!product.inStock && (
-											<div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-												<Badge variant="destructive">Out of Stock</Badge>
-											</div>
-										)}
-									</div>
-									<CardContent className="p-4">
-										<div className="space-y-2">
+						{
+							featuredProducts.map((product, index) => (
+								<motion.div
+									key={product.id}
+									initial={{ opacity: 0, y: 20 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.6, delay: index * 0.1 }}
+								>
+									<Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+										<div className="relative">
 											<Link href={`/products/${product.id}`}>
-												<h3 className="font-semibold hover:text-primary transition-colors">{product.name}</h3>
+												<Image
+													src={product.image || "/placeholder.svg"}
+													alt={product.name}
+													className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+													height={192}
+													width={192}
+												/>
 											</Link>
-											<p className="text-sm text-muted-foreground">
-												by {product.farmer} • {product.location}
-											</p>
-											<div className="flex items-center space-x-1">
-												<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-												<span className="text-sm font-medium">{product.rating}</span>
-											</div>
-											<div className="flex items-center justify-between">
-												<div className="flex items-center space-x-2">
-													<span className="font-bold text-lg">{product.price}</span>
-													<span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
-												</div>
-												<Button size="sm" disabled={!product.inStock} asChild>
-													<Link href={`/products/${product.id}`}>
-														{product.inStock ? "View Details" : "Out of Stock"}
-													</Link>
-												</Button>
-											</div>
+											<Badge
+												className="absolute top-3 left-3"
+												variant={product.badge === "ORGANIC" ? "default" : "secondary"}
+											>
+												{product.badge}
+											</Badge>
+											{
+												!product.inStock && (
+													<div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+														<Badge variant="destructive">Out of Stock</Badge>
+													</div>
+												)
+											}
 										</div>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+										<CardContent className="p-4">
+											<div className="space-y-2">
+												<Link href={`/products/${product.id}`}>
+													<h3 className="font-semibold hover:text-primary transition-colors">{product.name}</h3>
+												</Link>
+												<p className="text-sm text-muted-foreground">
+													by {product.farmer} • {product.location}
+												</p>
+												<div className="flex items-center space-x-1">
+													<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+													<span className="text-sm font-medium">{product.rating}</span>
+												</div>
+												<div className="flex items-center justify-between">
+													<div className="flex items-center space-x-2">
+														<span className="font-bold text-lg">{product.price}</span>
+														<span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
+													</div>
+													<Button size="sm" disabled={!product.inStock} asChild>
+														<Link href={`/products/${product.id}`}>
+															{product.inStock ? "View Details" : "Out of Stock"}
+														</Link>
+													</Button>
+												</div>
+											</div>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
-
 					<div className="text-center">
 						<Button variant="outline" size="lg" asChild>
 							<Link href="/products">
@@ -342,8 +333,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</section>
-
-			{/* Live Bidding Section */}
 			<section className="py-16 bg-muted/30">
 				<div className="container mx-auto px-4">
 					<div className="text-center space-y-4 mb-12">
@@ -356,58 +345,58 @@ export default function HomePage() {
 							transparent, government rate-based pricing.
 						</p>
 					</div>
-
 					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-						{liveBids.map((bid, index) => (
-							<motion.div
-								key={bid.id}
-								initial={{ opacity: 0, scale: 0.95 }}
-								whileInView={{ opacity: 1, scale: 1 }}
-								transition={{ duration: 0.6, delay: index * 0.1 }}
-							>
-								<Card className="border-2 border-primary/20 hover:border-primary/40 transition-colors">
-									<CardContent className="p-6">
-										<div className="flex items-start space-x-4">
-											<Image
-												src={bid.image || "/placeholder.svg"}
-												alt={bid.product}
-												className="w-20 h-20 rounded-lg object-cover"
-												height={80}
-												width={80}
-											/>
-											<div className="flex-1 space-y-2">
-												<div className="flex items-start justify-between">
-													<div>
-														<h3 className="font-semibold">{bid.product}</h3>
-														<p className="text-sm text-muted-foreground">
-															by {bid.farmer} • {bid.location}
-														</p>
+						{
+							liveBids.map((bid, index) => (
+								<motion.div
+									key={bid.id}
+									initial={{ opacity: 0, scale: 0.95 }}
+									whileInView={{ opacity: 1, scale: 1 }}
+									transition={{ duration: 0.6, delay: index * 0.1 }}
+								>
+									<Card className="border-2 border-primary/20 hover:border-primary/40 transition-colors">
+										<CardContent className="p-6">
+											<div className="flex items-start space-x-4">
+												<Image
+													src={bid.image || "/placeholder.svg"}
+													alt={bid.product}
+													className="w-20 h-20 rounded-lg object-cover"
+													height={80}
+													width={80}
+												/>
+												<div className="flex-1 space-y-2">
+													<div className="flex items-start justify-between">
+														<div>
+															<h3 className="font-semibold">{bid.product}</h3>
+															<p className="text-sm text-muted-foreground">
+																by {bid.farmer} • {bid.location}
+															</p>
+														</div>
+														<Badge variant="outline" className="text-xs">
+															<Clock className="w-3 h-3 mr-1" />
+															{bid.timeLeft}
+														</Badge>
 													</div>
-													<Badge variant="outline" className="text-xs">
-														<Clock className="w-3 h-3 mr-1" />
-														{bid.timeLeft}
-													</Badge>
-												</div>
-												<div className="flex items-center justify-between">
-													<div>
-														<p className="text-sm text-muted-foreground">Current Bid</p>
-														<p className="text-xl font-bold text-primary">{bid.currentBid}</p>
-													</div>
-													<div className="text-right">
-														<p className="text-sm text-muted-foreground">{bid.bidders} bidders</p>
-														<Button size="sm" className="mt-1" asChild>
-															<Link href="/bidding">Place Bid</Link>
-														</Button>
+													<div className="flex items-center justify-between">
+														<div>
+															<p className="text-sm text-muted-foreground">Current Bid</p>
+															<p className="text-xl font-bold text-primary">{bid.currentBid}</p>
+														</div>
+														<div className="text-right">
+															<p className="text-sm text-muted-foreground">{bid.bidders} bidders</p>
+															<Button size="sm" className="mt-1" asChild>
+																<Link href="/bidding">Place Bid</Link>
+															</Button>
+														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
-
 					<div className="text-center">
 						<Button size="lg" asChild>
 							<Link href="/bidding">
@@ -417,8 +406,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</section>
-
-			{/* How It Works Section */}
 			<section className="py-16">
 				<div className="container mx-auto px-4">
 					<div className="text-center space-y-4 mb-12">
@@ -427,7 +414,6 @@ export default function HomePage() {
 							Simple steps to get fresh produce from Nepal&apos;s farmers directly to your doorstep
 						</p>
 					</div>
-
 					<div className="grid md:grid-cols-3 gap-8">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -444,7 +430,6 @@ export default function HomePage() {
 								live bidding.
 							</p>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
@@ -460,7 +445,6 @@ export default function HomePage() {
 								options.
 							</p>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
@@ -478,8 +462,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</section>
-
-			{/* CTA Section */}
 			<section className="py-16 bg-gradient-to-r from-primary to-accent text-primary-foreground">
 				<div className="container mx-auto px-4 text-center">
 					<motion.div
@@ -510,7 +492,6 @@ export default function HomePage() {
 					</motion.div>
 				</div>
 			</section>
-
 			<Footer />
 		</div>
 	)

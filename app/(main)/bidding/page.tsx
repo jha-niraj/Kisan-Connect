@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -9,146 +9,76 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Clock, Gavel, Search, Star, MapPin } from "lucide-react"
+import { Clock, Gavel, Search, MapPin, Plus } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { useSession } from "next-auth/react"
+import { Role } from "@prisma/client"
+import { getActiveAuctions } from "@/actions/(common)/auction.action"
+import { Auction, AuctionStatus } from "@/types/auction"
 
-// Types
-interface Auction {
-	id: number
-	product: string
-	farmer: string
-	location: string
-	category: string
-	startPrice: number
-	currentBid: number
-	bidders: number
-	timeLeft: string
-	endTime: Date
-	image: string
-	description: string
-	minIncrement: number
-	totalBids: number
-	isOrganic?: boolean
-	rating?: number
+// Transform Prisma data to match our Auction interface
+interface AuctionWithTimeLeft extends Omit<Auction, 'status'> {
+	timeLeft?: string
+	status: AuctionStatus
 }
 
-// Mock data for live auctions
-const liveAuctions = [
-	{
-		id: 1,
-		product: "Premium Cardamom",
-		farmer: "Maya Sherpa",
-		location: "Ilam",
-		category: "Spices",
-		startPrice: 2000,
-		currentBid: 2500,
-		bidders: 12,
-		timeLeft: "2h 15m",
-		endTime: new Date(Date.now() + 2 * 60 * 60 * 1000 + 15 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Premium quality cardamom from the hills of Ilam. Organically grown and hand-picked.",
-		minIncrement: 50,
-		totalBids: 45,
-		isOrganic: true,
-		rating: 4.9,
-	},
-	{
-		id: 2,
-		product: "Organic Potatoes",
-		farmer: "Krishna Thapa",
-		location: "Mustang",
-		category: "Vegetables",
-		startPrice: 40,
-		currentBid: 45,
-		bidders: 8,
-		timeLeft: "45m",
-		endTime: new Date(Date.now() + 45 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Fresh organic potatoes from high altitude farms in Mustang.",
-		minIncrement: 2,
-		totalBids: 23,
-		isOrganic: true,
-		rating: 4.7,
-	},
-	{
-		id: 3,
-		product: "Basmati Rice",
-		farmer: "Ram Bahadur",
-		location: "Chitwan",
-		category: "Grains",
-		startPrice: 100,
-		currentBid: 120,
-		bidders: 15,
-		timeLeft: "1h 30m",
-		endTime: new Date(Date.now() + 1.5 * 60 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Premium quality Basmati rice, aromatic and long-grain.",
-		minIncrement: 5,
-		totalBids: 67,
-		isOrganic: false,
-		rating: 4.8,
-	},
-	{
-		id: 4,
-		product: "Mountain Honey",
-		farmer: "Tek Bahadur",
-		location: "Mustang",
-		category: "Honey",
-		startPrice: 800,
-		currentBid: 950,
-		bidders: 6,
-		timeLeft: "3h 20m",
-		endTime: new Date(Date.now() + 3 * 60 * 60 * 1000 + 20 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Pure mountain honey from the high altitudes of Mustang.",
-		minIncrement: 25,
-		totalBids: 18,
-		isOrganic: true,
-		rating: 5.0,
-	},
-]
-
-const upcomingAuctions = [
-	{
-		id: 5,
-		product: "Organic Tomatoes",
-		farmer: "Sita Devi",
-		location: "Kavre",
-		category: "Vegetables",
-		startPrice: 60,
-		startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Fresh organic tomatoes, perfect for cooking and salads.",
-		isOrganic: true,
-		rating: 4.6,
-	},
-	{
-		id: 6,
-		product: "Black Cardamom",
-		farmer: "Pemba Sherpa",
-		location: "Dolakha",
-		category: "Spices",
-		startPrice: 1500,
-		startTime: new Date(Date.now() + 12 * 60 * 60 * 1000),
-		image: "/placeholder.svg?height=200&width=200",
-		description: "Aromatic black cardamom from the mountains of Dolakha.",
-		isOrganic: true,
-		rating: 4.9,
-	},
-]
-
 export default function BiddingPage() {
+	const { data: session } = useSession()
 	const [activeTab, setActiveTab] = useState("live")
 	const [searchQuery, setSearchQuery] = useState("")
 	const [categoryFilter, setCategoryFilter] = useState("all")
 	const [sortBy, setSortBy] = useState("ending_soon")
-	const [selectedAuction, setSelectedAuction] = useState<number | null>(null)
+	const [selectedAuction, setSelectedAuction] = useState<string | null>(null)
+	const [auctions, setAuctions] = useState<AuctionWithTimeLeft[]>([])
+	const [loading, setLoading] = useState(true)
+
+	const loadAuctions = useCallback(async () => {
+		try {
+			setLoading(true)
+			const result = await getActiveAuctions()
+			
+			if (result.success && result.auctions) {
+				const auctionsWithTimeLeft = result.auctions.map(auction => ({
+					id: auction.id,
+					productId: auction.productId,
+					startingPrice: auction.startPrice,
+					currentBid: auction.currentBid,
+					highestBidderId: auction.bids[0]?.bidderId,
+					startTime: auction.startTime,
+					endTime: auction.endTime,
+					status: auction.status as AuctionStatus,
+					product: auction.product,
+					farmer: auction.farmer,
+					bids: auction.bids,
+					createdAt: auction.createdAt,
+					updatedAt: auction.updatedAt,
+					description: auction.description,
+					title: auction.title,
+					timeLeft: formatTimeLeft(new Date(auction.endTime))
+				}))
+				setAuctions(auctionsWithTimeLeft)
+			}
+		} catch (error) {
+			console.error("Error loading auctions:", error)
+		} finally {
+			setLoading(false)
+		}
+	}, [])
+
+	useEffect(() => {
+		loadAuctions()
+	}, [loadAuctions])
 
 	// Timer effect for countdown
 	useEffect(() => {
 		const timer = setInterval(() => {
-			// Force re-render to update countdown timers
-			setSelectedAuction((prev) => prev)
+			setAuctions(prevAuctions => 
+				prevAuctions.map(auction => ({
+					...auction,
+					timeLeft: formatTimeLeft(new Date(auction.endTime))
+				}))
+			)
 		}, 1000)
 
 		return () => clearInterval(timer)
@@ -183,27 +113,57 @@ export default function BiddingPage() {
 		return "text-green-600"
 	}
 
-	const filteredAuctions = liveAuctions.filter((auction) => {
+	const filteredAuctions = auctions.filter((auction) => {
 		const matchesSearch =
-			auction.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			auction.farmer.toLowerCase().includes(searchQuery.toLowerCase())
-		const matchesCategory = categoryFilter === "all" || auction.category.toLowerCase() === categoryFilter
+			auction.product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			auction.farmer.name.toLowerCase().includes(searchQuery.toLowerCase())
+		const matchesCategory = categoryFilter === "all" || auction.product.category.toLowerCase() === categoryFilter
 		return matchesSearch && matchesCategory
 	})
 
-	return (
-		<div className="min-h-screen bg-background">
-			<div className="container mx-auto px-4 py-8">
-				{/* Header */}
-				<div className="text-center space-y-4 mb-8">
-					<div className="flex items-center justify-center space-x-2">
-						<Gavel className="h-8 w-8 text-primary" />
-						<h1 className="font-serif text-4xl font-bold">Live Bidding</h1>
+	const canCreateAuction = session?.user && (session.user.role === Role.FARMER || session.user.role === Role.ADMIN)
+	const canBid = session?.user && (session.user.role === Role.USER || session.user.role === Role.CONTRACTOR)
+
+	if (loading) {
+		return (
+			<div className="min-h-screen bg-background">
+				<div className="container mx-auto px-4 py-8">
+					<div className="text-center space-y-4 mb-8">
+						<div className="flex items-center justify-center space-x-2">
+							<Gavel className="h-8 w-8 text-primary" />
+							<h1 className="font-serif text-4xl font-bold">Live Bidding</h1>
+						</div>
 					</div>
-					<p className="text-muted-foreground max-w-2xl mx-auto">
-						Participate in live auctions for premium products. Get the best deals directly from farmers across Nepal.
-					</p>
+					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+						{[...Array(6)].map((_, i) => (
+							<div key={i} className="h-80 bg-gray-200 rounded-lg animate-pulse"></div>
+						))}
+					</div>
 				</div>
+			</div>
+		)
+	}
+
+	return (
+		<div className="min-h-screen bg-background">		<div className="container mx-auto px-4 py-8">
+			{/* Header */}
+			<div className="text-center space-y-4 mb-8">
+				<div className="flex items-center justify-center space-x-2">
+					<Gavel className="h-8 w-8 text-primary" />
+					<h1 className="font-serif text-4xl font-bold">Live Bidding</h1>
+				</div>
+				<p className="text-muted-foreground max-w-2xl mx-auto">
+					Participate in live auctions for premium products. Get the best deals directly from farmers across Nepal.
+				</p>
+				{canCreateAuction && (
+					<Button asChild>
+						<Link href="/bidding/new">
+							<Plus className="h-4 w-4 mr-2" />
+							Create New Auction
+						</Link>
+					</Button>
+				)}
+			</div>
 
 				{/* Filters */}
 				<div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -240,20 +200,34 @@ export default function BiddingPage() {
 							<SelectItem value="most_bidders">Most Bidders</SelectItem>
 						</SelectContent>
 					</Select>
-				</div>
+				</div>			{/* Tabs */}
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+				<TabsList className="grid w-full grid-cols-1 max-w-md mx-auto">
+					<TabsTrigger value="live" className="flex items-center space-x-2">
+						<div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+						<span>Live Auctions ({filteredAuctions.length})</span>
+					</TabsTrigger>
+				</TabsList>
 
-				{/* Tabs */}
-				<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-					<TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-						<TabsTrigger value="live" className="flex items-center space-x-2">
-							<div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-							<span>Live Auctions ({liveAuctions.length})</span>
-						</TabsTrigger>
-						<TabsTrigger value="upcoming">Upcoming ({upcomingAuctions.length})</TabsTrigger>
-					</TabsList>
-
-					{/* Live Auctions */}
-					<TabsContent value="live" className="space-y-6">
+				{/* Live Auctions */}
+				<TabsContent value="live" className="space-y-6">
+					{filteredAuctions.length === 0 ? (
+						<div className="text-center py-12">
+							<Gavel className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+							<h3 className="text-xl font-semibold mb-2">No Active Auctions</h3>
+							<p className="text-muted-foreground mb-4">
+								There are currently no live auctions. Check back later or create one if you&apos;re a farmer.
+							</p>
+							{canCreateAuction && (
+								<Button asChild>
+									<Link href="/bidding/new">
+										<Plus className="h-4 w-4 mr-2" />
+										Create First Auction
+									</Link>
+								</Button>
+							)}
+						</div>
+					) : (
 						<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{filteredAuctions.map((auction, index) => (
 								<motion.div
@@ -265,14 +239,14 @@ export default function BiddingPage() {
 									<Card className="group hover:shadow-lg transition-all duration-300 border-2 border-primary/20 hover:border-primary/40">
 										<div className="relative">
 											<Image
-												src={auction.image || "/placeholder.svg"}
-												alt={auction.product}
+												src={auction.product.images[0] || "/placeholder.svg"}
+												alt={auction.product.name}
 												className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-												height={48}
-												width={48}
+												height={192}
+												width={192}
 											/>
 											<div className="absolute top-3 left-3 flex gap-2">
-												{auction.isOrganic && <Badge className="bg-green-100 text-green-800">Organic</Badge>}
+												<Badge className="bg-green-100 text-green-800">{auction.product.category}</Badge>
 												<Badge variant="destructive" className="animate-pulse">
 													LIVE
 												</Badge>
@@ -280,7 +254,7 @@ export default function BiddingPage() {
 											<div className="absolute top-3 right-3">
 												<Badge variant="outline" className="bg-white/90">
 													<Clock className="w-3 h-3 mr-1" />
-													<span className={getTimeLeftColor(auction.endTime)}>{formatTimeLeft(auction.endTime)}</span>
+													<span className={getTimeLeftColor(new Date(auction.endTime))}>{auction.timeLeft}</span>
 												</Badge>
 											</div>
 										</div>
@@ -288,20 +262,15 @@ export default function BiddingPage() {
 										<CardContent className="p-4">
 											<div className="space-y-3">
 												<div>
-													<h3 className="font-semibold text-lg">{auction.product}</h3>
+													<h3 className="font-semibold text-lg">{auction.product.name}</h3>
 													<div className="flex items-center space-x-2 text-sm text-muted-foreground">
-														<span>by {auction.farmer}</span>
+														<span>by {auction.farmer.name}</span>
 														<span>•</span>
 														<div className="flex items-center space-x-1">
 															<MapPin className="w-3 h-3" />
-															<span>{auction.location}</span>
+															<span>Nepal</span>
 														</div>
 													</div>
-												</div>
-
-												<div className="flex items-center space-x-1">
-													<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-													<span className="text-sm font-medium">{auction.rating}</span>
 												</div>
 
 												<p className="text-sm text-muted-foreground line-clamp-2">{auction.description}</p>
@@ -312,91 +281,30 @@ export default function BiddingPage() {
 														<span className="text-xl font-bold text-primary">Rs. {auction.currentBid}</span>
 													</div>
 													<div className="flex items-center justify-between text-sm">
-														<span className="text-muted-foreground">{auction.bidders} bidders</span>
-														<span className="text-muted-foreground">{auction.totalBids} total bids</span>
+														<span className="text-muted-foreground">{auction._count?.bids || 0} bidders</span>
+														<span className="text-muted-foreground">Min: Rs. {auction.minIncrement}</span>
 													</div>
 												</div>
 
-												<Button className="w-full" onClick={() => setSelectedAuction(auction.id)}>
-													<Gavel className="w-4 h-4 mr-2" />
-													Place Bid
-												</Button>
+												{canBid ? (
+													<Button className="w-full" onClick={() => setSelectedAuction(auction.id)}>
+														<Gavel className="w-4 h-4 mr-2" />
+														Place Bid
+													</Button>
+												) : (
+													<Button variant="outline" className="w-full" disabled>
+														{!session ? "Sign in to bid" : "View Only"}
+													</Button>
+												)}
 											</div>
 										</CardContent>
 									</Card>
 								</motion.div>
 							))}
 						</div>
-					</TabsContent>
-
-					{/* Upcoming Auctions */}
-					<TabsContent value="upcoming" className="space-y-6">
-						<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-							{upcomingAuctions.map((auction, index) => (
-								<motion.div
-									key={auction.id}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.6, delay: index * 0.1 }}
-								>
-									<Card className="group hover:shadow-lg transition-all duration-300">
-										<div className="relative">
-											<Image
-												src={auction.image || "/placeholder.svg"}
-												alt={auction.product}
-												className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-												height={48}
-												width={48}
-											/>
-											<div className="absolute top-3 left-3 flex gap-2">
-												{auction.isOrganic && <Badge className="bg-green-100 text-green-800">Organic</Badge>}
-												<Badge variant="secondary">Upcoming</Badge>
-											</div>
-										</div>
-
-										<CardContent className="p-4">
-											<div className="space-y-3">
-												<div>
-													<h3 className="font-semibold text-lg">{auction.product}</h3>
-													<div className="flex items-center space-x-2 text-sm text-muted-foreground">
-														<span>by {auction.farmer}</span>
-														<span>•</span>
-														<div className="flex items-center space-x-1">
-															<MapPin className="w-3 h-3" />
-															<span>{auction.location}</span>
-														</div>
-													</div>
-												</div>
-
-												<div className="flex items-center space-x-1">
-													<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-													<span className="text-sm font-medium">{auction.rating}</span>
-												</div>
-
-												<p className="text-sm text-muted-foreground line-clamp-2">{auction.description}</p>
-
-												<div className="space-y-2">
-													<div className="flex items-center justify-between">
-														<span className="text-sm text-muted-foreground">Starting Price</span>
-														<span className="text-xl font-bold text-secondary">Rs. {auction.startPrice}</span>
-													</div>
-													<div className="text-sm text-muted-foreground">
-														Starts: {auction.startTime.toLocaleDateString()} at {auction.startTime.toLocaleTimeString()}
-													</div>
-												</div>
-
-												<Button variant="outline" className="w-full bg-transparent">
-													<Clock className="w-4 h-4 mr-2" />
-													Set Reminder
-												</Button>
-											</div>
-										</CardContent>
-									</Card>
-								</motion.div>
-							))}
-						</div>
-					</TabsContent>
-				</Tabs>
+					)}
+				</TabsContent>
+			</Tabs>
 
 				{/* Bidding Modal would go here */}
 				{selectedAuction && (

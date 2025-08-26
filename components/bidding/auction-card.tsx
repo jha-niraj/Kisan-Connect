@@ -106,7 +106,6 @@ export function AuctionCard({ auction, onBid, variant = "live" }: AuctionCardPro
 						</Badge>
 					</div>
 				</div>
-
 				<CardContent className="p-4">
 					<div className="space-y-3">
 						<div>
@@ -120,14 +119,11 @@ export function AuctionCard({ auction, onBid, variant = "live" }: AuctionCardPro
 								</div>
 							</div>
 						</div>
-
 						<div className="flex items-center space-x-1">
 							<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
 							<span className="text-sm font-medium">{auction.rating}</span>
 						</div>
-
 						<p className="text-sm text-muted-foreground line-clamp-2">{auction.description}</p>
-
 						<div className="space-y-2">
 							<div className="flex items-center justify-between">
 								<span className="text-sm text-muted-foreground">
@@ -137,33 +133,36 @@ export function AuctionCard({ auction, onBid, variant = "live" }: AuctionCardPro
 									Rs. {variant === "live" ? auction.currentBid : auction.startPrice}
 								</span>
 							</div>
-							{variant === "live" && (
-								<div className="flex items-center justify-between text-sm">
-									<div className="flex items-center space-x-1">
-										<Users className="w-3 h-3" />
-										<span className="text-muted-foreground">{auction.bidders} bidders</span>
+							{
+								variant === "live" && (
+									<div className="flex items-center justify-between text-sm">
+										<div className="flex items-center space-x-1">
+											<Users className="w-3 h-3" />
+											<span className="text-muted-foreground">{auction.bidders} bidders</span>
+										</div>
+										<span className="text-muted-foreground">{auction.totalBids} total bids</span>
 									</div>
-									<span className="text-muted-foreground">{auction.totalBids} total bids</span>
-								</div>
-							)}
+								)
+							}
 						</div>
-
 						<Button
 							className="w-full"
 							onClick={() => onBid?.(auction.id)}
 							variant={variant === "upcoming" ? "outline" : "default"}
 						>
-							{variant === "live" ? (
-								<>
-									<Gavel className="w-4 h-4 mr-2" />
-									Place Bid
-								</>
-							) : (
-								<>
-									<Clock className="w-4 h-4 mr-2" />
-									Set Reminder
-								</>
-							)}
+							{
+								variant === "live" ? (
+									<>
+										<Gavel className="w-4 h-4 mr-2" />
+										Place Bid
+									</>
+								) : (
+									<>
+										<Clock className="w-4 h-4 mr-2" />
+										Set Reminder
+									</>
+								)
+							}
 						</Button>
 					</div>
 				</CardContent>

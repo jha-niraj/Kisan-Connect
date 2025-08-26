@@ -61,14 +61,12 @@ export function ProductCard({ product, onEdit, onDelete, onView }: ProductCardPr
 					</div>
 					<div className="absolute top-3 right-3">{getStatusBadge(product.status)}</div>
 				</div>
-
 				<CardContent className="p-4">
 					<div className="space-y-3">
 						<div>
 							<h3 className="font-semibold text-lg">{product.name}</h3>
 							<p className="text-sm text-muted-foreground">{product.category}</p>
 						</div>
-
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-xl font-bold text-primary">Rs. {product.price}</p>
@@ -80,7 +78,6 @@ export function ProductCard({ product, onEdit, onDelete, onView }: ProductCardPr
 								</p>
 							</div>
 						</div>
-
 						<div className="flex items-center justify-between pt-2 border-t">
 							<div className="flex items-center space-x-2">
 								<Button variant="ghost" size="sm" onClick={() => onView?.(product.id)}>
@@ -90,7 +87,6 @@ export function ProductCard({ product, onEdit, onDelete, onView }: ProductCardPr
 									<Edit className="h-4 w-4" />
 								</Button>
 							</div>
-
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="ghost" size="sm">
