@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Tractor, Home, Store, Building2 } from "lucide-react"
-import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus, getCategories } from "@/actions/onboarding.action"
+import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus, getCategories } from "@/actions/(common)/onboarding.action"
 
 interface Category {
 	id: string
@@ -174,8 +174,8 @@ export default function OnboardingPage() {
 							[1, 2, 3].map((step) => (
 								<div key={step} className="flex items-center">
 									<div className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= step
-											? 'bg-green-500 text-white'
-											: 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+										? 'bg-green-500 text-white'
+										: 'bg-gray-200 dark:bg-gray-700 text-gray-500'
 										}`}>
 										{currentStep > step ? <CheckCircle className="h-5 w-5" /> : step}
 									</div>
@@ -379,8 +379,8 @@ export default function OnboardingPage() {
 														<div
 															key={category.id}
 															className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${formData.categoryInterests.includes(category.name)
-																	? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-																	: 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+																? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+																: 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
 																}`}
 															onClick={() => handleCategoryToggle(category.name)}
 														>

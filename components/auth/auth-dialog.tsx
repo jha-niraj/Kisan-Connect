@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { useAuthDialog } from "./use-auth-dialog"
 import { Mail, Eye, EyeOff, LogIn, XCircle, CircleHelp } from "lucide-react"
 import type { ReadonlyURLSearchParams } from "next/navigation"
+import { Label } from "../ui/label"
 
 export function AuthDialog() {
 	const { status } = useSession()
@@ -142,9 +143,9 @@ export function AuthDialog() {
 							</div>
 							<form onSubmit={onCredentialsSignIn} className="grid gap-3">
 								<div className="grid gap-2">
-									<label htmlFor="email" className="text-sm font-medium">
+									<Label htmlFor="email" className="text-sm font-medium">
 										Email address
-									</label>
+									</Label>
 									<div className="relative">
 										<Mail className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
 										<Input
@@ -159,9 +160,9 @@ export function AuthDialog() {
 									</div>
 								</div>
 								<div className="grid gap-2">
-									<label htmlFor="password" className="text-sm font-medium">
+									<Label htmlFor="password" className="text-sm font-medium">
 										Password
-									</label>
+									</Label>
 									<div className="relative">
 										<Input
 											id="password"
@@ -193,9 +194,9 @@ export function AuthDialog() {
 									<CircleHelp className="w-3.5 h-3.5" />
 									Already have an account? Use your email and password or continue with Google.
 								</div>
-								
+
 								<Separator />
-								
+
 								<div className="text-center">
 									<p className="text-sm text-muted-foreground mb-3">
 										Don&apos;t have an account yet?

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Mail, CheckCircle, AlertCircle } from "lucide-react"
-import { requestPasswordReset } from "@/actions/auth.action"
+import { requestPasswordReset } from "@/actions/(common)/auth.action"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 

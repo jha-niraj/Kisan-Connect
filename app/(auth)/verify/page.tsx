@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { ArrowRight, CheckCircle, RefreshCw } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import { verifyOTP, resendVerificationOTP } from "@/actions/auth.action"
+import { verifyOTP, resendVerificationOTP } from "@/actions/(common)/auth.action"
 import { signIn } from "next-auth/react"
 
 function VerifyContent() {

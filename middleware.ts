@@ -172,8 +172,6 @@ export default auth((req) => {
 				return NextResponse.redirect(new URL('/contractor/dashboard', nextUrl.origin))
 			} else if (userRole === 'FARMER') {
 				return NextResponse.redirect(new URL('/farmer/dashboard', nextUrl.origin))
-			} else if (userRole === 'FARMER') {
-				return NextResponse.redirect(new URL('/farmer/dashboard', nextUrl.origin))
 			} else if (userRole === 'ADMIN') {
 				return NextResponse.redirect(new URL('/admin/dashboard', nextUrl.origin))
 			} else {

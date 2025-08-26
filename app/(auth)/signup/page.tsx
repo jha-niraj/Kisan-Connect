@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowRight } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { toast } from "sonner"
-import { registerUser } from "@/actions/auth.action"
+import { registerUser } from "@/actions/(common)/auth.action"
 
 function SignUp() {
     const [name, setName] = useState("")

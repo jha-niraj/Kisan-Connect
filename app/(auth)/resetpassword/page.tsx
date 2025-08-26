@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowRight, Eye, EyeOff, CheckCircle, AlertCircle, Shield } from "lucide-react"
-import { validateResetToken, resetPassword } from "@/actions/auth.action"
+import { validateResetToken, resetPassword } from "@/actions/(common)/auth.action"
 import { toast } from "sonner"
 
 function ResetPassword() {

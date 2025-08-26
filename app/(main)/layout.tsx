@@ -1,6 +1,6 @@
 'use client'
 
-import { Header } from '@/components/layout/header';
+import { Header } from '@/components/layout/navbar';
 import { Footer } from '@/components/footer';
 import OnboardingCheck from '@/components/onboardingcheck';
 
@@ -9,7 +9,6 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-	// Routes are now mostly public, middleware handles auth redirects
 
 	return (
 		<OnboardingCheck>
