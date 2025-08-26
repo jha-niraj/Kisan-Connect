@@ -1,7 +1,7 @@
 'use client'
 
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import { Footer } from '@/components/footer';
 import OnboardingCheck from '@/components/onboardingcheck';
 
 interface LayoutProps {

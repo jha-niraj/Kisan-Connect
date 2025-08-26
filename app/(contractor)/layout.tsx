@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import { Footer } from '@/components/footer';
 import { Role } from '@prisma/client';
 
 interface LayoutProps {
