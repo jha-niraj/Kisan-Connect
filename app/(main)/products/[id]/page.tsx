@@ -1,125 +1,182 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
+import { useParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-	Heart,
-	Share2,
-	Star,
-	MapPin,
-	Truck,
-	Shield,
-	Plus,
-	Minus,
-	ShoppingCart,
-	User,
-	Phone,
-	Mail,
-	Leaf,
-	Award,
+	Heart, Share2, Star, MapPin, Truck, Shield, Plus, Minus, 
+	ShoppingCart, User, Phone, Mail, Leaf, Award
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { getPublicProductById, getRelatedProducts } from "@/actions/(common)/product.action"
+import { ProductDetailSkeleton } from "@/components/products/product-detail-skeleton"
 
-// Mock product data
-const product = {
-	id: "1",
-	name: "Organic Basmati Rice",
-	price: 120,
-	originalPrice: 150,
-	rating: 4.8,
-	reviews: 156,
-	category: "Grains",
-	stock: 50,
-	unit: "kg",
-	images: [
-		"/placeholder.svg?height=400&width=400",
-		"/placeholder.svg?height=400&width=400",
-		"/placeholder.svg?height=400&width=400",
-		"/placeholder.svg?height=400&width=400",
-	],
-	description:
-		"Premium quality organic basmati rice grown in the fertile valleys of Nepal. This aromatic long-grain rice is perfect for biryanis, pulavs, and everyday meals. Grown without pesticides or chemical fertilizers.",
-	features: [
-		"100% Organic Certified",
-		"Long Grain Basmati",
-		"Aromatic & Fluffy",
-		"No Pesticides Used",
-		"Direct from Farm",
-		"Premium Quality",
-	],
+interface Product {
+	id: string
+	name: string
+	description: string
+	price: number
+	originalPrice?: number
+	rating?: number
+	reviews?: number
+	category: string
+	stock: number
+	unit: string
+	images: string[]
+	organicCertified: boolean
+	harvestDate?: Date
+	expiryDate?: Date
 	farmer: {
-		name: "Ram Bahadur Thapa",
-		location: "Chitwan, Nepal",
-		rating: 4.9,
-		totalProducts: 12,
-		yearsExperience: 15,
-		phone: "+977-9841234567",
-		email: "ram.thapa@email.com",
-		avatar: "/placeholder.svg?height=80&width=80",
-		verified: true,
-	},
-	specifications: {
-		"Grain Type": "Long Grain",
-		Processing: "Minimal Processing",
-		"Moisture Content": "12-14%",
-		Purity: "99.5%",
-		"Shelf Life": "12 Months",
-		Storage: "Cool & Dry Place",
-	},
-	deliveryInfo: {
-		estimatedDays: "2-3 days",
-		freeDeliveryAbove: 500,
-		deliveryCharge: 50,
-	},
+		id: string
+		name: string
+		location: string
+		district: string
+		rating: number
+		totalProducts: number
+		farmingExperience?: number
+		phone?: string
+		email?: string
+		image?: string
+		verified: boolean
+	}
+	deliveryInfo?: {
+		estimatedDays: string
+		freeDeliveryAbove: number
+		deliveryCharge: number
+	}
 }
 
-const relatedProducts = [
-	{
-		id: "2",
-		name: "Organic Red Rice",
-		price: 95,
-		rating: 4.6,
-		image: "/placeholder.svg?height=200&width=200",
-		farmer: "Sita Devi",
-	},
-	{
-		id: "3",
-		name: "Brown Rice",
-		price: 85,
-		rating: 4.7,
-		image: "/placeholder.svg?height=200&width=200",
-		farmer: "Krishna Prasad",
-	},
-	{
-		id: "4",
-		name: "Organic Quinoa",
-		price: 280,
-		rating: 4.9,
-		image: "/placeholder.svg?height=200&width=200",
-		farmer: "Maya Gurung",
-	},
-]
+interface RelatedProduct {
+	id: string
+	name: string
+	price: number
+	rating?: number
+	images: string[]
+	farmer: {
+		name: string
+	}
+}
 
 export default function ProductDetailPage() {
+	const params = useParams()
+	const productId = params.id as string
+	
 	const [selectedImage, setSelectedImage] = useState(0)
 	const [quantity, setQuantity] = useState(1)
 	const [isFavorite, setIsFavorite] = useState(false)
+	const [product, setProduct] = useState<Product | null>(null)
+	const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([])
+	const [loading, setLoading] = useState(true)
+
+	const loadProduct = useCallback(async () => {
+		try {
+			setLoading(true)
+			const result = await getPublicProductById(productId)
+			
+			if (result.success && result.product) {
+				const productData = result.product
+				setProduct({
+					id: productData.id,
+					name: productData.name,
+					description: productData.description,
+					price: productData.price,
+					originalPrice: productData.price * 1.25, // Mock original price (25% markup)
+					rating: 4.8, // Mock rating
+					reviews: 156, // Mock reviews
+					category: productData.category,
+					stock: productData.stock,
+					unit: productData.unit,
+					images: productData.images.length > 0 ? productData.images : ["/placeholder.svg?height=400&width=400"],
+					organicCertified: productData.organicCertified,
+					harvestDate: productData.harvestDate ? new Date(productData.harvestDate) : undefined,
+					expiryDate: productData.expiryDate ? new Date(productData.expiryDate) : undefined,
+					farmer: {
+						id: productData.farmer.id,
+						name: productData.farmer.name || "Unknown Farmer",
+						location: productData.farmer.location || productData.location,
+						district: productData.farmer.district || productData.district,
+						rating: productData.farmer.rating,
+						totalProducts: productData.farmer.totalProducts,
+						farmingExperience: productData.farmer.farmingExperience || 0,
+						phone: productData.farmer.phone || "",
+						email: productData.farmer.email || "",
+						image: productData.farmer.image || "/placeholder.svg?height=80&width=80",
+						verified: productData.farmer.verified
+					},
+					deliveryInfo: {
+						estimatedDays: "2-3 days",
+						freeDeliveryAbove: 500,
+						deliveryCharge: 50
+					}
+				})
+
+				// Load related products
+				const relatedResult = await getRelatedProducts(productData.id, productData.category)
+				if (relatedResult.success) {
+					setRelatedProducts(relatedResult.products.map(p => ({
+						id: p.id,
+						name: p.name,
+						price: p.price,
+						rating: 4.7, // Mock rating
+						images: p.images.length > 0 ? p.images : ["/placeholder.svg?height=200&width=200"],
+						farmer: {
+							name: p.farmer.name || "Unknown Farmer"
+						}
+					})))
+				}
+			} else {
+				console.error("Failed to load product:", result.error)
+				// TODO: Show error state
+			}
+		} catch (error) {
+			console.error("Error loading product:", error)
+			// TODO: Show error state
+		} finally {
+			setLoading(false)
+		}
+	}, [productId])
+
+	useEffect(() => {
+		if (productId) {
+			loadProduct()
+		}
+	}, [productId, loadProduct])
 
 	const handleAddToCart = () => {
+		if (!product) return
 		console.log("Adding to cart:", { productId: product.id, quantity })
-		// Mock add to cart logic
+		// TODO: Implement real add to cart logic
 		alert(`Added ${quantity} ${product.unit} of ${product.name} to cart!`)
 	}
 
 	const handleBuyNow = () => {
+		if (!product) return
 		console.log("Buy now:", { productId: product.id, quantity })
-		// Mock buy now logic - redirect to checkout
+		// TODO: Implement real buy now logic - redirect to checkout
 		window.location.href = "/checkout"
+	}
+
+	if (loading) {
+		return <ProductDetailSkeleton />
+	}
+
+	if (!product) {
+		return (
+			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
+				<div className="text-center">
+					<h1 className="text-2xl font-bold mb-2">Product Not Found</h1>
+					<p className="text-gray-600 mb-4">The product you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+					<Link href="/products">
+						<Button>Browse Products</Button>
+					</Link>
+				</div>
+			</div>
+		)
 	}
 
 	return (
@@ -221,7 +278,7 @@ export default function ProductDetailPage() {
 								<span className="text-3xl font-bold text-emerald-600">₹{product.price}</span>
 								<span className="text-xl text-gray-500 line-through">₹{product.originalPrice}</span>
 								<Badge variant="destructive">
-									{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+									{Math.round(((product?.originalPrice! - product.price) / product?.originalPrice!) * 100)}% OFF
 								</Badge>
 							</div>
 						</div>
@@ -235,14 +292,26 @@ export default function ProductDetailPage() {
 						</div>
 
 						{/* Features */}
-						<div className="grid grid-cols-2 gap-2">
-							{product.features.map((feature, index) => (
-								<div key={index} className="flex items-center space-x-2 text-sm">
+						{product.organicCertified && (
+							<div className="grid grid-cols-2 gap-2">
+								<div className="flex items-center space-x-2 text-sm">
 									<Leaf className="w-4 h-4 text-emerald-600" />
-									<span>{feature}</span>
+									<span>100% Organic Certified</span>
 								</div>
-							))}
-						</div>
+								<div className="flex items-center space-x-2 text-sm">
+									<Leaf className="w-4 h-4 text-emerald-600" />
+									<span>Direct from Farm</span>
+								</div>
+								<div className="flex items-center space-x-2 text-sm">
+									<Leaf className="w-4 h-4 text-emerald-600" />
+									<span>No Pesticides Used</span>
+								</div>
+								<div className="flex items-center space-x-2 text-sm">
+									<Leaf className="w-4 h-4 text-emerald-600" />
+									<span>Premium Quality</span>
+								</div>
+							</div>
+						)}
 
 						{/* Quantity Selector */}
 						<div className="space-y-4">
@@ -289,10 +358,10 @@ export default function ProductDetailPage() {
 									<span className="font-medium">Delivery Information</span>
 								</div>
 								<div className="space-y-1 text-sm text-gray-600">
-									<p>Estimated delivery: {product.deliveryInfo.estimatedDays}</p>
+									<p>Estimated delivery: {product?.deliveryInfo && product?.deliveryInfo.estimatedDays}</p>
 									<p>
-										Delivery charge: ₹{product.deliveryInfo.deliveryCharge} (Free above ₹
-										{product.deliveryInfo.freeDeliveryAbove})
+										Delivery charge: ₹{product?.deliveryInfo && product?.deliveryInfo.deliveryCharge} (Free above ₹
+										{product?.deliveryInfo && product?.deliveryInfo.freeDeliveryAbove})
 									</p>
 									<p className="flex items-center space-x-1">
 										<Shield className="w-4 h-4" />
@@ -325,12 +394,34 @@ export default function ProductDetailPage() {
 						<Card>
 							<CardContent className="p-6">
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									{Object.entries(product.specifications).map(([key, value]) => (
-										<div key={key} className="flex justify-between py-2 border-b border-gray-100">
-											<span className="font-medium text-gray-900">{key}:</span>
-											<span className="text-gray-600">{value}</span>
+									<div className="flex justify-between py-2 border-b border-gray-100">
+										<span className="font-medium text-gray-900">Category:</span>
+										<span className="text-gray-600">{product.category}</span>
+									</div>
+									<div className="flex justify-between py-2 border-b border-gray-100">
+										<span className="font-medium text-gray-900">Unit:</span>
+										<span className="text-gray-600">{product.unit}</span>
+									</div>
+									<div className="flex justify-between py-2 border-b border-gray-100">
+										<span className="font-medium text-gray-900">Stock:</span>
+										<span className="text-gray-600">{product.stock}</span>
+									</div>
+									<div className="flex justify-between py-2 border-b border-gray-100">
+										<span className="font-medium text-gray-900">Organic Certified:</span>
+										<span className="text-gray-600">{product.organicCertified ? "Yes" : "No"}</span>
+									</div>
+									{product.harvestDate && (
+										<div className="flex justify-between py-2 border-b border-gray-100">
+											<span className="font-medium text-gray-900">Harvest Date:</span>
+											<span className="text-gray-600">{product.harvestDate.toLocaleDateString()}</span>
 										</div>
-									))}
+									)}
+									{product.expiryDate && (
+										<div className="flex justify-between py-2 border-b border-gray-100">
+											<span className="font-medium text-gray-900">Expiry Date:</span>
+											<span className="text-gray-600">{product.expiryDate.toLocaleDateString()}</span>
+										</div>
+									)}
 								</div>
 							</CardContent>
 						</Card>
@@ -338,55 +429,54 @@ export default function ProductDetailPage() {
 
 					<TabsContent value="farmer" className="mt-6">
 						<Card>
-							<CardContent className="p-6">
-								<div className="flex items-start space-x-4">
-									<Image
-										src={product.farmer.avatar || "/placeholder.svg"}
-										alt={product.farmer.name}
-										width={80}
-										height={80}
-										className="rounded-full"
-									/>
-									<div className="flex-1">
-										<div className="flex items-center space-x-2 mb-2">
-											<h3 className="text-xl font-bold">{product.farmer.name}</h3>
-											{product.farmer.verified && (
-												<Badge className="bg-blue-100 text-blue-800">
-													<Award className="w-3 h-3 mr-1" />
-													Verified
-												</Badge>
-											)}
+							<CardContent className="p-6">							<div className="flex items-start space-x-4">
+								<Image
+									src={product.farmer.image || "/placeholder.svg"}
+									alt={product.farmer.name}
+									width={80}
+									height={80}
+									className="rounded-full"
+								/>
+								<div className="flex-1">
+									<div className="flex items-center space-x-2 mb-2">
+										<h3 className="text-xl font-bold">{product.farmer.name}</h3>
+										{product.farmer.verified && (
+											<Badge className="bg-blue-100 text-blue-800">
+												<Award className="w-3 h-3 mr-1" />
+												Verified
+											</Badge>
+										)}
+									</div>
+									<div className="space-y-2 text-sm text-gray-600">
+										<div className="flex items-center space-x-2">
+											<MapPin className="w-4 h-4" />
+											<span>{product.farmer.location}</span>
 										</div>
-										<div className="space-y-2 text-sm text-gray-600">
-											<div className="flex items-center space-x-2">
-												<MapPin className="w-4 h-4" />
-												<span>{product.farmer.location}</span>
-											</div>
-											<div className="flex items-center space-x-2">
-												<Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-												<span>{product.farmer.rating} rating</span>
-											</div>
-											<div className="flex items-center space-x-2">
-												<User className="w-4 h-4" />
-												<span>{product.farmer.yearsExperience} years experience</span>
-											</div>
-											<div className="flex items-center space-x-2">
-												<Leaf className="w-4 h-4" />
-												<span>{product.farmer.totalProducts} products listed</span>
-											</div>
+										<div className="flex items-center space-x-2">
+											<Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+											<span>{product.farmer.rating} rating</span>
 										</div>
-										<div className="flex items-center space-x-4 mt-4">
-											<Button variant="outline" size="sm">
-												<Phone className="w-4 h-4 mr-2" />
-												Contact
-											</Button>
-											<Button variant="outline" size="sm">
-												<Mail className="w-4 h-4 mr-2" />
-												Message
-											</Button>
+										<div className="flex items-center space-x-2">
+											<User className="w-4 h-4" />
+											<span>{product.farmer.farmingExperience} years experience</span>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Leaf className="w-4 h-4" />
+											<span>{product.farmer.totalProducts} products listed</span>
 										</div>
 									</div>
+									<div className="flex items-center space-x-4 mt-4">
+										<Button variant="outline" size="sm">
+											<Phone className="w-4 h-4 mr-2" />
+											Contact
+										</Button>
+										<Button variant="outline" size="sm">
+											<Mail className="w-4 h-4 mr-2" />
+											Message
+										</Button>
+									</div>
 								</div>
+							</div>
 							</CardContent>
 						</Card>
 					</TabsContent>
@@ -416,7 +506,7 @@ export default function ProductDetailPage() {
 							>
 								<Link href={`/products/${relatedProduct.id}`}>
 									<Image
-										src={relatedProduct.image || "/placeholder.svg"}
+										src={relatedProduct.images[0] || "/placeholder.svg"}
 										alt={relatedProduct.name}
 										width={200}
 										height={200}
@@ -431,7 +521,7 @@ export default function ProductDetailPage() {
 												<span className="text-sm">{relatedProduct.rating}</span>
 											</div>
 										</div>
-										<p className="text-sm text-gray-600 mt-1">by {relatedProduct.farmer}</p>
+										<p className="text-sm text-gray-600 mt-1">by {relatedProduct.farmer.name}</p>
 									</div>
 								</Link>
 							</motion.div>

@@ -13,7 +13,7 @@ import { Product } from "@/types/product"
 import { ProductStatus } from "@prisma/client"
 
 export default function SellerProductsPage() {
-    const { data: session, status } = useSession()
+    const { status } = useSession()
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -169,7 +169,7 @@ export default function SellerProductsPage() {
                         <div className="text-center py-12">
                             <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                             <h3 className="text-lg font-semibold mb-2">No products found</h3>
-                            <p className="text-muted-foreground mb-4">You haven't added any products yet.</p>
+                            <p className="text-muted-foreground mb-4">You haven&apos;t added any products yet.</p>
                             <Button asChild>
                                 <Link href="/seller/products/new">
                                     <Plus className="h-4 w-4 mr-2" />

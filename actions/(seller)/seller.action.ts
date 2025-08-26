@@ -18,7 +18,7 @@ interface CreateProductData {
 	harvestDate?: Date | null
 	expiryDate?: Date | null
 	images: string[]
-	status: ProductStatus
+	status?: ProductStatus
 }
 
 export async function createProduct(data: CreateProductData) {
@@ -44,7 +44,7 @@ export async function createProduct(data: CreateProductData) {
 				harvestDate: data.harvestDate,
 				expiryDate: data.expiryDate,
 				images: data.images,
-				status: data.status,
+				status: data.status || ProductStatus.ACTIVE,
 				farmerId: session.user.id, // Using farmerId for seller products as well until schema is updated
 			}
 		})
@@ -122,11 +122,11 @@ export async function deleteProduct(productId: string) {
 	try {
 		const session = await auth()
 
-		if (!session?.user || session.user.role !== Role.SELLER) {
+		if (!session?.user || (session.user.role !== Role.SELLER && session.user.role !== Role.FARMER)) {
 			throw new Error("Unauthorized")
 		}
 
-		// Verify product belongs to the seller
+		// Verify product belongs to the user
 		const existingProduct = await prisma.product.findFirst({
 			where: {
 				id: productId,
@@ -318,5 +318,32 @@ export async function getSellerTopProducts() {
 	} catch (error) {
 		console.error("Error fetching top products:", error)
 		return { success: false, error: "Failed to fetch top products" }
+	}
+}
+
+export async function getProductById(productId: string) {
+	try {
+		const session = await auth()
+
+		if (!session?.user || (session.user.role !== Role.SELLER && session.user.role !== Role.FARMER)) {
+			throw new Error("Unauthorized")
+		}
+
+		// Get product belonging to the user
+		const product = await prisma.product.findFirst({
+			where: {
+				id: productId,
+				farmerId: session.user.id
+			}
+		})
+
+		if (!product) {
+			throw new Error("Product not found")
+		}
+
+		return { success: true, product }
+	} catch (error) {
+		console.error("Error fetching product:", error)
+		return { success: false, error: "Failed to fetch product" }
 	}
 }

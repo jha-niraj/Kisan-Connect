@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Star, Eye, Edit, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
-import { Product, ProductStatus } from "@/types/product"
+import { Product, ProductStatus } from "@/types/product";
+
 
 interface ProductCardProps {
 	product: Product

@@ -129,7 +129,7 @@ export default function FarmerLandingPage() {
 								<span className="text-green-600"> KisanConnect</span>
 							</h1>
 							<p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-								Join Nepal's largest agricultural marketplace. Sell directly to consumers, participate in live auctions, and get fair prices for your hard work. Transform your farming into a profitable business.
+								Join Nepal&apos;s largest agricultural marketplace. Sell directly to consumers, participate in live auctions, and get fair prices for your hard work. Transform your farming into a profitable business.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4">
 								<Link href="/signup?ref=farmer">
@@ -253,7 +253,7 @@ export default function FarmerLandingPage() {
 							Powerful Features for Modern Farmers
 						</h2>
 						<p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-							Everything you need to succeed in today's agricultural market
+							Everything you need to succeed in today&apos;s agricultural market
 						</p>
 					</motion.div>
 					<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -329,7 +329,7 @@ export default function FarmerLandingPage() {
 											</div>
 										</div>
 										<blockquote className="text-gray-700 dark:text-gray-300 mb-2">
-											"{testimonial.quote}"
+											&quot;{testimonial.quote}&quot;
 										</blockquote>
 										<p className="text-sm text-gray-500 dark:text-gray-500 italic">
 											{testimonial.translation}

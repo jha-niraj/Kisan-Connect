@@ -2,35 +2,18 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
-    Search,
-    Filter,
-    MapPin,
-    Calendar,
-    DollarSign,
-    Clock,
-    User,
-    Package,
-    AlertCircle,
-    Eye,
-    Send,
-    Leaf,
-    Truck
+    Search, Filter, DollarSign, Clock, User, Package, Eye, Send, Leaf
 } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    Dialog, DialogContent, DialogDescription, 
+    DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -97,6 +80,7 @@ export default function ContractorOpportunities() {
                 setError(result.error || "Failed to load farmer products")
             }
         } catch (err) {
+            console.log("error occurred while loading farmers product: " + err);
             setError("Failed to load farmer products")
         } finally {
             setLoading(false)
@@ -117,7 +101,7 @@ export default function ContractorOpportunities() {
         }
 
         loadFarmerProducts()
-    }, [session, status, searchQuery, selectedCategory])
+    }, [session, status, searchQuery, selectedCategory, loadFarmerProducts])
 
     // Handle search input with debounce
     useEffect(() => {
@@ -128,7 +112,7 @@ export default function ContractorOpportunities() {
         }, 500)
 
         return () => clearTimeout(timer)
-    }, [searchQuery, selectedCategory])
+    }, [searchQuery, selectedCategory, loadFarmerProducts, session?.user?.role])
 
     const handleBidSubmit = async (productId: string) => {
         try {
@@ -143,6 +127,7 @@ export default function ContractorOpportunities() {
                 deliveryDate: ""
             })
         } catch (err) {
+            console.log("Error occurred during the bid submission:", err);
             toast.error("Failed to submit bid")
         }
     }

@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, use } from "react"
 import { useSession } from "next-auth/react"
-import { useRouter, useParams } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useRouter } from "next/navigation"
+import { 
+    Card, CardContent, CardDescription, 
+    CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,18 +13,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import {
-    ArrowLeft,
-    Save,
-    Edit,
-    Eye,
-    Upload,
-    X,
-    ImageIcon,
-    Loader2,
-    AlertCircle,
-    CheckCircle,
-    Calendar,
-    Package
+    ArrowLeft, Save, Edit, Eye, Upload, X, ImageIcon, Loader2,
+    AlertCircle, CheckCircle, Package
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -30,22 +22,19 @@ import { redirect } from "next/navigation"
 import { Role, ProductCategory, ProductStatus } from '@prisma/client'
 import { uploadToCloudinary } from "@/actions/(common)/utils.action"
 import {
-    getSellerProduct,
-    updateProduct,
-    toggleProductStatus
+    getSellerProduct, updateProduct, toggleProductStatus
 } from "@/actions/(seller)/seller.action"
-import { Product, ProductFormData, PRODUCT_CATEGORIES, PRODUCT_UNITS } from "@/types/product"
-import { toast } from "sonner"
+import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from "@/types/product"
 
 const productCategories = PRODUCT_CATEGORIES.map(category => ({
     value: category,
     label: category
 }))
 
-const productUnits = PRODUCT_UNITS.map(unit => ({
-    value: unit,
-    label: unit
-}))
+// const productUnits = PRODUCT_UNITS.map(unit => ({
+//     value: unit,
+//     label: unit
+// }))
 
 const productStatuses = [
     { value: "ACTIVE", label: "Active", color: "green" },
@@ -74,11 +63,10 @@ interface ProductForm {
     images: string[]
 }
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ params }: { params: Promise<{ productId: string }> }) {
     const { data: session, status } = useSession()
     const router = useRouter()
-    const params = useParams()
-    const productId = params.productId as string
+    const { productId } = use(params);
 
     const [isLoading, setIsLoading] = useState(true)
     const [isSaving, setIsSaving] = useState(false)
@@ -102,23 +90,7 @@ export default function ProductDetailPage() {
     })
     const [saveMessage, setSaveMessage] = useState("")
 
-    useEffect(() => {
-        if (status === "loading") return
-
-        if (!session) {
-            redirect("/signin?callbackUrl=/seller/products/" + productId)
-            return
-        }
-
-        if (session.user.role !== Role.SELLER) {
-            redirect("/")
-            return
-        }
-
-        loadProduct()
-    }, [session, status, productId])
-
-    const loadProduct = async () => {
+    const loadProduct = useCallback(async () => {
         try {
             setIsLoading(true)
             const result = await getSellerProduct(productId)
@@ -149,7 +121,23 @@ export default function ProductDetailPage() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [productId]);
+
+    useEffect(() => {
+        if (status === "loading") return
+
+        if (!session) {
+            redirect("/signin?callbackUrl=/seller/products/" + productId)
+            return
+        }
+
+        if (session.user.role !== Role.SELLER) {
+            redirect("/")
+            return
+        }
+
+        loadProduct()
+    }, [session, status, productId, loadProduct])
 
     const handleInputChange = (field: keyof ProductForm, value: any) => {
         setFormData(prev => ({
@@ -229,7 +217,7 @@ export default function ProductDetailPage() {
 
     const handleStatusToggle = async () => {
         try {
-            const result = await toggleProductStatus(productId)
+            const result = await toggleProductStatus(productId!)
             if (result.success) {
                 await loadProduct()
                 setSaveMessage("Product status updated!")
@@ -635,7 +623,7 @@ export default function ProductDetailPage() {
                                 <div className="flex justify-between">
                                     <span className="text-sm text-muted-foreground">Stock</span>
                                     <span className={`font-medium ${product.stock === 0 ? "text-red-500" :
-                                            product.stock <= 10 ? "text-yellow-500" : "text-green-500"
+                                        product.stock <= 10 ? "text-yellow-500" : "text-green-500"
                                         }`}>
                                         {product.stock} {product.unit}
                                     </span>

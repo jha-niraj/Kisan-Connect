@@ -35,14 +35,14 @@ export default function MainDashboard() {
 		case Role.SELLER:
 			return (
 				<div className="container mx-auto p-6">
-					<SellerDashboard session={session} />
+					<SellerDashboard />
 				</div>
 			)
 
 		case Role.CONTRACTOR:
 			return (
 				<div className="container mx-auto p-6">
-					<ContractorDashboard session={session} />
+					<ContractorDashboard />
 				</div>
 			)
 

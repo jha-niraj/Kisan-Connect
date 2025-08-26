@@ -157,7 +157,7 @@ export default function ContractorLandingPage() {
 							Why Choose KisanConnect for Contracting?
 						</h2>
 						<p className="text-xl text-gray-600 max-w-3xl mx-auto">
-							Access Nepal's largest network of farmers and agricultural products
+							Access Nepal&apos;s largest network of farmers and agricultural products
 						</p>
 					</div>
 					<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

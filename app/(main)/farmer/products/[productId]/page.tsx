@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,14 +15,15 @@ import {
 	ImageIcon,
 	Loader2,
 	ArrowLeft,
-	Save
+	Save,
+	Trash2
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import { uploadToCloudinary } from "@/actions/(common)/utils.action"
-import { createProduct } from "@/actions/(seller)/seller.action"
-import { Role, ProductCategory } from '@prisma/client';
+import { updateProduct, getProductById, deleteProduct } from "@/actions/(seller)/seller.action"
+import { Role, ProductCategory, ProductStatus } from '@prisma/client';
 
 const categories: ProductCategory[] = [
 	ProductCategory.GRAINS,
@@ -66,7 +67,7 @@ const units = [
 interface ProductForm {
 	name: string
 	description: string
-	category: ProductCategory | ""
+	category: ProductCategory
 	price: number
 	unit: string
 	stock: number
@@ -76,17 +77,23 @@ interface ProductForm {
 	organicCertified: boolean
 	harvestDate?: Date
 	expiryDate?: Date
+	status: ProductStatus
 }
 
-export default function NewProduct() {
+export default function EditProduct() {
 	const { data: session, status } = useSession()
 	const router = useRouter()
+	const params = useParams()
+	const productId = params.productId as string
+	
 	const [isLoading, setIsLoading] = useState(false)
+	const [isDeleting, setIsDeleting] = useState(false)
 	const [uploadingImages, setUploadingImages] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [formData, setFormData] = useState<ProductForm>({
 		name: "",
 		description: "",
-		category: "",
+		category: ProductCategory.GRAINS,
 		price: 0,
 		unit: "kg",
 		stock: 0,
@@ -95,24 +102,60 @@ export default function NewProduct() {
 		images: [],
 		organicCertified: false,
 		harvestDate: undefined,
-		expiryDate: undefined
+		expiryDate: undefined,
+		status: ProductStatus.ACTIVE
 	})
 
-	// No need for separate specification state as it's not in the model
+	const loadProduct = useCallback(async () => {
+		try {
+			setLoading(true)
+			const result = await getProductById(productId)
+			
+			if (result.success && result.product) {
+				const product = result.product
+				setFormData({
+					name: product.name,
+					description: product.description,
+					category: product.category,
+					price: product.price,
+					unit: product.unit,
+					stock: product.stock,
+					location: product.location,
+					district: product.district,
+					images: product.images,
+					organicCertified: product.organicCertified,
+					harvestDate: product.harvestDate ? new Date(product.harvestDate) : undefined,
+					expiryDate: product.expiryDate ? new Date(product.expiryDate) : undefined,
+					status: product.status
+				})
+			} else {
+				console.error("Failed to load product:", result.error)
+				router.push("/farmer/products")
+			}
+		} catch (error) {
+			console.error("Error loading product:", error)
+			router.push("/farmer/products")
+		} finally {
+			setLoading(false)
+		}
+	}, [productId, router])
 
 	useEffect(() => {
 		if (status === "loading") return
 
 		if (!session) {
-			redirect("/signin?callbackUrl=/seller/products/new")
+			redirect("/signin?callbackUrl=/farmer/products/" + productId)
 			return
 		}
 
-		if (session.user.role !== Role.SELLER) {
+		if (session.user.role !== Role.SELLER && session.user.role !== Role.FARMER) {
 			redirect("/")
 			return
 		}
-	}, [session, status])
+
+		// Load product data
+		loadProduct()
+	}, [session, status, productId, loadProduct])
 
 	const handleInputChange = (field: keyof ProductForm, value: unknown) => {
 		setFormData(prev => ({
@@ -155,14 +198,10 @@ export default function NewProduct() {
 	const handleSubmit = async () => {
 		setIsLoading(true)
 		try {
-			if (formData.category === "") {
-				throw new Error("Please select a category")
-			}
-
-			const result = await createProduct({
+			const result = await updateProduct(productId, {
 				name: formData.name,
 				description: formData.description,
-				category: formData.category as ProductCategory,
+				category: formData.category,
 				price: formData.price,
 				unit: formData.unit,
 				stock: formData.stock,
@@ -171,24 +210,48 @@ export default function NewProduct() {
 				images: formData.images,
 				organicCertified: formData.organicCertified,
 				harvestDate: formData.harvestDate,
-				expiryDate: formData.expiryDate
+				expiryDate: formData.expiryDate,
+				status: formData.status
 			})
 
 			if (result.success) {
-				router.push('/seller/products')
+				router.push('/farmer/products')
 			} else {
-				console.error('Error creating product:', result.error)
+				console.error('Error updating product:', result.error)
 				// TODO: Show error toast
 			}
 		} catch (error) {
-			console.error('Error creating product:', error)
+			console.error('Error updating product:', error)
 			// TODO: Show error toast
 		} finally {
 			setIsLoading(false)
 		}
 	}
 
-	if (status === "loading") {
+	const handleDelete = async () => {
+		if (!confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+			return
+		}
+
+		setIsDeleting(true)
+		try {
+			const result = await deleteProduct(productId)
+			
+			if (result.success) {
+				router.push('/farmer/products')
+			} else {
+				console.error('Error deleting product:', result.error)
+				// TODO: Show error toast
+			}
+		} catch (error) {
+			console.error('Error deleting product:', error)
+			// TODO: Show error toast
+		} finally {
+			setIsDeleting(false)
+		}
+	}
+
+	if (status === "loading" || loading) {
 		return (
 			<div className="flex items-center justify-center min-h-[50vh]">
 				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -196,7 +259,7 @@ export default function NewProduct() {
 		)
 	}
 
-	if (!session || session.user.role !== Role.SELLER) {
+	if (!session || (session.user.role !== Role.SELLER && session.user.role !== Role.FARMER)) {
 		return null
 	}
 
@@ -206,33 +269,38 @@ export default function NewProduct() {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
 					<Button variant="ghost" size="icon" asChild>
-						<Link href="/seller/products">
+						<Link href="/farmer/products">
 							<ArrowLeft className="h-4 w-4" />
 						</Link>
 					</Button>
 					<div>
-						<h1 className="text-3xl font-bold">Add New Product</h1>
-						<p className="text-muted-foreground">Create a new product listing for your store</p>
+						<h1 className="text-3xl font-bold">Edit Product</h1>
+						<p className="text-muted-foreground">Update your product information</p>
 					</div>
 				</div>
 				<div className="flex space-x-2">
 					<Button
-						variant="outline"
-						onClick={handleSubmit}
-						disabled={isLoading}
+						variant="destructive"
+						onClick={handleDelete}
+						disabled={isDeleting}
 					>
-						Save as Draft
+						{isDeleting ? (
+							<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+						) : (
+							<Trash2 className="h-4 w-4 mr-2" />
+						)}
+						Delete Product
 					</Button>
 					<Button
 						onClick={handleSubmit}
-						disabled={isLoading || !formData.name || !formData.category || formData.price <= 0 || !formData.location || !formData.district}
+						disabled={isLoading || !formData.name || formData.price <= 0 || !formData.location || !formData.district}
 					>
 						{isLoading ? (
 							<Loader2 className="h-4 w-4 mr-2 animate-spin" />
 						) : (
 							<Save className="h-4 w-4 mr-2" />
 						)}
-						Publish Product
+						Update Product
 					</Button>
 				</div>
 			</div>
@@ -245,7 +313,7 @@ export default function NewProduct() {
 						<CardHeader>
 							<CardTitle>Basic Information</CardTitle>
 							<CardDescription>
-								Enter the basic details of your product
+								Update the basic details of your product
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
@@ -276,10 +344,9 @@ export default function NewProduct() {
 									<select
 										id="category"
 										value={formData.category}
-										onChange={(e) => handleInputChange("category", e.target.value)}
+										onChange={(e) => handleInputChange("category", e.target.value as ProductCategory)}
 										className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									>
-										<option value="">Select category</option>
 										{categories.map(category => (
 											<option key={category} value={category}>{categoryLabels[category]}</option>
 										))}
@@ -308,7 +375,7 @@ export default function NewProduct() {
 						<CardHeader>
 							<CardTitle>Pricing & Inventory</CardTitle>
 							<CardDescription>
-								Set your product pricing and stock information
+								Update your product pricing and stock information
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
@@ -341,12 +408,38 @@ export default function NewProduct() {
 						</CardContent>
 					</Card>
 
+					{/* Product Status */}
+					<Card>
+						<CardHeader>
+							<CardTitle>Product Status</CardTitle>
+							<CardDescription>
+								Manage your product availability
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div>
+								<Label htmlFor="status">Status</Label>
+								<select
+									id="status"
+									value={formData.status}
+									onChange={(e) => handleInputChange("status", e.target.value as ProductStatus)}
+									className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+								>
+									<option value={ProductStatus.ACTIVE}>Active</option>
+									<option value={ProductStatus.INACTIVE}>Inactive</option>
+									<option value={ProductStatus.SOLD_OUT}>Sold Out</option>
+									<option value={ProductStatus.PENDING}>Pending</option>
+								</select>
+							</div>
+						</CardContent>
+					</Card>
+
 					{/* Location Information */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Location Information</CardTitle>
 							<CardDescription>
-								Specify where your product is located
+								Update where your product is located
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
@@ -423,7 +516,7 @@ export default function NewProduct() {
 						<CardHeader>
 							<CardTitle>Product Images</CardTitle>
 							<CardDescription>
-								Upload high-quality images of your product (Max 5 images)
+								Update product images (Max 5 images)
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
@@ -489,9 +582,11 @@ export default function NewProduct() {
 							)}
 						</CardContent>
 					</Card>
+				</div>
 
-					{/* Product Images */}
-					<Card>
+				{/* Product Preview */}
+				<div className="lg:col-span-1">
+					<Card className="sticky top-6">
 						<CardHeader>
 							<CardTitle>Product Preview</CardTitle>
 							<CardDescription>
@@ -533,11 +628,22 @@ export default function NewProduct() {
 								</div>
 							</div>
 
+							{/* Status */}
+							<div>
+								<Badge variant={
+									formData.status === ProductStatus.ACTIVE ? "default" :
+									formData.status === ProductStatus.INACTIVE ? "secondary" :
+									formData.status === ProductStatus.SOLD_OUT ? "destructive" : "outline"
+								}>
+									{formData.status}
+								</Badge>
+							</div>
+
 							{/* Category and Location */}
 							{(formData.category || formData.location) && (
 								<div className="space-y-2">
 									{formData.category && (
-										<Badge variant="secondary">{categoryLabels[formData.category as ProductCategory]}</Badge>
+										<Badge variant="secondary">{categoryLabels[formData.category]}</Badge>
 									)}
 									{formData.location && (
 										<p className="text-sm text-muted-foreground">

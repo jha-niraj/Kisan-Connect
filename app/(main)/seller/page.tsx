@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { 
-	ArrowRight, Store, TrendingUp, Users, ShoppingCart, Package, Globe, Star, CheckCircle, BarChart3
+	ArrowRight, Store, TrendingUp, Users, ShoppingCart, Package, Star, BarChart3
 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 
 const benefits = [
 	{
@@ -274,7 +273,7 @@ export default function SellerLanding() {
 												<Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
 											))}
 										</div>
-										<p className="text-gray-600 dark:text-gray-300">"{testimonial.text}"</p>
+										<p className="text-gray-600 dark:text-gray-300">&quot;{testimonial.text}&quot;</p>
 										<div>
 											<p className="font-semibold">{testimonial.name}</p>
 											<p className="text-sm text-gray-500">{testimonial.location}</p>
