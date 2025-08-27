@@ -6,6 +6,7 @@ import { Role } from '@prisma/client'
 import FarmerDashboard from "../farmer/_components/farmer-dashboard"
 import SellerDashboard from "../seller/_components/seller-dashboard"
 import ContractorDashboard from "../contractor/_components/contractor-dashboard"
+import UserDashboard from "../_components/user-dashboard"
 
 export default function MainDashboard() {
 	const { data: session, status } = useSession()
@@ -25,6 +26,13 @@ export default function MainDashboard() {
 
 	// Render dashboard based on user role
 	switch (session.user.role) {
+		case Role.USER:
+			return (
+				<div className="container mx-auto p-6">
+					<UserDashboard />
+				</div>
+			)
+
 		case Role.FARMER:
 			return (
 				<div className="container mx-auto p-6">

@@ -18,9 +18,11 @@ import { getActiveAuctions } from "@/actions/(common)/auction.action"
 import { Auction, AuctionStatus } from "@/types/auction"
 
 // Transform Prisma data to match our Auction interface
-interface AuctionWithTimeLeft extends Omit<Auction, 'status'> {
+interface AuctionWithTimeLeft extends Auction {
 	timeLeft?: string
-	status: AuctionStatus
+	title?: string
+	description?: string
+	minIncrement?: number
 }
 
 export default function BiddingPage() {
@@ -55,6 +57,7 @@ export default function BiddingPage() {
 					updatedAt: auction.updatedAt,
 					description: auction.description,
 					title: auction.title,
+					minIncrement: auction.minIncrement,
 					timeLeft: formatTimeLeft(new Date(auction.endTime))
 				}))
 				setAuctions(auctionsWithTimeLeft)
@@ -281,8 +284,8 @@ export default function BiddingPage() {
 														<span className="text-xl font-bold text-primary">Rs. {auction.currentBid}</span>
 													</div>
 													<div className="flex items-center justify-between text-sm">
-														<span className="text-muted-foreground">{auction._count?.bids || 0} bidders</span>
-														<span className="text-muted-foreground">Min: Rs. {auction.minIncrement}</span>
+														<span className="text-muted-foreground">{auction.bids?.length || 0} bidders</span>
+														<span className="text-muted-foreground">Min: Rs. {auction.minIncrement || 10}</span>
 													</div>
 												</div>
 
@@ -309,7 +312,7 @@ export default function BiddingPage() {
 				{/* Bidding Modal would go here */}
 				{selectedAuction && (
 					<BiddingModal
-						auction={liveAuctions.find((a) => a.id === selectedAuction)!}
+						auction={auctions.find((a) => a.id === selectedAuction)!}
 						onClose={() => setSelectedAuction(null)}
 					/>
 				)}
@@ -321,8 +324,8 @@ export default function BiddingPage() {
 }
 
 // Bidding Modal Component
-function BiddingModal({ auction, onClose }: { auction: Auction; onClose: () => void }) {
-	const [bidAmount, setBidAmount] = useState(auction.currentBid + auction.minIncrement)
+function BiddingModal({ auction, onClose }: { auction: AuctionWithTimeLeft; onClose: () => void }) {
+	const [bidAmount, setBidAmount] = useState((auction.currentBid || 0) + (auction.minIncrement || 10))
 	const [isPlacingBid, setIsPlacingBid] = useState(false)
 
 	const handlePlaceBid = async () => {
@@ -352,15 +355,15 @@ function BiddingModal({ auction, onClose }: { auction: Auction; onClose: () => v
 					<div className="space-y-4">
 						<div className="flex items-center space-x-4">
 							<Image
-								src={auction.image || "/placeholder.svg"}
-								alt={auction.product}
+								src={auction.product.images[0] || "/placeholder.svg"}
+								alt={auction.product.name}
 								className="w-16 h-16 rounded-lg object-cover"
-								height={32}
-								width={32}
+								height={64}
+								width={64}
 							/>
 							<div>
-								<h3 className="font-semibold">{auction.product}</h3>
-								<p className="text-sm text-muted-foreground">by {auction.farmer}</p>
+								<h3 className="font-semibold">{auction.product.name}</h3>
+								<p className="text-sm text-muted-foreground">by {auction.farmer.name}</p>
 							</div>
 						</div>
 
@@ -371,7 +374,7 @@ function BiddingModal({ auction, onClose }: { auction: Auction; onClose: () => v
 							</div>
 							<div>
 								<p className="text-sm text-muted-foreground">Time Left</p>
-								<p className="text-lg font-bold text-red-600">{auction.timeLeft}</p>
+								<p className="text-lg font-bold text-red-600">{auction.timeLeft || "Loading..."}</p>
 							</div>
 						</div>
 
@@ -381,42 +384,42 @@ function BiddingModal({ auction, onClose }: { auction: Auction; onClose: () => v
 								type="number"
 								value={bidAmount}
 								onChange={(e) => setBidAmount(Number(e.target.value))}
-								min={auction.currentBid + auction.minIncrement}
-								step={auction.minIncrement}
+								min={(auction.currentBid || 0) + (auction.minIncrement || 10)}
+								step={auction.minIncrement || 10}
 							/>
 							<p className="text-xs text-muted-foreground">
-								Minimum bid: Rs. {auction.currentBid + auction.minIncrement} (increment: Rs. {auction.minIncrement})
+								Minimum bid: Rs. {(auction.currentBid || 0) + (auction.minIncrement || 10)} (increment: Rs. {auction.minIncrement || 10})
 							</p>
 						</div>
 
 						<div className="flex space-x-2">
 							<Button
 								variant="outline"
-								onClick={() => setBidAmount(auction.currentBid + auction.minIncrement)}
+								onClick={() => setBidAmount((auction.currentBid || 0) + (auction.minIncrement || 10))}
 								className="bg-transparent"
 							>
 								Min Bid
 							</Button>
 							<Button
 								variant="outline"
-								onClick={() => setBidAmount(auction.currentBid + auction.minIncrement * 2)}
+								onClick={() => setBidAmount((auction.currentBid || 0) + (auction.minIncrement || 10) * 2)}
 								className="bg-transparent"
 							>
-								+Rs. {auction.minIncrement}
+								+Rs. {(auction.minIncrement || 10)}
 							</Button>
 							<Button
 								variant="outline"
-								onClick={() => setBidAmount(auction.currentBid + auction.minIncrement * 5)}
+								onClick={() => setBidAmount((auction.currentBid || 0) + (auction.minIncrement || 10) * 5)}
 								className="bg-transparent"
 							>
-								+Rs. {auction.minIncrement * 4}
+								+Rs. {(auction.minIncrement || 10) * 4}
 							</Button>
 						</div>
 
 						<Button
 							className="w-full"
 							onClick={handlePlaceBid}
-							disabled={isPlacingBid || bidAmount < auction.currentBid + auction.minIncrement}
+							disabled={isPlacingBid || bidAmount < (auction.currentBid || 0) + (auction.minIncrement || 10)}
 						>
 							{isPlacingBid ? "Placing Bid..." : `Place Bid - Rs. ${bidAmount}`}
 						</Button>

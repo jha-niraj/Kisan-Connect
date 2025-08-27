@@ -6,6 +6,7 @@ import { Role } from '@prisma/client'
 import FarmerProducts from "../farmer/_components/farmer-products"
 import SellerProducts from "../seller/_components/seller-products"
 import ContractorProducts from "../contractor/_components/contractor-products"
+import UserProducts from "../_components/user-products"
 
 export default function MainProducts() {
 	const { data: session, status } = useSession()
@@ -25,6 +26,9 @@ export default function MainProducts() {
 
 	// Render products based on user role
 	switch (session.user.role) {
+		case Role.USER:
+			return <UserProducts />
+
 		case Role.FARMER:
 			return (
 				<div className="container mx-auto p-6">
