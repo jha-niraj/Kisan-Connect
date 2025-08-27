@@ -1,23 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { 
-	Card, CardContent, CardDescription, 
-	CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription,
+	CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-	Tabs, TabsContent, TabsList, TabsTrigger 
+import {
+	Tabs, TabsContent, TabsList, TabsTrigger
 } from "@/components/ui/tabs"
 import {
 	Package, ShoppingCart, TrendingUp, Users, Plus, DollarSign
 } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { 
-	getSellerStats, getSellerProducts, 
-	getSellerRecentOrders, getSellerTopProducts 
+import {
+	getSellerStats, getSellerProducts,
+	getSellerRecentOrders, getSellerTopProducts
 } from "@/actions/(seller)/seller.action"
 import { SellerStats, RecentOrder, TopProduct } from "@/types/dashboard"
 import { Product } from "@/types/product"
@@ -90,9 +90,11 @@ export default function SellerDashboard() {
 					<div className="h-10 bg-gray-200 rounded w-32"></div>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-					{[...Array(4)].map((_, i) => (
-						<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-					))}
+					{
+						[...Array(4)].map((_, i) => (
+							<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+						))
+					}
 				</div>
 			</div>
 		)
@@ -100,7 +102,6 @@ export default function SellerDashboard() {
 
 	return (
 		<div className="space-y-8">
-			{/* Header */}
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="text-3xl font-bold">Seller Dashboard</h1>
@@ -113,8 +114,6 @@ export default function SellerDashboard() {
 					</Link>
 				</Button>
 			</div>
-
-			{/* Stats Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 					<Card>
@@ -130,7 +129,6 @@ export default function SellerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -149,7 +147,6 @@ export default function SellerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -168,7 +165,6 @@ export default function SellerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -188,8 +184,6 @@ export default function SellerDashboard() {
 					</Card>
 				</motion.div>
 			</div>
-
-			{/* Content Tabs */}
 			<Tabs defaultValue="overview" className="space-y-4">
 				<TabsList>
 					<TabsTrigger value="overview">Overview</TabsTrigger>
@@ -197,7 +191,6 @@ export default function SellerDashboard() {
 					<TabsTrigger value="orders">Recent Orders</TabsTrigger>
 					<TabsTrigger value="top-products">Top Products</TabsTrigger>
 				</TabsList>
-
 				<TabsContent value="overview" className="space-y-4">
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 						<Card className="col-span-4">
@@ -233,7 +226,6 @@ export default function SellerDashboard() {
 								</div>
 							</CardContent>
 						</Card>
-
 						<Card className="col-span-3">
 							<CardHeader>
 								<CardTitle>Quick Actions</CardTitle>
@@ -270,7 +262,6 @@ export default function SellerDashboard() {
 						</Card>
 					</div>
 				</TabsContent>
-
 				<TabsContent value="products" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -281,72 +272,77 @@ export default function SellerDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{products.length > 0 ? (
-									products.slice(0, 5).map((product) => (
-										<div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
-											<div className="flex items-center space-x-4">
-												{product.images.length > 0 && (
-													<Image 
-														src={product.images[0]} 
-														alt={product.name}
-														className="w-12 h-12 object-cover rounded-md"
-														height={32}
-														width={32}
-													/>
-												)}
-												<div>
-													<p className="text-sm font-medium">{product.name}</p>
-													<p className="text-sm text-muted-foreground">{product.category}</p>
-												</div>
-											</div>
-											<div className="flex items-center space-x-4">
-												<div className="text-right">
-													<p className="text-sm font-medium">₹{product.price.toLocaleString()}</p>
-													<p className="text-xs text-muted-foreground">Stock: {product.stock} {product.unit}</p>
-												</div>
-												<Badge
-													variant={
-														product.status === "ACTIVE" ? "default" :
-															product.status === "INACTIVE" ? "secondary" : "destructive"
+								{
+									products.length > 0 ? (
+										products.slice(0, 5).map((product) => (
+											<div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+												<div className="flex items-center space-x-4">
+													{
+														product.images.length > 0 && (
+															<Image
+																src={product.images[0]}
+																alt={product.name}
+																className="w-12 h-12 object-cover rounded-md"
+																height={32}
+																width={32}
+															/>
+														)
 													}
-												>
-													{product.status}
-												</Badge>
-												<Button asChild size="sm" variant="outline">
-													<Link href={`/seller/products/${product.id}`}>
-														Edit
-													</Link>
-												</Button>
+													<div>
+														<p className="text-sm font-medium">{product.name}</p>
+														<p className="text-sm text-muted-foreground">{product.category}</p>
+													</div>
+												</div>
+												<div className="flex items-center space-x-4">
+													<div className="text-right">
+														<p className="text-sm font-medium">₹{product.price.toLocaleString()}</p>
+														<p className="text-xs text-muted-foreground">Stock: {product.stock} {product.unit}</p>
+													</div>
+													<Badge
+														variant={
+															product.status === "ACTIVE" ? "default" :
+																product.status === "INACTIVE" ? "secondary" : "destructive"
+														}
+													>
+														{product.status}
+													</Badge>
+													<Button asChild size="sm" variant="outline">
+														<Link href={`/seller/products/${product.id}`}>
+															Edit
+														</Link>
+													</Button>
+												</div>
 											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No products found</p>
+											<p className="text-sm">Add your first product to get started</p>
+											<Button asChild className="mt-4">
+												<Link href="/seller/products/new">
+													<Plus className="h-4 w-4 mr-2" />
+													Add Product
+												</Link>
+											</Button>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No products found</p>
-										<p className="text-sm">Add your first product to get started</p>
-										<Button asChild className="mt-4">
-											<Link href="/seller/products/new">
-												<Plus className="h-4 w-4 mr-2" />
-												Add Product
+									)
+								}
+							</div>
+							{
+								products.length > 5 && (
+									<div className="mt-4 text-center">
+										<Button asChild variant="outline">
+											<Link href="/seller/products">
+												View All Products
 											</Link>
 										</Button>
 									</div>
-								)}
-							</div>
-							{products.length > 5 && (
-								<div className="mt-4 text-center">
-									<Button asChild variant="outline">
-										<Link href="/seller/products">
-											View All Products
-										</Link>
-									</Button>
-								</div>
-							)}
+								)
+							}
 						</CardContent>
 					</Card>
 				</TabsContent>
-
 				<TabsContent value="orders" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -357,47 +353,48 @@ export default function SellerDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{recentOrders.length > 0 ? (
-									recentOrders.map((order) => (
-										<div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
-											<div className="flex items-center space-x-4">
-												<div>
-													<p className="text-sm font-medium">{order.id}</p>
-													<p className="text-sm text-muted-foreground">{order.customer}</p>
+								{
+									recentOrders.length > 0 ? (
+										recentOrders.map((order) => (
+											<div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
+												<div className="flex items-center space-x-4">
+													<div>
+														<p className="text-sm font-medium">{order.id}</p>
+														<p className="text-sm text-muted-foreground">{order.customer}</p>
+													</div>
+													<div>
+														<p className="text-sm font-medium">{order.product}</p>
+														<p className="text-sm text-muted-foreground">Qty: {order.quantity}</p>
+													</div>
 												</div>
-												<div>
-													<p className="text-sm font-medium">{order.product}</p>
-													<p className="text-sm text-muted-foreground">Qty: {order.quantity}</p>
+												<div className="flex items-center space-x-4">
+													<div className="text-right">
+														<p className="text-sm font-medium">₹{order.amount.toLocaleString()}</p>
+														<p className="text-xs text-muted-foreground">{order.date}</p>
+													</div>
+													<Badge
+														variant={
+															order.status === "completed" ? "default" :
+																order.status === "processing" ? "secondary" : "destructive"
+														}
+													>
+														{order.status}
+													</Badge>
 												</div>
 											</div>
-											<div className="flex items-center space-x-4">
-												<div className="text-right">
-													<p className="text-sm font-medium">₹{order.amount.toLocaleString()}</p>
-													<p className="text-xs text-muted-foreground">{order.date}</p>
-												</div>
-												<Badge
-													variant={
-														order.status === "completed" ? "default" :
-															order.status === "processing" ? "secondary" : "destructive"
-													}
-												>
-													{order.status}
-												</Badge>
-											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No recent orders found</p>
+											<p className="text-sm">Orders will appear here once customers start buying your products</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No recent orders found</p>
-										<p className="text-sm">Orders will appear here once customers start buying your products</p>
-									</div>
-								)}
+									)
+								}
 							</div>
 						</CardContent>
 					</Card>
 				</TabsContent>
-
 				<TabsContent value="top-products" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -408,29 +405,31 @@ export default function SellerDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{topProducts.length > 0 ? (
-									topProducts.map((product, index) => (
-										<div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
-											<div className="flex items-center space-x-4">
-												<div className="text-sm font-bold text-muted-foreground">#{index + 1}</div>
-												<div>
-													<p className="text-sm font-medium">{product.name}</p>
-													<p className="text-sm text-muted-foreground">{product.sales} sales</p>
+								{
+									topProducts.length > 0 ? (
+										topProducts.map((product, index) => (
+											<div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+												<div className="flex items-center space-x-4">
+													<div className="text-sm font-bold text-muted-foreground">#{index + 1}</div>
+													<div>
+														<p className="text-sm font-medium">{product.name}</p>
+														<p className="text-sm text-muted-foreground">{product.sales} sales</p>
+													</div>
+												</div>
+												<div className="text-right">
+													<p className="text-sm font-medium">₹{product.revenue.toLocaleString()}</p>
+													<p className="text-xs text-muted-foreground">Revenue</p>
 												</div>
 											</div>
-											<div className="text-right">
-												<p className="text-sm font-medium">₹{product.revenue.toLocaleString()}</p>
-												<p className="text-xs text-muted-foreground">Revenue</p>
-											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No product performance data yet</p>
+											<p className="text-sm">Add products and start selling to see performance metrics</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No product performance data yet</p>
-										<p className="text-sm">Add products and start selling to see performance metrics</p>
-									</div>
-								)}
+									)
+								}
 							</div>
 						</CardContent>
 					</Card>

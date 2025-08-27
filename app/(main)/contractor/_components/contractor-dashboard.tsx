@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { 
-	Card, CardContent, CardDescription, 
-	CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription,
+	CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,13 +14,13 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { 
-	getContractorStats, getContractorActiveBids, 
-	getContractorActiveProjects, getContractorRecentActivity 
+import {
+	getContractorStats, getContractorActiveBids,
+	getContractorActiveProjects, getContractorRecentActivity
 } from "@/actions/(contractor)/contractor.action"
-import { 
-	ContractorStats, ActiveBid, 
-	ActiveProject, RecentActivity 
+import {
+	ContractorStats, ActiveBid,
+	ActiveProject, RecentActivity
 } from "@/types/dashboard"
 import { useSession } from "next-auth/react"
 
@@ -88,9 +88,11 @@ export default function ContractorDashboard() {
 					<div className="h-10 bg-gray-200 rounded w-32"></div>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-					{[...Array(4)].map((_, i) => (
-						<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-					))}
+					{
+						[...Array(4)].map((_, i) => (
+							<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+						))
+					}
 				</div>
 			</div>
 		)
@@ -98,7 +100,6 @@ export default function ContractorDashboard() {
 
 	return (
 		<div className="space-y-8">
-			{/* Header */}
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="text-3xl font-bold">Contractor Dashboard</h1>
@@ -111,8 +112,6 @@ export default function ContractorDashboard() {
 					</Link>
 				</Button>
 			</div>
-
-			{/* Stats Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 					<Card>
@@ -128,7 +127,6 @@ export default function ContractorDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -147,7 +145,6 @@ export default function ContractorDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -166,7 +163,6 @@ export default function ContractorDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -186,15 +182,12 @@ export default function ContractorDashboard() {
 					</Card>
 				</motion.div>
 			</div>
-
-			{/* Content Tabs */}
 			<Tabs defaultValue="overview" className="space-y-4">
 				<TabsList>
 					<TabsTrigger value="overview">Overview</TabsTrigger>
 					<TabsTrigger value="bids">Active Bids</TabsTrigger>
 					<TabsTrigger value="projects">Active Projects</TabsTrigger>
 				</TabsList>
-
 				<TabsContent value="overview" className="space-y-4">
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 						<Card className="col-span-4">
@@ -203,29 +196,30 @@ export default function ContractorDashboard() {
 							</CardHeader>
 							<CardContent className="pl-2">
 								<div className="space-y-4">
-									{recentActivity.length > 0 ? (
-										recentActivity.map((activity, index) => (
-											<div key={index} className="flex items-center">
-												<div className={`w-2 h-2 rounded-full mr-4 ${activity.type === 'bid_won' ? 'bg-green-500' :
+									{
+										recentActivity.length > 0 ? (
+											recentActivity.map((activity, index) => (
+												<div key={index} className="flex items-center">
+													<div className={`w-2 h-2 rounded-full mr-4 ${activity.type === 'bid_won' ? 'bg-green-500' :
 														activity.type === 'project_update' ? 'bg-blue-500' : 'bg-yellow-500'
-													}`}></div>
-												<div className="flex-1">
-													<p className="text-sm font-medium">{activity.message}</p>
+														}`}></div>
+													<div className="flex-1">
+														<p className="text-sm font-medium">{activity.message}</p>
+													</div>
+													<div className="text-xs text-muted-foreground">{activity.time}</div>
 												</div>
-												<div className="text-xs text-muted-foreground">{activity.time}</div>
+											))
+										) : (
+											<div className="text-center text-muted-foreground py-8">
+												<FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+												<p>No recent activity</p>
+												<p className="text-sm">Activity will appear here when you start bidding</p>
 											</div>
-										))
-									) : (
-										<div className="text-center text-muted-foreground py-8">
-											<FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-											<p>No recent activity</p>
-											<p className="text-sm">Activity will appear here when you start bidding</p>
-										</div>
-									)}
+										)
+									}
 								</div>
 							</CardContent>
 						</Card>
-
 						<Card className="col-span-3">
 							<CardHeader>
 								<CardTitle>Quick Actions</CardTitle>
@@ -262,7 +256,6 @@ export default function ContractorDashboard() {
 						</Card>
 					</div>
 				</TabsContent>
-
 				<TabsContent value="bids" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -273,62 +266,63 @@ export default function ContractorDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{activeBids.length > 0 ? (
-									activeBids.map((bid) => (
-										<div key={bid.id} className="border rounded-lg p-4">
-											<div className="flex items-start justify-between">
-												<div className="flex-1">
-													<div className="flex items-center space-x-2 mb-2">
-														<h3 className="font-semibold">{bid.title}</h3>
-														<Badge
-															variant={
-																bid.status === "shortlisted" ? "default" :
-																	bid.status === "submitted" ? "secondary" : "outline"
-															}
-														>
-															{bid.status}
-														</Badge>
+								{
+									activeBids.length > 0 ? (
+										activeBids.map((bid) => (
+											<div key={bid.id} className="border rounded-lg p-4">
+												<div className="flex items-start justify-between">
+													<div className="flex-1">
+														<div className="flex items-center space-x-2 mb-2">
+															<h3 className="font-semibold">{bid.title}</h3>
+															<Badge
+																variant={
+																	bid.status === "shortlisted" ? "default" :
+																		bid.status === "submitted" ? "secondary" : "outline"
+																}
+															>
+																{bid.status}
+															</Badge>
+														</div>
+														<p className="text-sm text-muted-foreground mb-2">{bid.description}</p>
+														<div className="grid grid-cols-2 gap-4 text-sm">
+															<div>
+																<span className="text-muted-foreground">Farmer:</span> {bid.farmer}
+															</div>
+															<div>
+																<span className="text-muted-foreground">Location:</span> {bid.location}
+															</div>
+															<div>
+																<span className="text-muted-foreground">Budget:</span> ₹{bid.budget.toLocaleString()}
+															</div>
+															<div>
+																<span className="text-muted-foreground">Deadline:</span> {bid.deadline}
+															</div>
+														</div>
 													</div>
-													<p className="text-sm text-muted-foreground mb-2">{bid.description}</p>
-													<div className="grid grid-cols-2 gap-4 text-sm">
-														<div>
-															<span className="text-muted-foreground">Farmer:</span> {bid.farmer}
+													<div className="text-right">
+														<div className="text-sm text-muted-foreground mb-2">
+															<Clock className="h-4 w-4 inline mr-1" />
+															{bid.timeLeft} left
 														</div>
-														<div>
-															<span className="text-muted-foreground">Location:</span> {bid.location}
-														</div>
-														<div>
-															<span className="text-muted-foreground">Budget:</span> ₹{bid.budget.toLocaleString()}
-														</div>
-														<div>
-															<span className="text-muted-foreground">Deadline:</span> {bid.deadline}
-														</div>
+														<Button size="sm" variant="outline">
+															View Details
+														</Button>
 													</div>
-												</div>
-												<div className="text-right">
-													<div className="text-sm text-muted-foreground mb-2">
-														<Clock className="h-4 w-4 inline mr-1" />
-														{bid.timeLeft} left
-													</div>
-													<Button size="sm" variant="outline">
-														View Details
-													</Button>
 												</div>
 											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<Hammer className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No active bids</p>
+											<p className="text-sm">Start bidding on opportunities to see them here</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<Hammer className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No active bids</p>
-										<p className="text-sm">Start bidding on opportunities to see them here</p>
-									</div>
-								)}
+									)
+								}
 							</div>
 						</CardContent>
 					</Card>
 				</TabsContent>
-
 				<TabsContent value="projects" className="space-y-4">
 					<Card>
 						<CardHeader>
@@ -339,50 +333,52 @@ export default function ContractorDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{activeProjects.length > 0 ? (
-									activeProjects.map((project) => (
-										<div key={project.id} className="border rounded-lg p-4">
-											<div className="flex items-start justify-between mb-4">
-												<div className="flex-1">
-													<div className="flex items-center space-x-2 mb-2">
-														<h3 className="font-semibold">{project.title}</h3>
-														<Badge variant="default">In Progress</Badge>
+								{
+									activeProjects.length > 0 ? (
+										activeProjects.map((project) => (
+											<div key={project.id} className="border rounded-lg p-4">
+												<div className="flex items-start justify-between mb-4">
+													<div className="flex-1">
+														<div className="flex items-center space-x-2 mb-2">
+															<h3 className="font-semibold">{project.title}</h3>
+															<Badge variant="default">In Progress</Badge>
+														</div>
+														<div className="grid grid-cols-2 gap-4 text-sm">
+															<div>
+																<span className="text-muted-foreground">Farmer:</span> {project.farmer}
+															</div>
+															<div>
+																<span className="text-muted-foreground">Location:</span> {project.location}
+															</div>
+															<div>
+																<span className="text-muted-foreground">Budget:</span> ₹{project.budget.toLocaleString()}
+															</div>
+															<div>
+																<span className="text-muted-foreground">End Date:</span> {project.endDate}
+															</div>
+														</div>
 													</div>
-													<div className="grid grid-cols-2 gap-4 text-sm">
-														<div>
-															<span className="text-muted-foreground">Farmer:</span> {project.farmer}
-														</div>
-														<div>
-															<span className="text-muted-foreground">Location:</span> {project.location}
-														</div>
-														<div>
-															<span className="text-muted-foreground">Budget:</span> ₹{project.budget.toLocaleString()}
-														</div>
-														<div>
-															<span className="text-muted-foreground">End Date:</span> {project.endDate}
-														</div>
+													<Button size="sm" variant="outline">
+														Manage Project
+													</Button>
+												</div>
+												<div className="space-y-2">
+													<div className="flex justify-between text-sm">
+														<span>Progress</span>
+														<span>{project.progress}%</span>
 													</div>
+													<Progress value={project.progress} className="h-2" />
 												</div>
-												<Button size="sm" variant="outline">
-													Manage Project
-												</Button>
 											</div>
-											<div className="space-y-2">
-												<div className="flex justify-between text-sm">
-													<span>Progress</span>
-													<span>{project.progress}%</span>
-												</div>
-												<Progress value={project.progress} className="h-2" />
-											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No active projects</p>
+											<p className="text-sm">Win bids to start working on projects</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No active projects</p>
-										<p className="text-sm">Win bids to start working on projects</p>
-									</div>
-								)}
+									)
+								}
 							</div>
 						</CardContent>
 					</Card>

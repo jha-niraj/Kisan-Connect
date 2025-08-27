@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback, use } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { 
-    Card, CardContent, CardDescription, 
-    CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    Card, CardContent, CardDescription,
+    CardHeader, CardTitle
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -254,7 +255,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
 
     return (
         <div className="container mx-auto p-6 space-y-8">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                     <Button variant="ghost" size="icon" asChild>
@@ -270,45 +270,49 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                    {saveMessage && (
-                        <div className={`flex items-center space-x-2 px-3 py-1 rounded-md text-sm ${saveMessage.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                            }`}>
-                            {saveMessage.includes("success") ? (
-                                <CheckCircle className="h-4 w-4" />
-                            ) : (
-                                <AlertCircle className="h-4 w-4" />
-                            )}
-                            <span>{saveMessage}</span>
-                        </div>
-                    )}
-
-                    {isEditing ? (
-                        <>
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>
-                                Cancel
+                    {
+                        saveMessage && (
+                            <div className={`flex items-center space-x-2 px-3 py-1 rounded-md text-sm ${saveMessage.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                }`}>
+                                {
+                                    saveMessage.includes("success") ? (
+                                        <CheckCircle className="h-4 w-4" />
+                                    ) : (
+                                        <AlertCircle className="h-4 w-4" />
+                                    )
+                                }
+                                <span>{saveMessage}</span>
+                            </div>
+                        )
+                    }
+                    {
+                        isEditing ? (
+                            <>
+                                <Button variant="outline" onClick={() => setIsEditing(false)}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleSave} disabled={isSaving}>
+                                    {
+                                        isSaving ? (
+                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                        ) : (
+                                            <Save className="h-4 w-4 mr-2" />
+                                        )
+                                    }
+                                    Save Changes
+                                </Button>
+                            </>
+                        ) : (
+                            <Button onClick={() => setIsEditing(true)}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit Product
                             </Button>
-                            <Button onClick={handleSave} disabled={isSaving}>
-                                {isSaving ? (
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                ) : (
-                                    <Save className="h-4 w-4 mr-2" />
-                                )}
-                                Save Changes
-                            </Button>
-                        </>
-                    ) : (
-                        <Button onClick={() => setIsEditing(true)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Product
-                        </Button>
-                    )}
+                        )
+                    }
                 </div>
             </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Content */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Basic Information */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Basic Information</CardTitle>
@@ -326,7 +330,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                     disabled={!isEditing}
                                 />
                             </div>
-
                             <div>
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
@@ -337,7 +340,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                     rows={4}
                                 />
                             </div>
-
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="category">Category</Label>
@@ -348,12 +350,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         disabled={!isEditing}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        {productCategories.map(cat => (
-                                            <option key={cat.value} value={cat.value}>{cat.label}</option>
-                                        ))}
+                                        {
+                                            productCategories.map(cat => (
+                                                <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                            ))
+                                        }
                                     </select>
                                 </div>
-
                                 <div>
                                     <Label htmlFor="unit">Unit</Label>
                                     <select
@@ -363,16 +366,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         disabled={!isEditing}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        {units.map(unit => (
-                                            <option key={unit} value={unit}>{unit}</option>
-                                        ))}
+                                        {
+                                            units.map(unit => (
+                                                <option key={unit} value={unit}>{unit}</option>
+                                            ))
+                                        }
                                     </select>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Pricing and Inventory */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Pricing & Inventory</CardTitle>
@@ -394,7 +397,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         disabled={!isEditing}
                                     />
                                 </div>
-
                                 <div>
                                     <Label htmlFor="stock">Stock Quantity</Label>
                                     <Input
@@ -407,7 +409,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                     />
                                 </div>
                             </div>
-
                             <div className="flex items-center space-x-2">
                                 <Switch
                                     id="organicCertified"
@@ -419,8 +420,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Location */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Location Information</CardTitle>
@@ -440,7 +439,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         placeholder="e.g., Village/City name"
                                     />
                                 </div>
-
                                 <div>
                                     <Label htmlFor="district">District</Label>
                                     <Input
@@ -454,8 +452,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Dates */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Product Dates</CardTitle>
@@ -475,7 +471,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         disabled={!isEditing}
                                     />
                                 </div>
-
                                 <div>
                                     <Label htmlFor="expiryDate">Expiry Date</Label>
                                     <Input
@@ -489,8 +484,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Product Images */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Product Images</CardTitle>
@@ -499,76 +492,83 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {isEditing && (
-                                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
-                                    <div className="text-center">
-                                        <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                        <div className="space-y-2">
-                                            <Label
-                                                htmlFor="image-upload"
-                                                className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                                            >
-                                                {uploadingImages ? (
-                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                ) : (
-                                                    <Upload className="h-4 w-4 mr-2" />
-                                                )}
-                                                {uploadingImages ? "Uploading..." : "Upload Images"}
-                                            </Label>
-                                            <Input
-                                                id="image-upload"
-                                                type="file"
-                                                accept="image/*"
-                                                multiple
-                                                className="hidden"
-                                                onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
-                                                disabled={formData.images.length >= 5 || uploadingImages}
-                                            />
-                                            <p className="text-sm text-muted-foreground">
-                                                PNG, JPG up to 5MB each
-                                            </p>
+                            {
+                                isEditing && (
+                                    <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+                                        <div className="text-center">
+                                            <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                                            <div className="space-y-2">
+                                                <Label
+                                                    htmlFor="image-upload"
+                                                    className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                                >
+                                                    {
+                                                        uploadingImages ? (
+                                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                        ) : (
+                                                            <Upload className="h-4 w-4 mr-2" />
+                                                        )
+                                                    }
+                                                    {uploadingImages ? "Uploading..." : "Upload Images"}
+                                                </Label>
+                                                <Input
+                                                    id="image-upload"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    multiple
+                                                    className="hidden"
+                                                    onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                                                    disabled={formData.images.length >= 5 || uploadingImages}
+                                                />
+                                                <p className="text-sm text-muted-foreground">
+                                                    PNG, JPG up to 5MB each
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Image Preview */}
-                            {formData.images.length > 0 && (
-                                <div className="grid grid-cols-5 gap-4">
-                                    {formData.images.map((image, index) => (
-                                        <div key={index} className="relative group">
-                                            <div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
-                                                <Image
-                                                    src={image}
-                                                    alt={`Product image ${index + 1}`}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                            {isEditing && (
-                                                <Button
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    onClick={() => removeImage(index)}
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            )}
-                                            {index === 0 && (
-                                                <Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                )
+                            }
+                            {
+                                formData.images.length > 0 && (
+                                    <div className="grid grid-cols-5 gap-4">
+                                        {
+                                            formData.images.map((image, index) => (
+                                                <div key={index} className="relative group">
+                                                    <div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
+                                                        <Image
+                                                            src={image}
+                                                            alt={`Product image ${index + 1}`}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    </div>
+                                                    {
+                                                        isEditing && (
+                                                            <Button
+                                                                variant="destructive"
+                                                                size="icon"
+                                                                className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                onClick={() => removeImage(index)}
+                                                            >
+                                                                <X className="h-3 w-3" />
+                                                            </Button>
+                                                        )
+                                                    }
+                                                    {
+                                                        index === 0 && (
+                                                            <Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
+                                                        )
+                                                    }
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )
+                            }
                         </CardContent>
                     </Card>
                 </div>
-
-                {/* Sidebar */}
                 <div className="space-y-6">
-                    {/* Product Status */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Product Status</CardTitle>
@@ -584,32 +584,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                         {getStatusBadge(product.status)}
                                     </div>
                                 </div>
-                                {!isEditing && (
-                                    <Button variant="outline" size="sm" onClick={handleStatusToggle}>
-                                        Toggle Status
-                                    </Button>
-                                )}
+                                {
+                                    !isEditing && (
+                                        <Button variant="outline" size="sm" onClick={handleStatusToggle}>
+                                            Toggle Status
+                                        </Button>
+                                    )
+                                }
                             </div>
-
-                            {isEditing && (
-                                <div>
-                                    <Label htmlFor="status">Change Status</Label>
-                                    <select
-                                        id="status"
-                                        value={formData.status}
-                                        onChange={(e) => handleInputChange("status", e.target.value as ProductStatus)}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        {productStatuses.map(status => (
-                                            <option key={status.value} value={status.value}>{status.label}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
+                            {
+                                isEditing && (
+                                    <div>
+                                        <Label htmlFor="status">Change Status</Label>
+                                        <select
+                                            id="status"
+                                            value={formData.status}
+                                            onChange={(e) => handleInputChange("status", e.target.value as ProductStatus)}
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {
+                                                productStatuses.map(status => (
+                                                    <option key={status.value} value={status.value}>{status.label}</option>
+                                                ))
+                                            }
+                                        </select>
+                                    </div>
+                                )
+                            }
                         </CardContent>
                     </Card>
-
-                    {/* Product Summary */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Product Summary</CardTitle>
@@ -638,14 +641,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                                     <span className="text-sm text-muted-foreground">Location</span>
                                     <span className="font-medium">{product.location}, {product.district}</span>
                                 </div>
-                                {product.organicCertified && (
-                                    <div className="flex justify-between">
-                                        <span className="text-sm text-muted-foreground">Organic</span>
-                                        <Badge variant="secondary">Certified</Badge>
-                                    </div>
-                                )}
+                                {
+                                    product.organicCertified && (
+                                        <div className="flex justify-between">
+                                            <span className="text-sm text-muted-foreground">Organic</span>
+                                            <Badge variant="secondary">Certified</Badge>
+                                        </div>
+                                    )
+                                }
                             </div>
-
                             <div className="pt-4 border-t">
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
@@ -660,8 +664,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ produc
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Quick Actions */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Quick Actions</CardTitle>

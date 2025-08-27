@@ -12,7 +12,7 @@ import {
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import {
-    Dialog, DialogContent, DialogDescription, 
+    Dialog, DialogContent, DialogDescription,
     DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
@@ -68,12 +68,12 @@ export default function ContractorOpportunities() {
         try {
             setLoading(true)
             setError(null)
-            
+
             const result = await getFarmerProducts({
                 search: searchQuery,
                 category: selectedCategory === "all" ? undefined : selectedCategory
             })
-            
+
             if (result.success && result.products) {
                 setFarmerProducts(result.products as Product[])
             } else {
@@ -149,15 +149,12 @@ export default function ContractorOpportunities() {
 
     return (
         <div className="container mx-auto p-6 space-y-8">
-            {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold">Farmer Products - Bidding Opportunities</h1>
                     <p className="text-muted-foreground">Bid on fresh products directly from farmers</p>
                 </div>
             </div>
-
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -196,8 +193,6 @@ export default function ContractorOpportunities() {
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -214,217 +209,221 @@ export default function ContractorOpportunities() {
                     className="px-3 py-2 border rounded-md bg-background"
                 >
                     <option value="all">All Categories</option>
-                    {PRODUCT_CATEGORIES.map(category => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
+                    {
+                        PRODUCT_CATEGORIES.map(category => (
+                            <option key={category} value={category}>{category}</option>
+                        ))
+                    }
                 </select>
                 <Button variant="outline">
                     <Filter className="h-4 w-4 mr-2" />
                     More Filters
                 </Button>
             </div>
-
-            {/* Error State */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-700">{error}</p>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="mt-2"
-                        onClick={loadFarmerProducts}
-                    >
-                        Try Again
-                    </Button>
-                </div>
-            )}
-
-            {/* Loading State */}
-            {loading && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <ProductCardSkeleton key={i} />
-                    ))}
-                </div>
-            )}
-
-            {/* Products Grid */}
-            {!loading && !error && (
-                <>
-                    {filteredProducts.length === 0 ? (
-                        <div className="text-center py-12">
-                            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold mb-2">No products available</h3>
-                            <p className="text-muted-foreground">
-                                No farmer products match your current filters.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredProducts.map((product) => (
-                                <Card key={product.id} className="group hover:shadow-lg transition-shadow">
-                                    <CardHeader className="p-0">
-                                        <div className="relative h-48 w-full">
-                                            <Image
-                                                src={product.images[0] || "/placeholder-product.jpg"}
-                                                alt={product.name}
-                                                fill
-                                                className="object-cover rounded-t-lg"
-                                            />
-                                            <div className="absolute top-2 left-2">
-                                                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                                                    <Leaf className="h-3 w-3 mr-1" />
-                                                    From Farmer
-                                                </Badge>
-                                            </div>
-                                            <div className="absolute top-2 right-2">
-                                                <Badge variant="outline" className="bg-white/90">
-                                                    {product.category}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="p-4">
-                                        <div className="space-y-3">
-                                            <div>
-                                                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                                                    {product.name}
-                                                </h3>
-                                                <p className="text-sm text-muted-foreground line-clamp-2">
-                                                    {product.description}
-                                                </p>
-                                            </div>
-                                            
-                                            <div className="flex items-center space-x-2">
-                                                <User className="h-4 w-4 text-muted-foreground" />
-                                                <span className="text-sm text-muted-foreground">
-                                                    {product.farmer?.name}
-                                                </span>
-                                            </div>
-
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <span className="text-lg font-bold text-primary">
-                                                        NPR {product.price.toLocaleString()}
-                                                    </span>
-                                                    <span className="text-sm text-muted-foreground">
-                                                        /{product.unit}
-                                                    </span>
-                                                </div>
-                                                <div className="text-sm text-muted-foreground">
-                                                    Available: {product.stock} {product.unit}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex space-x-2 pt-2">
-                                                <Button variant="outline" size="sm" className="flex-1">
-                                                    <Eye className="h-4 w-4 mr-1" />
-                                                    View Details
-                                                </Button>
-                                                
-                                                <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <Button size="sm" className="flex-1">
-                                                            <Send className="h-4 w-4 mr-1" />
-                                                            Place Bid
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="sm:max-w-[425px]">
-                                                        <DialogHeader>
-                                                            <DialogTitle>Place Bid for {product.name}</DialogTitle>
-                                                            <DialogDescription>
-                                                                Submit your bid for this product. The farmer will review and respond.
-                                                            </DialogDescription>
-                                                        </DialogHeader>
-                                                        <div className="grid gap-4 py-4">
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label htmlFor="bidPrice" className="text-right">
-                                                                    Bid Price
-                                                                </Label>
-                                                                <Input
-                                                                    id="bidPrice"
-                                                                    type="number"
-                                                                    placeholder="Price per unit"
-                                                                    className="col-span-3"
-                                                                    value={bidFormData.bidPrice || ""}
-                                                                    onChange={(e) => setBidFormData({
-                                                                        ...bidFormData,
-                                                                        bidPrice: Number(e.target.value)
-                                                                    })}
-                                                                />
+            {
+                error && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p className="text-red-700">{error}</p>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2"
+                            onClick={loadFarmerProducts}
+                        >
+                            Try Again
+                        </Button>
+                    </div>
+                )
+            }
+            {
+                loading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {
+                            Array.from({ length: 6 }).map((_, i) => (
+                                <ProductCardSkeleton key={i} />
+                            ))
+                        }
+                    </div>
+                )
+            }
+            {
+                !loading && !error && (
+                    <>
+                        {
+                            filteredProducts.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                                    <h3 className="text-lg font-semibold mb-2">No products available</h3>
+                                    <p className="text-muted-foreground">
+                                        No farmer products match your current filters.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {
+                                        filteredProducts.map((product) => (
+                                            <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+                                                <CardHeader className="p-0">
+                                                    <div className="relative h-48 w-full">
+                                                        <Image
+                                                            src={product.images[0] || "/placeholder-product.jpg"}
+                                                            alt={product.name}
+                                                            fill
+                                                            className="object-cover rounded-t-lg"
+                                                        />
+                                                        <div className="absolute top-2 left-2">
+                                                            <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                                                <Leaf className="h-3 w-3 mr-1" />
+                                                                From Farmer
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="absolute top-2 right-2">
+                                                            <Badge variant="outline" className="bg-white/90">
+                                                                {product.category}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent className="p-4">
+                                                    <div className="space-y-3">
+                                                        <div>
+                                                            <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                                                                {product.name}
+                                                            </h3>
+                                                            <p className="text-sm text-muted-foreground line-clamp-2">
+                                                                {product.description}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <User className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="text-sm text-muted-foreground">
+                                                                {product.farmer?.name}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <div>
+                                                                <span className="text-lg font-bold text-primary">
+                                                                    NPR {product.price.toLocaleString()}
+                                                                </span>
+                                                                <span className="text-sm text-muted-foreground">
+                                                                    /{product.unit}
+                                                                </span>
                                                             </div>
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label htmlFor="quantity" className="text-right">
-                                                                    Quantity
-                                                                </Label>
-                                                                <Input
-                                                                    id="quantity"
-                                                                    type="number"
-                                                                    placeholder={`Quantity in ${product.unit}`}
-                                                                    className="col-span-3"
-                                                                    value={bidFormData.quantity || ""}
-                                                                    onChange={(e) => setBidFormData({
-                                                                        ...bidFormData,
-                                                                        quantity: Number(e.target.value)
-                                                                    })}
-                                                                />
-                                                            </div>
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label htmlFor="deliveryDate" className="text-right">
-                                                                    Delivery Date
-                                                                </Label>
-                                                                <Input
-                                                                    id="deliveryDate"
-                                                                    type="date"
-                                                                    className="col-span-3"
-                                                                    value={bidFormData.deliveryDate}
-                                                                    onChange={(e) => setBidFormData({
-                                                                        ...bidFormData,
-                                                                        deliveryDate: e.target.value
-                                                                    })}
-                                                                />
-                                                            </div>
-                                                            <div className="grid gap-2">
-                                                                <Label htmlFor="message">Message to Farmer</Label>
-                                                                <Textarea
-                                                                    id="message"
-                                                                    placeholder="Add any additional details or requirements..."
-                                                                    value={bidFormData.message}
-                                                                    onChange={(e) => setBidFormData({
-                                                                        ...bidFormData,
-                                                                        message: e.target.value
-                                                                    })}
-                                                                />
+                                                            <div className="text-sm text-muted-foreground">
+                                                                Available: {product.stock} {product.unit}
                                                             </div>
                                                         </div>
-                                                        <div className="flex justify-end space-x-2">
-                                                            <Button 
-                                                                variant="outline"
-                                                                onClick={() => setBidFormData({
-                                                                    productId: "",
-                                                                    bidPrice: 0,
-                                                                    quantity: 0,
-                                                                    message: "",
-                                                                    deliveryDate: ""
-                                                                })}
-                                                            >
-                                                                Cancel
+                                                        <div className="flex space-x-2 pt-2">
+                                                            <Button variant="outline" size="sm" className="flex-1">
+                                                                <Eye className="h-4 w-4 mr-1" />
+                                                                View Details
                                                             </Button>
-                                                            <Button onClick={() => handleBidSubmit(product.id)}>
-                                                                Submit Bid
-                                                            </Button>
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <Button size="sm" className="flex-1">
+                                                                        <Send className="h-4 w-4 mr-1" />
+                                                                        Place Bid
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="sm:max-w-[425px]">
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Place Bid for {product.name}</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            Submit your bid for this product. The farmer will review and respond.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    <div className="grid gap-4 py-4">
+                                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                                            <Label htmlFor="bidPrice" className="text-right">
+                                                                                Bid Price
+                                                                            </Label>
+                                                                            <Input
+                                                                                id="bidPrice"
+                                                                                type="number"
+                                                                                placeholder="Price per unit"
+                                                                                className="col-span-3"
+                                                                                value={bidFormData.bidPrice || ""}
+                                                                                onChange={(e) => setBidFormData({
+                                                                                    ...bidFormData,
+                                                                                    bidPrice: Number(e.target.value)
+                                                                                })}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                                            <Label htmlFor="quantity" className="text-right">
+                                                                                Quantity
+                                                                            </Label>
+                                                                            <Input
+                                                                                id="quantity"
+                                                                                type="number"
+                                                                                placeholder={`Quantity in ${product.unit}`}
+                                                                                className="col-span-3"
+                                                                                value={bidFormData.quantity || ""}
+                                                                                onChange={(e) => setBidFormData({
+                                                                                    ...bidFormData,
+                                                                                    quantity: Number(e.target.value)
+                                                                                })}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                                            <Label htmlFor="deliveryDate" className="text-right">
+                                                                                Delivery Date
+                                                                            </Label>
+                                                                            <Input
+                                                                                id="deliveryDate"
+                                                                                type="date"
+                                                                                className="col-span-3"
+                                                                                value={bidFormData.deliveryDate}
+                                                                                onChange={(e) => setBidFormData({
+                                                                                    ...bidFormData,
+                                                                                    deliveryDate: e.target.value
+                                                                                })}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="grid gap-2">
+                                                                            <Label htmlFor="message">Message to Farmer</Label>
+                                                                            <Textarea
+                                                                                id="message"
+                                                                                placeholder="Add any additional details or requirements..."
+                                                                                value={bidFormData.message}
+                                                                                onChange={(e) => setBidFormData({
+                                                                                    ...bidFormData,
+                                                                                    message: e.target.value
+                                                                                })}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="flex justify-end space-x-2">
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            onClick={() => setBidFormData({
+                                                                                productId: "",
+                                                                                bidPrice: 0,
+                                                                                quantity: 0,
+                                                                                message: "",
+                                                                                deliveryDate: ""
+                                                                            })}
+                                                                        >
+                                                                            Cancel
+                                                                        </Button>
+                                                                        <Button onClick={() => handleBidSubmit(product.id)}>
+                                                                            Submit Bid
+                                                                        </Button>
+                                                                    </div>
+                                                                </DialogContent>
+                                                            </Dialog>
                                                         </div>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </>
-            )}
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))
+                                    }
+                                </div>
+                            )
+                        }
+                    </>
+                )
+            }
         </div>
     )
 }

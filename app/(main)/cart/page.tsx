@@ -13,7 +13,9 @@ import { Separator } from "@/components/ui/separator"
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Loader2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { getCartItems, updateCartItemQuantity, removeFromCart } from "@/actions/(common)/cart.action"
+import {
+	getCartItems, updateCartItemQuantity, removeFromCart
+} from "@/actions/(common)/cart.action"
 
 interface CartItem {
 	id: string
@@ -85,14 +87,14 @@ export default function CartPage() {
 		if (newQuantity < 1) return
 
 		setUpdatingItems(prev => new Set(prev).add(itemId))
-		
+
 		try {
 			if (session?.user) {
 				const result = await updateCartItemQuantity(itemId, newQuantity)
 				if (result.success) {
-					setCartItems(prev => 
-						prev.map(item => 
-							item.id === itemId 
+					setCartItems(prev =>
+						prev.map(item =>
+							item.id === itemId
 								? { ...item, quantity: newQuantity }
 								: item
 						)
@@ -104,8 +106,8 @@ export default function CartPage() {
 			} else {
 				// Update localStorage for guest users
 				const localCart: GuestCartItem[] = JSON.parse(localStorage.getItem("guestCart") || "[]")
-				const updatedCart = localCart.map(item => 
-					item.productId === itemId 
+				const updatedCart = localCart.map(item =>
+					item.productId === itemId
 						? { ...item, quantity: newQuantity }
 						: item
 				)
@@ -126,7 +128,7 @@ export default function CartPage() {
 
 	const handleRemoveItem = async (itemId: string) => {
 		setUpdatingItems(prev => new Set(prev).add(itemId))
-		
+
 		try {
 			if (session?.user) {
 				const result = await removeFromCart(itemId)
@@ -183,9 +185,10 @@ export default function CartPage() {
 						<ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground" />
 						<h1 className="font-serif text-3xl font-bold">Your cart is empty</h1>
 						<p className="text-muted-foreground">
-							{!session?.user 
-								? "Sign in to save items to your cart and access your purchases"
-								: "Discover fresh products from local farmers"
+							{
+								!session?.user
+									? "Sign in to save items to your cart and access your purchases"
+									: "Discover fresh products from local farmers"
 							}
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -195,13 +198,15 @@ export default function CartPage() {
 									<ArrowRight className="ml-2 h-4 w-4" />
 								</Link>
 							</Button>
-							{!session?.user && (
-								<Button variant="outline" size="lg" asChild>
-									<Link href="/signin">
-										Sign In
-									</Link>
-								</Button>
-							)}
+							{
+								!session?.user && (
+									<Button variant="outline" size="lg" asChild>
+										<Link href="/signin">
+											Sign In
+										</Link>
+									</Button>
+								)
+							}
 						</div>
 					</div>
 				</div>
@@ -213,100 +218,94 @@ export default function CartPage() {
 	return (
 		<div className="min-h-screen bg-background">
 			<Header />
-
 			<div className="container mx-auto px-4 py-8">
 				<div className="mb-8">
 					<h1 className="font-serif text-3xl font-bold mb-2">Shopping Cart</h1>
 					<p className="text-muted-foreground">{cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart</p>
 				</div>
-
 				<div className="grid lg:grid-cols-3 gap-8">
-					{/* Cart Items */}
 					<div className="lg:col-span-2 space-y-4">
-						{cartItems.map((item) => (
-							<Card key={item.id}>
-								<CardContent className="p-6">
-									<div className="flex items-center space-x-4">
-										{/* Product Image */}
-										<div className="w-20 h-20 relative bg-gray-100 rounded-lg overflow-hidden">
-											{item.product.images && item.product.images.length > 0 ? (
-												<Image
-													src={item.product.images[0]}
-													alt={item.product.name}
-													fill
-													className="object-cover"
-												/>
-											) : (
-												<div className="w-full h-full flex items-center justify-center text-gray-400">
-													<ShoppingBag className="h-8 w-8" />
-												</div>
-											)}
+						{
+							cartItems.map((item) => (
+								<Card key={item.id}>
+									<CardContent className="p-6">
+										<div className="flex items-center space-x-4">
+											<div className="w-20 h-20 relative bg-gray-100 rounded-lg overflow-hidden">
+												{
+													item.product.images && item.product.images.length > 0 ? (
+														<Image
+															src={item.product.images[0]}
+															alt={item.product.name}
+															fill
+															className="object-cover"
+														/>
+													) : (
+														<div className="w-full h-full flex items-center justify-center text-gray-400">
+															<ShoppingBag className="h-8 w-8" />
+														</div>
+													)
+												}
+											</div>
+											<div className="flex-1">
+												<h3 className="font-semibold">{item.product.name}</h3>
+												<p className="text-sm text-muted-foreground">
+													by {item.product.farmer.name}
+													{item.product.farmer.district && ` • ${item.product.farmer.district}`}
+												</p>
+												<p className="text-lg font-bold text-primary">
+													Rs. {item.product.price.toFixed(2)} / {item.product.unit}
+												</p>
+												<Badge variant="secondary" className="mt-1">
+													{item.product.stock} {item.product.unit} available
+												</Badge>
+											</div>
+											<div className="flex items-center space-x-2">
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => handleQuantityUpdate(item.id, item.quantity - 1)}
+													disabled={item.quantity <= 1 || updatingItems.has(item.id)}
+												>
+													<Minus className="h-4 w-4" />
+												</Button>
+												<span className="w-8 text-center font-medium">
+													{
+														updatingItems.has(item.id) ? (
+															<Loader2 className="h-4 w-4 animate-spin mx-auto" />
+														) : (
+															item.quantity
+														)
+													}
+												</span>
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => handleQuantityUpdate(item.id, item.quantity + 1)}
+													disabled={item.quantity >= item.product.stock || updatingItems.has(item.id)}
+												>
+													<Plus className="h-4 w-4" />
+												</Button>
+											</div>
+											<div className="text-right">
+												<p className="font-bold text-lg">
+													Rs. {(item.product.price * item.quantity).toFixed(2)}
+												</p>
+												<Button
+													variant="ghost"
+													size="sm"
+													onClick={() => handleRemoveItem(item.id)}
+													disabled={updatingItems.has(item.id)}
+													className="text-red-600 hover:text-red-700 hover:bg-red-50"
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</div>
 										</div>
-
-										{/* Product Details */}
-										<div className="flex-1">
-											<h3 className="font-semibold">{item.product.name}</h3>
-											<p className="text-sm text-muted-foreground">
-												by {item.product.farmer.name}
-												{item.product.farmer.district && ` • ${item.product.farmer.district}`}
-											</p>
-											<p className="text-lg font-bold text-primary">
-												Rs. {item.product.price.toFixed(2)} / {item.product.unit}
-											</p>
-											<Badge variant="secondary" className="mt-1">
-												{item.product.stock} {item.product.unit} available
-											</Badge>
-										</div>
-
-										{/* Quantity Controls */}
-										<div className="flex items-center space-x-2">
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => handleQuantityUpdate(item.id, item.quantity - 1)}
-												disabled={item.quantity <= 1 || updatingItems.has(item.id)}
-											>
-												<Minus className="h-4 w-4" />
-											</Button>
-											<span className="w-8 text-center font-medium">
-												{updatingItems.has(item.id) ? (
-													<Loader2 className="h-4 w-4 animate-spin mx-auto" />
-												) : (
-													item.quantity
-												)}
-											</span>
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => handleQuantityUpdate(item.id, item.quantity + 1)}
-												disabled={item.quantity >= item.product.stock || updatingItems.has(item.id)}
-											>
-												<Plus className="h-4 w-4" />
-											</Button>
-										</div>
-
-										{/* Total Price */}
-										<div className="text-right">
-											<p className="font-bold text-lg">
-												Rs. {(item.product.price * item.quantity).toFixed(2)}
-											</p>
-											<Button
-												variant="ghost"
-												size="sm"
-												onClick={() => handleRemoveItem(item.id)}
-												disabled={updatingItems.has(item.id)}
-												className="text-red-600 hover:text-red-700 hover:bg-red-50"
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						))}
+									</CardContent>
+								</Card>
+							))
+						}
 					</div>
-
-					{/* Order Summary */}
 					<div className="space-y-6">
 						<Card>
 							<CardHeader>
@@ -322,32 +321,30 @@ export default function CartPage() {
 										<span>Delivery fee</span>
 										<span>{deliveryFee === 0 ? "FREE" : `Rs. ${deliveryFee}`}</span>
 									</div>
-									{deliveryFee === 0 && (
-										<p className="text-sm text-green-600">
-											🎉 Free delivery on orders over Rs. 1000
-										</p>
-									)}
+									{
+										deliveryFee === 0 && (
+											<p className="text-sm text-green-600">
+												🎉 Free delivery on orders over Rs. 1000
+											</p>
+										)
+									}
 									<Separator />
 									<div className="flex justify-between font-bold text-lg">
 										<span>Total</span>
 										<span>Rs. {total.toFixed(2)}</span>
 									</div>
 								</div>
-
 								<Button className="w-full" size="lg" asChild>
 									<Link href="/checkout">
 										Proceed to Checkout
 										<ArrowRight className="ml-2 h-4 w-4" />
 									</Link>
 								</Button>
-
 								<Button variant="outline" className="w-full" asChild>
 									<Link href="/products">Continue Shopping</Link>
 								</Button>
 							</CardContent>
 						</Card>
-
-						{/* Delivery Info */}
 						<Card>
 							<CardContent className="pt-6">
 								<div className="space-y-3 text-sm">
@@ -364,7 +361,6 @@ export default function CartPage() {
 					</div>
 				</div>
 			</div>
-
 			<Footer />
 		</div>
 	)

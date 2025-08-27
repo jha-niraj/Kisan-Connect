@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { 
+import {
 	ArrowRight, Store, TrendingUp, Users, ShoppingCart, Package, Star, BarChart3
 } from "lucide-react"
 import Link from "next/link"
@@ -39,7 +39,7 @@ const features = [
 		icon: <Package className="h-6 w-6" />
 	},
 	{
-		title: "Inventory Tracking", 
+		title: "Inventory Tracking",
 		description: "Keep track of your stock levels and get notified when items are running low",
 		icon: <BarChart3 className="h-6 w-6" />
 	},
@@ -59,7 +59,6 @@ export default function SellerLanding() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-neutral-900">
 			<div className="max-w-7xl mx-auto">
-				{/* Hero Section */}
 				<section className="pt-20 pb-16 px-6">
 					<div className="grid lg:grid-cols-2 gap-12 items-center">
 						<motion.div
@@ -80,7 +79,6 @@ export default function SellerLanding() {
 									Build a thriving agricultural business with our comprehensive e-commerce platform. Reach more customers, increase sales, and grow your revenue with KisanConnect.
 								</p>
 							</div>
-							
 							<div className="flex flex-col sm:flex-row gap-4">
 								<Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg" asChild>
 									<Link href="/signup?ref=seller">
@@ -94,7 +92,6 @@ export default function SellerLanding() {
 									</Link>
 								</Button>
 							</div>
-
 							<div className="grid grid-cols-3 gap-6 pt-8">
 								<div className="text-center">
 									<div className="text-3xl font-bold text-blue-600">2000+</div>
@@ -110,7 +107,6 @@ export default function SellerLanding() {
 								</div>
 							</div>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, x: 50 }}
 							animate={{ opacity: 1, x: 0 }}
@@ -140,11 +136,9 @@ export default function SellerLanding() {
 						</motion.div>
 					</div>
 				</section>
-
-				{/* Benefits Section */}
 				<section className="py-20 px-6">
 					<div className="text-center mb-16">
-						<motion.h2 
+						<motion.h2
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6 }}
@@ -152,7 +146,7 @@ export default function SellerLanding() {
 						>
 							Why Sell on KisanConnect?
 						</motion.h2>
-						<motion.p 
+						<motion.p
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, delay: 0.1 }}
@@ -161,33 +155,32 @@ export default function SellerLanding() {
 							Join successful sellers who are growing their business with our platform
 						</motion.p>
 					</div>
-
 					<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-						{benefits.map((benefit, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 30 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.6, delay: index * 0.1 }}
-							>
-								<Card className="h-full hover:shadow-lg transition-shadow">
-									<CardContent className="p-6 text-center">
-										<div className="mb-4 flex justify-center">
-											{benefit.icon}
-										</div>
-										<h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-										<p className="text-gray-600 dark:text-gray-300">{benefit.description}</p>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+						{
+							benefits.map((benefit, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 30 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.6, delay: index * 0.1 }}
+								>
+									<Card className="h-full hover:shadow-lg transition-shadow">
+										<CardContent className="p-6 text-center">
+											<div className="mb-4 flex justify-center">
+												{benefit.icon}
+											</div>
+											<h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
+											<p className="text-gray-600 dark:text-gray-300">{benefit.description}</p>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
 				</section>
-
-				{/* Features Section */}
 				<section className="py-20 px-6 bg-blue-50 dark:bg-blue-950/20 rounded-3xl mx-6">
 					<div className="text-center mb-16">
-						<motion.h2 
+						<motion.h2
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6 }}
@@ -195,7 +188,7 @@ export default function SellerLanding() {
 						>
 							Powerful Selling Tools
 						</motion.h2>
-						<motion.p 
+						<motion.p
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, delay: 0.1 }}
@@ -204,32 +197,31 @@ export default function SellerLanding() {
 							Everything you need to run a successful online agricultural business
 						</motion.p>
 					</div>
-
 					<div className="grid md:grid-cols-2 gap-8">
-						{features.map((feature, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-								whileInView={{ opacity: 1, x: 0 }}
-								transition={{ duration: 0.6, delay: index * 0.1 }}
-								className="flex items-start space-x-4"
-							>
-								<div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-									{feature.icon}
-								</div>
-								<div>
-									<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{feature.title}</h3>
-									<p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-								</div>
-							</motion.div>
-						))}
+						{
+							features.map((feature, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+									whileInView={{ opacity: 1, x: 0 }}
+									transition={{ duration: 0.6, delay: index * 0.1 }}
+									className="flex items-start space-x-4"
+								>
+									<div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+										{feature.icon}
+									</div>
+									<div>
+										<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{feature.title}</h3>
+										<p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+									</div>
+								</motion.div>
+							))
+						}
 					</div>
 				</section>
-
-				{/* Testimonials Section */}
 				<section className="py-20 px-6">
 					<div className="text-center mb-16">
-						<motion.h2 
+						<motion.h2
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6 }}
@@ -238,54 +230,55 @@ export default function SellerLanding() {
 							Success Stories
 						</motion.h2>
 					</div>
-
 					<div className="grid md:grid-cols-3 gap-8">
-						{[
-							{
-								name: "Aarti Enterprises",
-								location: "Kathmandu",
-								text: "Our online sales tripled within 6 months of joining KisanConnect. The platform is incredibly user-friendly!",
-								rating: 5
-							},
-							{
-								name: "Nepal Organic Store",
-								location: "Pokhara",
-								text: "Best platform for agricultural businesses. The analytics help us make better decisions.",
-								rating: 5
-							},
-							{
-								name: "Fresh Valley Products",
-								location: "Biratnagar",
-								text: "Customer support is amazing and the payment system is very reliable.",
-								rating: 5
-							}
-						].map((testimonial, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 30 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.6, delay: index * 0.1 }}
-							>
-								<Card className="p-6">
-									<CardContent className="space-y-4">
-										<div className="flex space-x-1">
-											{[...Array(testimonial.rating)].map((_, i) => (
-												<Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-											))}
-										</div>
-										<p className="text-gray-600 dark:text-gray-300">&quot;{testimonial.text}&quot;</p>
-										<div>
-											<p className="font-semibold">{testimonial.name}</p>
-											<p className="text-sm text-gray-500">{testimonial.location}</p>
-										</div>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+						{
+							[
+								{
+									name: "Aarti Enterprises",
+									location: "Kathmandu",
+									text: "Our online sales tripled within 6 months of joining KisanConnect. The platform is incredibly user-friendly!",
+									rating: 5
+								},
+								{
+									name: "Nepal Organic Store",
+									location: "Pokhara",
+									text: "Best platform for agricultural businesses. The analytics help us make better decisions.",
+									rating: 5
+								},
+								{
+									name: "Fresh Valley Products",
+									location: "Biratnagar",
+									text: "Customer support is amazing and the payment system is very reliable.",
+									rating: 5
+								}
+							].map((testimonial, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 30 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.6, delay: index * 0.1 }}
+								>
+									<Card className="p-6">
+										<CardContent className="space-y-4">
+											<div className="flex space-x-1">
+												{
+													[...Array(testimonial.rating)].map((_, i) => (
+														<Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+													))
+												}
+											</div>
+											<p className="text-gray-600 dark:text-gray-300">&quot;{testimonial.text}&quot;</p>
+											<div>
+												<p className="font-semibold">{testimonial.name}</p>
+												<p className="text-sm text-gray-500">{testimonial.location}</p>
+											</div>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
 				</section>
-
-				{/* CTA Section */}
 				<section className="py-20 px-6">
 					<motion.div
 						initial={{ opacity: 0, scale: 0.95 }}

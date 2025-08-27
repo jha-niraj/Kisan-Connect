@@ -84,9 +84,11 @@ export default function SellerProductsPage() {
                 <div className="space-y-6">
                     <div className="h-8 bg-gray-200 rounded w-64"></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[...Array(6)].map((_, i) => (
-                            <div key={i} className="h-80 bg-gray-200 rounded-lg"></div>
-                        ))}
+                        {
+                            [...Array(6)].map((_, i) => (
+                                <div key={i} className="h-80 bg-gray-200 rounded-lg"></div>
+                            ))
+                        }
                     </div>
                 </div>
             </div>
@@ -99,7 +101,6 @@ export default function SellerProductsPage() {
 
     return (
         <div className="container mx-auto p-6 space-y-8">
-            {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold">My Products</h1>
@@ -112,8 +113,6 @@ export default function SellerProductsPage() {
                     </Link>
                 </Button>
             </div>
-
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -124,7 +123,6 @@ export default function SellerProductsPage() {
                         <div className="text-2xl font-bold">{products.length}</div>
                     </CardContent>
                 </Card>
-
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active</CardTitle>
@@ -136,7 +134,6 @@ export default function SellerProductsPage() {
                         </div>
                     </CardContent>
                 </Card>
-
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Sold Out</CardTitle>
@@ -148,7 +145,6 @@ export default function SellerProductsPage() {
                         </div>
                     </CardContent>
                 </Card>
-
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Pending</CardTitle>
@@ -161,88 +157,85 @@ export default function SellerProductsPage() {
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Products Grid */}
-            {products.length === 0 ? (
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="text-center py-12">
-                            <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                            <h3 className="text-lg font-semibold mb-2">No products found</h3>
-                            <p className="text-muted-foreground mb-4">You haven&apos;t added any products yet.</p>
-                            <Button asChild>
-                                <Link href="/seller/products/new">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Add Your First Product
-                                </Link>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {products.map((product) => (
-                        <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                            <div className="aspect-square relative">
-                                <Image
-                                    src={product.images[0] || "/placeholder.jpg"}
-                                    alt={product.name}
-                                    fill
-                                    className="object-cover"
-                                />
-                                <div className="absolute top-2 right-2">
-                                    {getStatusBadge(product.status)}
-                                </div>
+            {
+                products.length === 0 ? (
+                    <Card>
+                        <CardContent className="pt-6">
+                            <div className="text-center py-12">
+                                <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                                <h3 className="text-lg font-semibold mb-2">No products found</h3>
+                                <p className="text-muted-foreground mb-4">You haven&apos;t added any products yet.</p>
+                                <Button asChild>
+                                    <Link href="/seller/products/new">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Add Your First Product
+                                    </Link>
+                                </Button>
                             </div>
-
-                            <CardContent className="p-4">
-                                <div className="space-y-2">
-                                    <h3 className="font-semibold line-clamp-1">{product.name}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {product.description}
-                                    </p>
-
-                                    <div className="flex justify-between items-center">
-                                        <div>
-                                            <span className="text-lg font-bold">₹{product.price}</span>
-                                            <span className="text-sm text-muted-foreground">/{product.unit}</span>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {
+                            products.map((product) => (
+                                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div className="aspect-square relative">
+                                        <Image
+                                            src={product.images[0] || "/placeholder.jpg"}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                        <div className="absolute top-2 right-2">
+                                            {getStatusBadge(product.status)}
                                         </div>
-                                        <span className="text-sm text-muted-foreground">
-                                            Stock: {product.stock}
-                                        </span>
                                     </div>
-
-                                    <div className="flex gap-2 pt-2">
-                                        <Button size="sm" variant="outline" asChild className="flex-1">
-                                            <Link href={`/seller/products/${product.id}`}>
-                                                <Edit className="h-4 w-4 mr-1" />
-                                                Edit
-                                            </Link>
-                                        </Button>
-
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => handleToggleStatus(product.id)}
-                                            className="flex-1"
-                                        >
-                                            {product.status === ProductStatus.ACTIVE ? "Hide" : "Show"}
-                                        </Button>
-
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            onClick={() => handleDeleteProduct(product.id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
+                                    <CardContent className="p-4">
+                                        <div className="space-y-2">
+                                            <h3 className="font-semibold line-clamp-1">{product.name}</h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-2">
+                                                {product.description}
+                                            </p>
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <span className="text-lg font-bold">₹{product.price}</span>
+                                                    <span className="text-sm text-muted-foreground">/{product.unit}</span>
+                                                </div>
+                                                <span className="text-sm text-muted-foreground">
+                                                    Stock: {product.stock}
+                                                </span>
+                                            </div>
+                                            <div className="flex gap-2 pt-2">
+                                                <Button size="sm" variant="outline" asChild className="flex-1">
+                                                    <Link href={`/seller/products/${product.id}`}>
+                                                        <Edit className="h-4 w-4 mr-1" />
+                                                        Edit
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handleToggleStatus(product.id)}
+                                                    className="flex-1"
+                                                >
+                                                    {product.status === ProductStatus.ACTIVE ? "Hide" : "Show"}
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="destructive"
+                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        }
+                    </div>
+                )
+            }
         </div>
     )
 }

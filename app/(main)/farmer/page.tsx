@@ -81,7 +81,6 @@ const testimonials = [
 export default function FarmerLandingPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-green-950 dark:via-gray-900 dark:to-emerald-950">
-			{/* Navigation */}
 			<nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-green-200 dark:border-green-800">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center py-4">
@@ -110,8 +109,6 @@ export default function FarmerLandingPage() {
 					</div>
 				</div>
 			</nav>
-
-			{/* Hero Section */}
 			<section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
 				<div className="max-w-7xl mx-auto">
 					<div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -177,7 +174,6 @@ export default function FarmerLandingPage() {
 									className="rounded-lg w-full"
 								/>
 							</div>
-							{/* Floating elements */}
 							<motion.div
 								animate={{ y: [0, -10, 0] }}
 								transition={{ duration: 3, repeat: Infinity }}
@@ -196,8 +192,6 @@ export default function FarmerLandingPage() {
 					</div>
 				</div>
 			</section>
-
-			{/* Benefits Section */}
 			<section className="py-20 bg-white/50 dark:bg-gray-900/50">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<motion.div
@@ -214,33 +208,33 @@ export default function FarmerLandingPage() {
 						</p>
 					</motion.div>
 					<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-						{benefits.map((benefit, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.8, delay: index * 0.1 }}
-							>
-								<Card className="text-center h-full hover:shadow-lg transition-shadow">
-									<CardContent className="p-6">
-										<div className="flex justify-center mb-4">
-											{benefit.icon}
-										</div>
-										<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-											{benefit.title}
-										</h3>
-										<p className="text-gray-600 dark:text-gray-300">
-											{benefit.description}
-										</p>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+						{
+							benefits.map((benefit, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 20 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.8, delay: index * 0.1 }}
+								>
+									<Card className="text-center h-full hover:shadow-lg transition-shadow">
+										<CardContent className="p-6">
+											<div className="flex justify-center mb-4">
+												{benefit.icon}
+											</div>
+											<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+												{benefit.title}
+											</h3>
+											<p className="text-gray-600 dark:text-gray-300">
+												{benefit.description}
+											</p>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
 				</div>
 			</section>
-
-			{/* Features Section */}
 			<section className="py-20">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<motion.div
@@ -257,35 +251,35 @@ export default function FarmerLandingPage() {
 						</p>
 					</motion.div>
 					<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-						{features.map((feature, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.8, delay: index * 0.1 }}
-							>
-								<Card className="h-full hover:shadow-lg transition-shadow">
-									<CardContent className="p-6">
-										<div className="flex items-center space-x-3 mb-4">
-											<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-												{feature.icon}
+						{
+							features.map((feature, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 20 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.8, delay: index * 0.1 }}
+								>
+									<Card className="h-full hover:shadow-lg transition-shadow">
+										<CardContent className="p-6">
+											<div className="flex items-center space-x-3 mb-4">
+												<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+													{feature.icon}
+												</div>
+												<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+													{feature.title}
+												</h3>
 											</div>
-											<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-												{feature.title}
-											</h3>
-										</div>
-										<p className="text-gray-600 dark:text-gray-300">
-											{feature.description}
-										</p>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+											<p className="text-gray-600 dark:text-gray-300">
+												{feature.description}
+											</p>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
 				</div>
 			</section>
-
-			{/* Testimonials Section */}
 			<section className="py-20 bg-green-50 dark:bg-green-950">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<motion.div
@@ -302,47 +296,47 @@ export default function FarmerLandingPage() {
 						</p>
 					</motion.div>
 					<div className="grid md:grid-cols-3 gap-8">
-						{testimonials.map((testimonial, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.8, delay: index * 0.2 }}
-							>
-								<Card className="h-full">
-									<CardContent className="p-6">
-										<div className="flex items-center space-x-4 mb-4">
-											<Image
-												src={testimonial.image}
-												alt={testimonial.name}
-												width={48}
-												height={48}
-												className="rounded-full"
-											/>
-											<div>
-												<h4 className="font-semibold text-gray-900 dark:text-white">
-													{testimonial.name}
-												</h4>
-												<p className="text-sm text-gray-600 dark:text-gray-400">
-													{testimonial.location}
-												</p>
+						{
+							testimonials.map((testimonial, index) => (
+								<motion.div
+									key={index}
+									initial={{ opacity: 0, y: 20 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.8, delay: index * 0.2 }}
+								>
+									<Card className="h-full">
+										<CardContent className="p-6">
+											<div className="flex items-center space-x-4 mb-4">
+												<Image
+													src={testimonial.image}
+													alt={testimonial.name}
+													width={48}
+													height={48}
+													className="rounded-full"
+												/>
+												<div>
+													<h4 className="font-semibold text-gray-900 dark:text-white">
+														{testimonial.name}
+													</h4>
+													<p className="text-sm text-gray-600 dark:text-gray-400">
+														{testimonial.location}
+													</p>
+												</div>
 											</div>
-										</div>
-										<blockquote className="text-gray-700 dark:text-gray-300 mb-2">
-											&quot;{testimonial.quote}&quot;
-										</blockquote>
-										<p className="text-sm text-gray-500 dark:text-gray-500 italic">
-											{testimonial.translation}
-										</p>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+											<blockquote className="text-gray-700 dark:text-gray-300 mb-2">
+												&quot;{testimonial.quote}&quot;
+											</blockquote>
+											<p className="text-sm text-gray-500 dark:text-gray-500 italic">
+												{testimonial.translation}
+											</p>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))
+						}
 					</div>
 				</div>
 			</section>
-
-			{/* CTA Section */}
 			<section className="py-20 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<motion.div
@@ -354,7 +348,7 @@ export default function FarmerLandingPage() {
 							Ready to Transform Your Farming Business?
 						</h2>
 						<p className="text-xl mb-8 max-w-2xl mx-auto">
-							Join KisanConnect today and start earning better prices for your crops. 
+							Join KisanConnect today and start earning better prices for your crops.
 							Setup takes less than 5 minutes.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -373,8 +367,6 @@ export default function FarmerLandingPage() {
 					</motion.div>
 				</div>
 			</section>
-
-			{/* Footer */}
 			<footer className="bg-gray-900 text-white py-12">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid md:grid-cols-4 gap-8">
@@ -418,7 +410,7 @@ export default function FarmerLandingPage() {
 						</div>
 					</div>
 					<div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-						<p>&copy; 2024 KisanConnect. All rights reserved.</p>
+						<p>&copy; 2025 KisanConnect. All rights reserved.</p>
 					</div>
 				</div>
 			</footer>

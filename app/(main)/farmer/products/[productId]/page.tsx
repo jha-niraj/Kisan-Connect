@@ -3,26 +3,24 @@
 import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter, useParams } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import {
-	Upload,
-	X,
-	ImageIcon,
-	Loader2,
-	ArrowLeft,
-	Save,
-	Trash2
+	Upload, X, ImageIcon, Loader2, ArrowLeft, Save, Trash2
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { redirect } from "next/navigation"
 import { uploadToCloudinary } from "@/actions/(common)/utils.action"
-import { updateProduct, getProductById, deleteProduct } from "@/actions/(seller)/seller.action"
+import {
+	updateProduct, getProductById, deleteProduct
+} from "@/actions/(seller)/seller.action"
 import { Role, ProductCategory, ProductStatus } from '@prisma/client';
 
 const categories: ProductCategory[] = [
@@ -85,7 +83,7 @@ export default function EditProduct() {
 	const router = useRouter()
 	const params = useParams()
 	const productId = params.productId as string
-	
+
 	const [isLoading, setIsLoading] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
 	const [uploadingImages, setUploadingImages] = useState(false)
@@ -110,7 +108,7 @@ export default function EditProduct() {
 		try {
 			setLoading(true)
 			const result = await getProductById(productId)
-			
+
 			if (result.success && result.product) {
 				const product = result.product
 				setFormData({
@@ -236,7 +234,7 @@ export default function EditProduct() {
 		setIsDeleting(true)
 		try {
 			const result = await deleteProduct(productId)
-			
+
 			if (result.success) {
 				router.push('/farmer/products')
 			} else {
@@ -265,7 +263,6 @@ export default function EditProduct() {
 
 	return (
 		<div className="container mx-auto p-6 space-y-8">
-			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
 					<Button variant="ghost" size="icon" asChild>
@@ -284,31 +281,32 @@ export default function EditProduct() {
 						onClick={handleDelete}
 						disabled={isDeleting}
 					>
-						{isDeleting ? (
-							<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-						) : (
-							<Trash2 className="h-4 w-4 mr-2" />
-						)}
+						{
+							isDeleting ? (
+								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+							) : (
+								<Trash2 className="h-4 w-4 mr-2" />
+							)
+						}
 						Delete Product
 					</Button>
 					<Button
 						onClick={handleSubmit}
 						disabled={isLoading || !formData.name || formData.price <= 0 || !formData.location || !formData.district}
 					>
-						{isLoading ? (
-							<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-						) : (
-							<Save className="h-4 w-4 mr-2" />
-						)}
+						{
+							isLoading ? (
+								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+							) : (
+								<Save className="h-4 w-4 mr-2" />
+							)
+						}
 						Update Product
 					</Button>
 				</div>
 			</div>
-
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-				{/* Main Form */}
 				<div className="lg:col-span-2 space-y-6">
-					{/* Basic Information */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Basic Information</CardTitle>
@@ -326,7 +324,6 @@ export default function EditProduct() {
 									onChange={(e) => handleInputChange("name", e.target.value)}
 								/>
 							</div>
-
 							<div>
 								<Label htmlFor="description">Description *</Label>
 								<Textarea
@@ -337,7 +334,6 @@ export default function EditProduct() {
 									rows={4}
 								/>
 							</div>
-
 							<div className="grid grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="category">Category *</Label>
@@ -347,12 +343,13 @@ export default function EditProduct() {
 										onChange={(e) => handleInputChange("category", e.target.value as ProductCategory)}
 										className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									>
-										{categories.map(category => (
-											<option key={category} value={category}>{categoryLabels[category]}</option>
-										))}
+										{
+											categories.map(category => (
+												<option key={category} value={category}>{categoryLabels[category]}</option>
+											))
+										}
 									</select>
 								</div>
-
 								<div>
 									<Label htmlFor="unit">Unit</Label>
 									<select
@@ -361,16 +358,16 @@ export default function EditProduct() {
 										onChange={(e) => handleInputChange("unit", e.target.value)}
 										className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									>
-										{units.map(unit => (
-											<option key={unit} value={unit}>{unit}</option>
-										))}
+										{
+											units.map(unit => (
+												<option key={unit} value={unit}>{unit}</option>
+											))
+										}
 									</select>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Pricing and Inventory */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Pricing & Inventory</CardTitle>
@@ -392,7 +389,6 @@ export default function EditProduct() {
 										onChange={(e) => handleInputChange("price", parseFloat(e.target.value) || 0)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="stock">Stock Quantity *</Label>
 									<Input
@@ -407,8 +403,6 @@ export default function EditProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Product Status */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Status</CardTitle>
@@ -433,8 +427,6 @@ export default function EditProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Location Information */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Location Information</CardTitle>
@@ -453,7 +445,6 @@ export default function EditProduct() {
 										onChange={(e) => handleInputChange("location", e.target.value)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="district">District *</Label>
 									<Input
@@ -466,8 +457,6 @@ export default function EditProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Product Details */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Details</CardTitle>
@@ -486,7 +475,6 @@ export default function EditProduct() {
 								/>
 								<Label htmlFor="organicCertified">Organic Certified</Label>
 							</div>
-
 							<div className="grid grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="harvestDate">Harvest Date</Label>
@@ -497,7 +485,6 @@ export default function EditProduct() {
 										onChange={(e) => handleInputChange("harvestDate", e.target.value ? new Date(e.target.value) : undefined)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="expiryDate">Expiry Date</Label>
 									<Input
@@ -510,8 +497,6 @@ export default function EditProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Product Images */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Images</CardTitle>
@@ -520,7 +505,6 @@ export default function EditProduct() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							{/* Upload Area */}
 							<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
 								<div className="text-center">
 									<ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -529,11 +513,13 @@ export default function EditProduct() {
 											htmlFor="image-upload"
 											className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
 										>
-											{uploadingImages ? (
-												<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-											) : (
-												<Upload className="h-4 w-4 mr-2" />
-											)}
+											{
+												uploadingImages ? (
+													<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+												) : (
+													<Upload className="h-4 w-4 mr-2" />
+												)
+											}
 											{uploadingImages ? "Uploading..." : "Upload Images"}
 										</Label>
 										<Input
@@ -551,40 +537,42 @@ export default function EditProduct() {
 									</div>
 								</div>
 							</div>
-
-							{/* Image Preview */}
-							{formData.images.length > 0 && (
-								<div className="grid grid-cols-5 gap-4">
-									{formData.images.map((image, index) => (
-										<div key={index} className="relative group">
-											<div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
-												<Image
-													src={image}
-													alt={`Product image ${index + 1}`}
-													fill
-													className="object-cover"
-												/>
-											</div>
-											<Button
-												variant="destructive"
-												size="icon"
-												className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-												onClick={() => removeImage(index)}
-											>
-												<X className="h-3 w-3" />
-											</Button>
-											{index === 0 && (
-												<Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
-											)}
-										</div>
-									))}
-								</div>
-							)}
+							{
+								formData.images.length > 0 && (
+									<div className="grid grid-cols-5 gap-4">
+										{
+											formData.images.map((image, index) => (
+												<div key={index} className="relative group">
+													<div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
+														<Image
+															src={image}
+															alt={`Product image ${index + 1}`}
+															fill
+															className="object-cover"
+														/>
+													</div>
+													<Button
+														variant="destructive"
+														size="icon"
+														className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+														onClick={() => removeImage(index)}
+													>
+														<X className="h-3 w-3" />
+													</Button>
+													{
+														index === 0 && (
+															<Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
+														)
+													}
+												</div>
+											))
+										}
+									</div>
+								)
+							}
 						</CardContent>
 					</Card>
 				</div>
-
-				{/* Product Preview */}
 				<div className="lg:col-span-1">
 					<Card className="sticky top-6">
 						<CardHeader>
@@ -594,23 +582,22 @@ export default function EditProduct() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							{/* Main Image */}
 							<div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden">
-								{formData.images.length > 0 ? (
-									<Image
-										src={formData.images[0]}
-										alt="Product preview"
-										fill
-										className="object-cover"
-									/>
-								) : (
-									<div className="flex items-center justify-center h-full">
-										<ImageIcon className="h-12 w-12 text-muted-foreground" />
-									</div>
-								)}
+								{
+									formData.images.length > 0 ? (
+										<Image
+											src={formData.images[0]}
+											alt="Product preview"
+											fill
+											className="object-cover"
+										/>
+									) : (
+										<div className="flex items-center justify-center h-full">
+											<ImageIcon className="h-12 w-12 text-muted-foreground" />
+										</div>
+									)
+								}
 							</div>
-
-							{/* Product Info */}
 							<div className="space-y-2">
 								<h3 className="font-semibold text-lg">
 									{formData.name || "Product Name"}
@@ -627,54 +614,60 @@ export default function EditProduct() {
 									</Badge>
 								</div>
 							</div>
-
-							{/* Status */}
 							<div>
 								<Badge variant={
 									formData.status === ProductStatus.ACTIVE ? "default" :
-									formData.status === ProductStatus.INACTIVE ? "secondary" :
-									formData.status === ProductStatus.SOLD_OUT ? "destructive" : "outline"
+										formData.status === ProductStatus.INACTIVE ? "secondary" :
+											formData.status === ProductStatus.SOLD_OUT ? "destructive" : "outline"
 								}>
 									{formData.status}
 								</Badge>
 							</div>
-
-							{/* Category and Location */}
-							{(formData.category || formData.location) && (
-								<div className="space-y-2">
-									{formData.category && (
-										<Badge variant="secondary">{categoryLabels[formData.category]}</Badge>
-									)}
-									{formData.location && (
-										<p className="text-sm text-muted-foreground">
-											📍 {formData.location}{formData.district ? `, ${formData.district}` : ""}
-										</p>
-									)}
-								</div>
-							)}
-
-							{/* Organic Certification */}
-							{formData.organicCertified && (
-								<div>
-									<Badge variant="default" className="bg-green-600">🌱 Organic Certified</Badge>
-								</div>
-							)}
-
-							{/* Dates */}
-							{(formData.harvestDate || formData.expiryDate) && (
-								<div className="text-sm space-y-1">
-									{formData.harvestDate && (
-										<p className="text-muted-foreground">
-											Harvested: {formData.harvestDate.toLocaleDateString()}
-										</p>
-									)}
-									{formData.expiryDate && (
-										<p className="text-muted-foreground">
-											Expires: {formData.expiryDate.toLocaleDateString()}
-										</p>
-									)}
-								</div>
-							)}
+							{
+								(formData.category || formData.location) && (
+									<div className="space-y-2">
+										{
+											formData.category && (
+												<Badge variant="secondary">{categoryLabels[formData.category]}</Badge>
+											)
+										}
+										{
+											formData.location && (
+												<p className="text-sm text-muted-foreground">
+													📍 {formData.location}{formData.district ? `, ${formData.district}` : ""}
+												</p>
+											)
+										}
+									</div>
+								)
+							}
+							{
+								formData.organicCertified && (
+									<div>
+										<Badge variant="default" className="bg-green-600">🌱 Organic Certified</Badge>
+									</div>
+								)
+							}
+							{
+								(formData.harvestDate || formData.expiryDate) && (
+									<div className="text-sm space-y-1">
+										{
+											formData.harvestDate && (
+												<p className="text-muted-foreground">
+													Harvested: {formData.harvestDate.toLocaleDateString()}
+												</p>
+											)
+										}
+										{
+											formData.expiryDate && (
+												<p className="text-muted-foreground">
+													Expires: {formData.expiryDate.toLocaleDateString()}
+												</p>
+											)
+										}
+									</div>
+								)
+							}
 						</CardContent>
 					</Card>
 				</div>

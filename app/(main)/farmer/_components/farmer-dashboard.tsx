@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { 
-	Card, CardContent, CardDescription, 
-	CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription,
+	CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -84,9 +84,11 @@ export default function FarmerDashboard() {
 					<div className="h-10 bg-gray-200 rounded w-32"></div>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-					{[...Array(4)].map((_, i) => (
-						<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-					))}
+					{
+						[...Array(4)].map((_, i) => (
+							<div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+						))
+					}
 				</div>
 			</div>
 		)
@@ -94,7 +96,6 @@ export default function FarmerDashboard() {
 
 	return (
 		<div className="space-y-8">
-			{/* Header */}
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
 					<h1 className="font-serif text-3xl font-bold mb-2">Farmer Dashboard</h1>
@@ -117,8 +118,6 @@ export default function FarmerDashboard() {
 					</Button>
 				</div>
 			</div>
-
-			{/* Stats Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 					<Card>
@@ -133,7 +132,6 @@ export default function FarmerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -151,7 +149,6 @@ export default function FarmerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -169,7 +166,6 @@ export default function FarmerDashboard() {
 						</CardContent>
 					</Card>
 				</motion.div>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -191,8 +187,6 @@ export default function FarmerDashboard() {
 					</Card>
 				</motion.div>
 			</div>
-
-			{/* Content Tabs */}
 			<Tabs defaultValue="overview" className="space-y-6">
 				<TabsList>
 					<TabsTrigger value="overview">Overview</TabsTrigger>
@@ -200,11 +194,8 @@ export default function FarmerDashboard() {
 					<TabsTrigger value="bidding">Bidding</TabsTrigger>
 					<TabsTrigger value="orders">Orders</TabsTrigger>
 				</TabsList>
-
-				{/* Overview Tab */}
 				<TabsContent value="overview" className="space-y-6">
 					<div className="grid lg:grid-cols-2 gap-6">
-						{/* Recent Products */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center justify-between">
@@ -215,39 +206,39 @@ export default function FarmerDashboard() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
-								{products.length > 0 ? (
-									products.map((product) => (
-										<div key={product.id} className="flex items-center space-x-4 p-3 rounded-lg border">
-											<Image
-												src={product.images[0] || "/placeholder.svg"}
-												alt={product.name}
-												className="rounded-lg object-cover"
-												height={64}
-												width={64}
-											/>
-											<div className="flex-1 min-w-0">
-												<p className="font-medium truncate">{product.name}</p>
-												<p className="text-sm text-muted-foreground">
-													{product.category} • Rs. {product.price.toLocaleString()}
-												</p>
+								{
+									products.length > 0 ? (
+										products.map((product) => (
+											<div key={product.id} className="flex items-center space-x-4 p-3 rounded-lg border">
+												<Image
+													src={product.images[0] || "/placeholder.svg"}
+													alt={product.name}
+													className="rounded-lg object-cover"
+													height={64}
+													width={64}
+												/>
+												<div className="flex-1 min-w-0">
+													<p className="font-medium truncate">{product.name}</p>
+													<p className="text-sm text-muted-foreground">
+														{product.category} • Rs. {product.price.toLocaleString()}
+													</p>
+												</div>
+												<div className="text-right">
+													{getStatusBadge(product.status)}
+													<p className="text-xs text-muted-foreground mt-1">Stock: {product.stock}</p>
+												</div>
 											</div>
-											<div className="text-right">
-												{getStatusBadge(product.status)}
-												<p className="text-xs text-muted-foreground mt-1">Stock: {product.stock}</p>
-											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No products yet</p>
+											<p className="text-sm">Start by adding your first product</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No products yet</p>
-										<p className="text-sm">Start by adding your first product</p>
-									</div>
-								)}
+									)
+								}
 							</CardContent>
 						</Card>
-
-						{/* Active Bids */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center justify-between">
@@ -267,8 +258,6 @@ export default function FarmerDashboard() {
 						</Card>
 					</div>
 				</TabsContent>
-
-				{/* Products Tab */}
 				<TabsContent value="products" className="space-y-6">
 					<Card>
 						<CardHeader>
@@ -284,53 +273,53 @@ export default function FarmerDashboard() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-								{products.length > 0 ? (
-									products.map((product) => (
-										<div key={product.id} className="flex items-center space-x-4 p-4 rounded-lg border">
-											<Image
-												src={product.images[0] || "/placeholder.svg"}
-												alt={product.name}
-												className="w-16 h-16 rounded-lg object-cover"
-												height={64}
-												width={64}
-											/>
-											<div className="flex-1">
-												<h4 className="font-medium">{product.name}</h4>
-												<p className="text-sm text-muted-foreground">{product.category}</p>
-												<div className="flex items-center space-x-4 mt-2 text-sm">
-													<span className="font-medium">Rs. {product.price.toLocaleString()}</span>
-													<span className="text-muted-foreground">Stock: {product.stock}</span>
-													<span className="text-muted-foreground">Unit: {product.unit}</span>
+								{
+									products.length > 0 ? (
+										products.map((product) => (
+											<div key={product.id} className="flex items-center space-x-4 p-4 rounded-lg border">
+												<Image
+													src={product.images[0] || "/placeholder.svg"}
+													alt={product.name}
+													className="w-16 h-16 rounded-lg object-cover"
+													height={64}
+													width={64}
+												/>
+												<div className="flex-1">
+													<h4 className="font-medium">{product.name}</h4>
+													<p className="text-sm text-muted-foreground">{product.category}</p>
+													<div className="flex items-center space-x-4 mt-2 text-sm">
+														<span className="font-medium">Rs. {product.price.toLocaleString()}</span>
+														<span className="text-muted-foreground">Stock: {product.stock}</span>
+														<span className="text-muted-foreground">Unit: {product.unit}</span>
+													</div>
+												</div>
+												<div className="flex items-center space-x-2">
+													{getStatusBadge(product.status)}
+													<Button variant="ghost" size="sm" asChild>
+														<Link href={`/farmer/products/${product.id}`}>
+															<Eye className="h-4 w-4" />
+														</Link>
+													</Button>
+													<Button variant="ghost" size="sm" asChild>
+														<Link href={`/farmer/products/${product.id}/edit`}>
+															<Edit className="h-4 w-4" />
+														</Link>
+													</Button>
 												</div>
 											</div>
-											<div className="flex items-center space-x-2">
-												{getStatusBadge(product.status)}
-												<Button variant="ghost" size="sm" asChild>
-													<Link href={`/farmer/products/${product.id}`}>
-														<Eye className="h-4 w-4" />
-													</Link>
-												</Button>
-												<Button variant="ghost" size="sm" asChild>
-													<Link href={`/farmer/products/${product.id}/edit`}>
-														<Edit className="h-4 w-4" />
-													</Link>
-												</Button>
-											</div>
+										))
+									) : (
+										<div className="text-center text-muted-foreground py-8">
+											<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+											<p>No products yet</p>
+											<p className="text-sm">Add your first product to get started</p>
 										</div>
-									))
-								) : (
-									<div className="text-center text-muted-foreground py-8">
-										<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-										<p>No products yet</p>
-										<p className="text-sm">Add your first product to get started</p>
-									</div>
-								)}
+									)
+								}
 							</div>
 						</CardContent>
 					</Card>
 				</TabsContent>
-
-				{/* Bidding Tab */}
 				<TabsContent value="bidding" className="space-y-6">
 					<Card>
 						<CardHeader>
@@ -348,8 +337,6 @@ export default function FarmerDashboard() {
 						</CardContent>
 					</Card>
 				</TabsContent>
-
-				{/* Orders Tab */}
 				<TabsContent value="orders" className="space-y-6">
 					<Card>
 						<CardHeader>

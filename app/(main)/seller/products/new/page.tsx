@@ -202,7 +202,6 @@ export default function NewProduct() {
 
 	return (
 		<div className="container mx-auto p-6 space-y-8">
-			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
 					<Button variant="ghost" size="icon" asChild>
@@ -227,20 +226,19 @@ export default function NewProduct() {
 						onClick={handleSubmit}
 						disabled={isLoading || !formData.name || !formData.category || formData.price <= 0 || !formData.location || !formData.district}
 					>
-						{isLoading ? (
-							<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-						) : (
-							<Save className="h-4 w-4 mr-2" />
-						)}
+						{
+							isLoading ? (
+								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+							) : (
+								<Save className="h-4 w-4 mr-2" />
+							)
+						}
 						Publish Product
 					</Button>
 				</div>
 			</div>
-
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-				{/* Main Form */}
 				<div className="lg:col-span-2 space-y-6">
-					{/* Basic Information */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Basic Information</CardTitle>
@@ -258,7 +256,6 @@ export default function NewProduct() {
 									onChange={(e) => handleInputChange("name", e.target.value)}
 								/>
 							</div>
-
 							<div>
 								<Label htmlFor="description">Description *</Label>
 								<Textarea
@@ -269,7 +266,6 @@ export default function NewProduct() {
 									rows={4}
 								/>
 							</div>
-
 							<div className="grid grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="category">Category *</Label>
@@ -280,12 +276,13 @@ export default function NewProduct() {
 										className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									>
 										<option value="">Select category</option>
-										{categories.map(category => (
-											<option key={category} value={category}>{categoryLabels[category]}</option>
-										))}
+										{
+											categories.map(category => (
+												<option key={category} value={category}>{categoryLabels[category]}</option>
+											))
+										}
 									</select>
 								</div>
-
 								<div>
 									<Label htmlFor="unit">Unit</Label>
 									<select
@@ -294,16 +291,16 @@ export default function NewProduct() {
 										onChange={(e) => handleInputChange("unit", e.target.value)}
 										className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									>
-										{units.map(unit => (
-											<option key={unit} value={unit}>{unit}</option>
-										))}
+										{
+											units.map(unit => (
+												<option key={unit} value={unit}>{unit}</option>
+											))
+										}
 									</select>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Pricing and Inventory */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Pricing & Inventory</CardTitle>
@@ -325,7 +322,6 @@ export default function NewProduct() {
 										onChange={(e) => handleInputChange("price", parseFloat(e.target.value) || 0)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="stock">Stock Quantity *</Label>
 									<Input
@@ -340,8 +336,6 @@ export default function NewProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Location Information */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Location Information</CardTitle>
@@ -360,7 +354,6 @@ export default function NewProduct() {
 										onChange={(e) => handleInputChange("location", e.target.value)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="district">District *</Label>
 									<Input
@@ -373,8 +366,6 @@ export default function NewProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Product Details */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Details</CardTitle>
@@ -384,7 +375,7 @@ export default function NewProduct() {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center space-x-2">
-								<input
+								<Input
 									id="organicCertified"
 									type="checkbox"
 									checked={formData.organicCertified}
@@ -393,7 +384,6 @@ export default function NewProduct() {
 								/>
 								<Label htmlFor="organicCertified">Organic Certified</Label>
 							</div>
-
 							<div className="grid grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="harvestDate">Harvest Date</Label>
@@ -404,7 +394,6 @@ export default function NewProduct() {
 										onChange={(e) => handleInputChange("harvestDate", e.target.value ? new Date(e.target.value) : undefined)}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="expiryDate">Expiry Date</Label>
 									<Input
@@ -417,8 +406,6 @@ export default function NewProduct() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Product Images */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Images</CardTitle>
@@ -427,7 +414,6 @@ export default function NewProduct() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							{/* Upload Area */}
 							<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
 								<div className="text-center">
 									<ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -436,11 +422,13 @@ export default function NewProduct() {
 											htmlFor="image-upload"
 											className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
 										>
-											{uploadingImages ? (
-												<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-											) : (
-												<Upload className="h-4 w-4 mr-2" />
-											)}
+											{
+												uploadingImages ? (
+													<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+												) : (
+													<Upload className="h-4 w-4 mr-2" />
+												)
+											}
 											{uploadingImages ? "Uploading..." : "Upload Images"}
 										</Label>
 										<Input
@@ -458,39 +446,41 @@ export default function NewProduct() {
 									</div>
 								</div>
 							</div>
-
-							{/* Image Preview */}
-							{formData.images.length > 0 && (
-								<div className="grid grid-cols-5 gap-4">
-									{formData.images.map((image, index) => (
-										<div key={index} className="relative group">
-											<div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
-												<Image
-													src={image}
-													alt={`Product image ${index + 1}`}
-													fill
-													className="object-cover"
-												/>
-											</div>
-											<Button
-												variant="destructive"
-												size="icon"
-												className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-												onClick={() => removeImage(index)}
-											>
-												<X className="h-3 w-3" />
-											</Button>
-											{index === 0 && (
-												<Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
-											)}
-										</div>
-									))}
-								</div>
-							)}
+							{
+								formData.images.length > 0 && (
+									<div className="grid grid-cols-5 gap-4">
+										{
+											formData.images.map((image, index) => (
+												<div key={index} className="relative group">
+													<div className="relative w-full h-24 bg-muted rounded-lg overflow-hidden">
+														<Image
+															src={image}
+															alt={`Product image ${index + 1}`}
+															fill
+															className="object-cover"
+														/>
+													</div>
+													<Button
+														variant="destructive"
+														size="icon"
+														className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+														onClick={() => removeImage(index)}
+													>
+														<X className="h-3 w-3" />
+													</Button>
+													{
+														index === 0 && (
+															<Badge className="absolute bottom-1 left-1 text-xs">Main</Badge>
+														)
+													}
+												</div>
+											))
+										}
+									</div>
+								)
+							}
 						</CardContent>
 					</Card>
-
-					{/* Product Images */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Product Preview</CardTitle>
@@ -499,23 +489,22 @@ export default function NewProduct() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							{/* Main Image */}
 							<div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden">
-								{formData.images.length > 0 ? (
-									<Image
-										src={formData.images[0]}
-										alt="Product preview"
-										fill
-										className="object-cover"
-									/>
-								) : (
-									<div className="flex items-center justify-center h-full">
-										<ImageIcon className="h-12 w-12 text-muted-foreground" />
-									</div>
-								)}
+								{
+									formData.images.length > 0 ? (
+										<Image
+											src={formData.images[0]}
+											alt="Product preview"
+											fill
+											className="object-cover"
+										/>
+									) : (
+										<div className="flex items-center justify-center h-full">
+											<ImageIcon className="h-12 w-12 text-muted-foreground" />
+										</div>
+									)
+								}
 							</div>
-
-							{/* Product Info */}
 							<div className="space-y-2">
 								<h3 className="font-semibold text-lg">
 									{formData.name || "Product Name"}
@@ -532,43 +521,51 @@ export default function NewProduct() {
 									</Badge>
 								</div>
 							</div>
-
-							{/* Category and Location */}
-							{(formData.category || formData.location) && (
-								<div className="space-y-2">
-									{formData.category && (
-										<Badge variant="secondary">{categoryLabels[formData.category as ProductCategory]}</Badge>
-									)}
-									{formData.location && (
-										<p className="text-sm text-muted-foreground">
-											📍 {formData.location}{formData.district ? `, ${formData.district}` : ""}
-										</p>
-									)}
-								</div>
-							)}
-
-							{/* Organic Certification */}
-							{formData.organicCertified && (
-								<div>
-									<Badge variant="default" className="bg-green-600">🌱 Organic Certified</Badge>
-								</div>
-							)}
-
-							{/* Dates */}
-							{(formData.harvestDate || formData.expiryDate) && (
-								<div className="text-sm space-y-1">
-									{formData.harvestDate && (
-										<p className="text-muted-foreground">
-											Harvested: {formData.harvestDate.toLocaleDateString()}
-										</p>
-									)}
-									{formData.expiryDate && (
-										<p className="text-muted-foreground">
-											Expires: {formData.expiryDate.toLocaleDateString()}
-										</p>
-									)}
-								</div>
-							)}
+							{
+								(formData.category || formData.location) && (
+									<div className="space-y-2">
+										{
+											formData.category && (
+												<Badge variant="secondary">{categoryLabels[formData.category as ProductCategory]}</Badge>
+											)
+										}
+										{
+											formData.location && (
+												<p className="text-sm text-muted-foreground">
+													📍 {formData.location}{formData.district ? `, ${formData.district}` : ""}
+												</p>
+											)
+										}
+									</div>
+								)
+							}
+							{
+								formData.organicCertified && (
+									<div>
+										<Badge variant="default" className="bg-green-600">🌱 Organic Certified</Badge>
+									</div>
+								)
+							}
+							{
+								(formData.harvestDate || formData.expiryDate) && (
+									<div className="text-sm space-y-1">
+										{
+											formData.harvestDate && (
+												<p className="text-muted-foreground">
+													Harvested: {formData.harvestDate.toLocaleDateString()}
+												</p>
+											)
+										}
+										{
+											formData.expiryDate && (
+												<p className="text-muted-foreground">
+													Expires: {formData.expiryDate.toLocaleDateString()}
+												</p>
+											)
+										}
+									</div>
+								)
+							}
 						</CardContent>
 					</Card>
 				</div>

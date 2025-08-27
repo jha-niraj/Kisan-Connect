@@ -15,7 +15,9 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { CreditCard, Truck, MapPin, Phone, ArrowLeft, Loader2 } from "lucide-react"
+import {
+	CreditCard, Truck, MapPin, Phone, ArrowLeft, Loader2
+} from "lucide-react"
 import Link from "next/link"
 import { getCartItems, clearCart } from "@/actions/(common)/cart.action"
 
@@ -54,7 +56,7 @@ interface Address {
 
 const nepalProvinces = [
 	"Province 1",
-	"Madhesh Province", 
+	"Madhesh Province",
 	"Bagmati Province",
 	"Gandaki Province",
 	"Lumbini Province",
@@ -68,7 +70,7 @@ export default function CheckoutPage() {
 	const [cartItems, setCartItems] = useState<CartItem[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [isSubmitting, setIsSubmitting] = useState(false)
-	
+
 	// Address form
 	const [address, setAddress] = useState<Address>({
 		name: "",
@@ -79,7 +81,7 @@ export default function CheckoutPage() {
 		province: "",
 		notes: ""
 	})
-	
+
 	// Payment and terms
 	const [paymentMethod, setPaymentMethod] = useState("cod")
 	const [agreeTerms, setAgreeTerms] = useState(false)
@@ -231,7 +233,6 @@ export default function CheckoutPage() {
 	return (
 		<div className="min-h-screen bg-background">
 			<Header />
-
 			<div className="container mx-auto px-4 py-8">
 				<div className="flex items-center space-x-4 mb-8">
 					<Button variant="ghost" size="sm" asChild>
@@ -245,11 +246,8 @@ export default function CheckoutPage() {
 						<p className="text-muted-foreground">Complete your order</p>
 					</div>
 				</div>
-
 				<div className="grid lg:grid-cols-3 gap-8">
-					{/* Checkout Form */}
 					<div className="lg:col-span-2 space-y-6">
-						{/* Delivery Address */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center space-x-2">
@@ -278,7 +276,6 @@ export default function CheckoutPage() {
 										/>
 									</div>
 								</div>
-								
 								<div>
 									<Label htmlFor="street">Street Address *</Label>
 									<Input
@@ -288,7 +285,6 @@ export default function CheckoutPage() {
 										placeholder="House number, street name"
 									/>
 								</div>
-
 								<div className="grid md:grid-cols-2 gap-4">
 									<div>
 										<Label htmlFor="municipality">Municipality *</Label>
@@ -309,7 +305,6 @@ export default function CheckoutPage() {
 										/>
 									</div>
 								</div>
-
 								<div>
 									<Label htmlFor="province">Province *</Label>
 									<select
@@ -319,12 +314,13 @@ export default function CheckoutPage() {
 										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
 									>
 										<option value="">Select Province</option>
-										{nepalProvinces.map(province => (
-											<option key={province} value={province}>{province}</option>
-										))}
+										{
+											nepalProvinces.map(province => (
+												<option key={province} value={province}>{province}</option>
+											))
+										}
 									</select>
 								</div>
-
 								<div>
 									<Label htmlFor="notes">Delivery Notes (Optional)</Label>
 									<Textarea
@@ -337,8 +333,6 @@ export default function CheckoutPage() {
 								</div>
 							</CardContent>
 						</Card>
-
-						{/* Payment Method */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center space-x-2">
@@ -360,7 +354,6 @@ export default function CheckoutPage() {
 											</div>
 										</Label>
 									</div>
-
 									<div className="flex items-center space-x-2 p-4 border rounded-lg opacity-50">
 										<RadioGroupItem value="esewa" id="esewa" disabled />
 										<Label htmlFor="esewa" className="flex-1">
@@ -370,7 +363,6 @@ export default function CheckoutPage() {
 											</div>
 										</Label>
 									</div>
-
 									<div className="flex items-center space-x-2 p-4 border rounded-lg opacity-50">
 										<RadioGroupItem value="khalti" id="khalti" disabled />
 										<Label htmlFor="khalti" className="flex-1">
@@ -383,15 +375,13 @@ export default function CheckoutPage() {
 								</RadioGroup>
 							</CardContent>
 						</Card>
-
-						{/* Terms and Conditions */}
 						<Card>
 							<CardContent className="pt-6">
 								<div className="flex items-start space-x-2">
-									<Checkbox 
-										id="terms" 
-										checked={agreeTerms} 
-										onCheckedChange={(checked) => setAgreeTerms(checked === true)} 
+									<Checkbox
+										id="terms"
+										checked={agreeTerms}
+										onCheckedChange={(checked) => setAgreeTerms(checked === true)}
 									/>
 									<Label htmlFor="terms" className="text-sm leading-relaxed">
 										I agree to the{" "}
@@ -408,25 +398,25 @@ export default function CheckoutPage() {
 							</CardContent>
 						</Card>
 					</div>
-
-					{/* Order Summary */}
 					<div className="space-y-6">
 						<Card>
 							<CardHeader>
 								<CardTitle>Order Summary</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
-								{cartItems.map((item) => (
-									<div key={item.id} className="flex items-center justify-between">
-										<div className="flex-1">
-											<p className="font-medium">{item.product.name}</p>
-											<p className="text-sm text-muted-foreground">
-												by {item.product.farmer.name} • {item.quantity} {item.product.unit}
-											</p>
+								{
+									cartItems.map((item) => (
+										<div key={item.id} className="flex items-center justify-between">
+											<div className="flex-1">
+												<p className="font-medium">{item.product.name}</p>
+												<p className="text-sm text-muted-foreground">
+													by {item.product.farmer.name} • {item.quantity} {item.product.unit}
+												</p>
+											</div>
+											<span className="font-medium">Rs. {(item.product.price * item.quantity).toFixed(2)}</span>
 										</div>
-										<span className="font-medium">Rs. {(item.product.price * item.quantity).toFixed(2)}</span>
-									</div>
-								))}
+									))
+								}
 
 								<Separator />
 
@@ -445,26 +435,25 @@ export default function CheckoutPage() {
 										<span>Rs. {total.toFixed(2)}</span>
 									</div>
 								</div>
-
-								<Button 
-									className="w-full" 
-									size="lg" 
-									onClick={handlePlaceOrder} 
+								<Button
+									className="w-full"
+									size="lg"
+									onClick={handlePlaceOrder}
 									disabled={!agreeTerms || isSubmitting}
 								>
-									{isSubmitting ? (
-										<>
-											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-											Placing Order...
-										</>
-									) : (
-										"Place Order"
-									)}
+									{
+										isSubmitting ? (
+											<>
+												<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+												Placing Order...
+											</>
+										) : (
+											"Place Order"
+										)
+									}
 								</Button>
 							</CardContent>
 						</Card>
-
-						{/* Delivery Info */}
 						<Card>
 							<CardContent className="pt-6">
 								<div className="space-y-3 text-sm">
@@ -486,7 +475,6 @@ export default function CheckoutPage() {
 					</div>
 				</div>
 			</div>
-
 			<Footer />
 		</div>
 	)
