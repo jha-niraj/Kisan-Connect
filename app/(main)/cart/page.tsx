@@ -75,7 +75,7 @@ export default function CartPage() {
 		} finally {
 			setIsLoading(false)
 		}
-	}, []);
+	}, [session?.user]);
 
 	useEffect(() => {
 		loadCartData()
